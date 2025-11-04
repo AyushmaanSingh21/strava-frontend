@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.env
+.env.local
+# Ignore all other env variants (Vite uses .env.[mode]*)
+.env.*
+!.env.example
+
+# Common private keys
+*.pem
+*.key

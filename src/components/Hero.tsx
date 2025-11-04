@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { initiateStravaLogin } from "@/services/stravaAuth";
 import heroImage from "@/assets/hero-runner-clouds.png";
 
 const Hero = () => {
@@ -64,6 +65,7 @@ const Hero = () => {
             <Button 
               size="lg"
               className="bg-[#E67A3C] hover:bg-[#FF9999] hover:text-black text-white font-bold uppercase tracking-wide px-8 py-6 text-lg border-3 border-black rounded-xl shadow-lg transition-all duration-200"
+              onClick={initiateStravaLogin}
             >
               CONNECT WITH STRAVA
             </Button>
