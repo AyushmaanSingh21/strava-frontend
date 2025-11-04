@@ -32,6 +32,7 @@ const Navigation = () => {
         <Button 
           variant="default"
           className="bg-strava-orange hover:bg-white hover:text-black text-black font-bold uppercase tracking-wide px-6 rounded-full transition-all duration-200 hover:scale-105"
+          onClick={() => window.location.href = '/dashboard'}
         >
           Connect Strava
         </Button>
