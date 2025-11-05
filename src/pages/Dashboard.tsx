@@ -1,33 +1,97 @@
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Trophy, Zap, Mountain, Activity, Clock, Ruler, Flame } from "lucide-react";
+import { getAthleteProfile, getActivities } from "@/services/stravaAPI";
+import {
+  calculateTotalDistance,
+  calculateTotalTime,
+  getAveragePace,
+  findPersonalRecords,
+  getMonthlyStats,
+  getActivityTypes,
+} from "@/utils/dataProcessor";
 
 const Dashboard = () => {
-  const userName = "ALEX";
-  
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [profile, setProfile] = useState<any | null>(null);
+  const [activities, setActivities] = useState<any[]>([]);
+  const [lastSynced, setLastSynced] = useState<string>("");
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const prof = await getAthleteProfile();
+        setProfile(prof || null);
+        const acts = (await getActivities(1, 50)) || [];
+        setActivities(Array.isArray(acts) ? acts : []);
+        setLastSynced(new Date().toLocaleTimeString());
+      } catch (e: any) {
+        console.error("Dashboard data fetch error:", e);
+        setError(e?.message || "Failed to load dashboard data");
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  const formatPace = (paceMinPerKm?: number | null) => {
+    if (!paceMinPerKm || !isFinite(paceMinPerKm)) return "-";
+    const m = Math.floor(paceMinPerKm);
+    const sec = Math.round((paceMinPerKm - m) * 60);
+    return `${m}:${String(sec).padStart(2, "0")} /km`;
+  };
+
+  const processed = useMemo(() => {
+    const totalDistance = calculateTotalDistance(activities);
+    const totalTime = calculateTotalTime(activities);
+    const avgPace = getAveragePace(activities);
+    const prs = findPersonalRecords(activities);
+    const monthly = getMonthlyStats(activities);
+    const byType = getActivityTypes(activities);
+    return { totalDistance, totalTime, avgPace, prs, monthly, byType };
+  }, [activities]);
+
+  const userName = profile?.firstname ? String(profile.firstname).toUpperCase() : "ATHLETE";
+
   const heroStats = [
-    { label: "TOTAL DISTANCE", value: "247.3 KM", subtext: "this month", icon: Ruler, color: "lime" },
-    { label: "TOTAL TIME", value: "24.5 HRS", subtext: "moving time", icon: Clock, color: "pink" },
-    { label: "ACTIVITIES", value: "18", subtext: "runs logged", icon: Activity, color: "blue" },
-    { label: "AVG PACE", value: "5:23 /km", subtext: "average pace", icon: Zap, color: "yellow" },
+    { label: "TOTAL DISTANCE", value: `${processed.totalDistance.toFixed(1)} KM`, subtext: "last 50 activities", icon: Ruler, color: "lime" },
+    { label: "TOTAL TIME", value: `${processed.totalTime.toFixed(1)} HRS`, subtext: "moving time", icon: Clock, color: "pink" },
+    { label: "ACTIVITIES", value: String(activities.length || 0), subtext: "logged", icon: Activity, color: "blue" },
+    { label: "AVG PACE", value: formatPace(processed.avgPace), subtext: "runs only", icon: Zap, color: "yellow" },
   ];
 
-  const recentActivities = [
-    { name: "Morning Run", distance: "8.2 km", pace: "5:12 /km", date: "Today" },
-    { name: "Evening Ride", distance: "24.5 km", pace: "3:45 /km", date: "Yesterday" },
-    { name: "Trail Run", distance: "12.3 km", pace: "6:03 /km", date: "2 days ago" },
-    { name: "Recovery Run", distance: "5.0 km", pace: "6:30 /km", date: "3 days ago" },
-    { name: "Long Run", distance: "21.1 km", pace: "5:45 /km", date: "4 days ago" },
-  ];
+  const recentActivities = activities.slice(0, 10).map((a) => {
+    const km = (a?.distance || 0) / 1000;
+    const paceMinPerKm = a?.type === "Run" && km > 0 ? (a.moving_time / 60) / km : null;
+    return {
+      name: a?.name || "Activity",
+      distance: `${km.toFixed(1)} km`,
+      pace: a?.type === "Run" && paceMinPerKm ? formatPace(paceMinPerKm) : "-",
+      date: a?.start_date_local ? new Date(a.start_date_local).toLocaleDateString() : "",
+    };
+  });
 
   const personalRecords = [
-    { label: "Longest Run", value: "21.5 km", icon: Trophy },
-    { label: "Fastest 5K", value: "24:32", icon: Zap },
-    { label: "Most Elevation", value: "523m", icon: Mountain },
+    { label: "Longest Run", value: processed.prs?.longestRun ? `${(processed.prs.longestRun.distance / 1000).toFixed(1)} km` : "-", icon: Trophy },
+    { label: "Fastest Pace", value: processed.prs?.fastestPaceRun ? formatPace((processed.prs.fastestPaceRun.moving_time / 60) / (processed.prs.fastestPaceRun.distance / 1000)) : "-", icon: Zap },
+    { label: "Most Elevation", value: processed.prs?.mostElevation ? `${Math.round(processed.prs.mostElevation.total_elevation_gain)} m` : "-", icon: Mountain },
   ];
 
   const weekDays = ["M", "T", "W", "T", "F", "S", "S"];
-  const weekActivity = [true, false, true, true, false, true, true];
+  const weekActivity = (() => {
+    const now = new Date();
+    return weekDays.map((_, idx) => {
+      const day = new Date(now);
+      day.setDate(now.getDate() - (6 - idx));
+      const dayKey = day.toISOString().slice(0, 10);
+      return activities.some((a) => (a.start_date || a.start_date_local || "").slice(0, 10) === dayKey);
+    });
+  })();
 
   const getBorderColor = (color: string) => {
     switch (color) {
@@ -90,33 +154,52 @@ const Dashboard = () => {
             </h1>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {heroStats.map((stat, index) => (
-                <Card 
-                  key={index}
-                  className={`bg-black text-white border-2 border-white ${getBorderColor(stat.color)} border-l-8 shadow-brutal hover:translate-y-[-4px] transition-transform duration-200 p-6`}
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <stat.icon className="w-8 h-8" />
-                  </div>
-                  <div className="font-mono text-5xl font-bold mb-2">
-                    {stat.value}
-                  </div>
-                  <div className="text-xs uppercase tracking-widest text-gray-400 mb-1">
-                    {stat.label}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    {stat.subtext}
-                  </div>
-                </Card>
-              ))}
+              {(loading ? [0,1,2,3] : heroStats).map((stat: any, index: number) => {
+                const Icon = (stat as any)?.icon as React.ComponentType<any> | undefined;
+                return (
+                  <Card 
+                    key={index}
+                    className={`bg-black text-white border-2 border-white ${getBorderColor((stat as any)?.color || "lime")} border-l-8 shadow-brutal hover:translate-y-[-4px] transition-transform duration-200 p-6`}
+                  >
+                    {loading ? (
+                      <div className="space-y-2">
+                        <div className="h-8 bg-white/10" />
+                        <div className="h-4 bg-white/10" />
+                        <div className="h-3 bg-white/10" />
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex items-start justify-between mb-4">
+                          {Icon ? <Icon className="w-8 h-8" /> : <div className="w-8 h-8" />}
+                        </div>
+                        <div className="font-mono text-5xl font-bold mb-2">
+                          {(stat as any).value}
+                        </div>
+                        <div className="text-xs uppercase tracking-widest text-gray-400 mb-1">
+                          {(stat as any).label}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {(stat as any).subtext}
+                        </div>
+                      </>
+                    )}
+                  </Card>
+                );
+              })}
             </div>
 
             {/* Quirky message */}
-            <div className="mt-8 text-center">
-              <p className="text-lime font-bold text-lg">
-                18 activities? Someone's training for something 👀
-              </p>
-            </div>
+            {!loading && (
+              <div className="mt-8 text-center">
+                <p className="text-lime font-bold text-lg">
+                  {activities.length >= 10
+                    ? `${activities.length} activities? Someone's training for something 👀`
+                    : activities.length === 0
+                    ? "You ran 0x this week. Touch grass more."
+                    : `${activities.length} recent activities — keep going!`}
+                </p>
+              </div>
+            )}
           </div>
         </section>
 
@@ -132,21 +215,25 @@ const Dashboard = () => {
                   RECENT ACTIVITY
                 </h2>
                 <div className="space-y-3">
-                  {recentActivities.map((activity, index) => (
+                  {(loading ? Array.from({ length: 5 }) : recentActivities).map((activity: any, index: number) => (
                     <div 
                       key={index} 
                       className={`p-4 ${index % 2 === 0 ? 'bg-white/5' : 'bg-transparent'} border-l-2 border-lime hover:border-l-4 transition-all`}
                     >
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <div className="font-bold text-lg">{activity.name}</div>
-                          <div className="text-sm text-gray-400">{activity.date}</div>
+                      {loading ? (
+                        <div className="h-10 bg-white/10" />
+                      ) : (
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <div className="font-bold text-lg">{activity.name}</div>
+                            <div className="text-sm text-gray-400">{activity.date}</div>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-mono text-xl font-bold">{activity.distance}</div>
+                            <div className="font-mono text-sm text-gray-400">{activity.pace}</div>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <div className="font-mono text-xl font-bold">{activity.distance}</div>
-                          <div className="font-mono text-sm text-gray-400">{activity.pace}</div>
-                        </div>
-                      </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -159,17 +246,23 @@ const Dashboard = () => {
                   PERSONAL RECORDS
                 </h2>
                 <div className="space-y-6">
-                  {personalRecords.map((record, index) => (
+                  {(loading ? Array.from({ length: 3 }) : personalRecords).map((record: any, index: number) => (
                     <div key={index} className="border-l-4 border-pink pl-4 hover:border-l-8 transition-all">
-                      <div className="flex items-center gap-3 mb-2">
-                        <record.icon className="w-5 h-5 text-yellow" />
-                        <div className="text-sm uppercase tracking-wide text-gray-400">
-                          {record.label}
-                        </div>
-                      </div>
-                      <div className="font-mono text-3xl font-bold">
-                        {record.value}
-                      </div>
+                      {loading ? (
+                        <div className="h-10 bg-white/10" />
+                      ) : (
+                        <>
+                          <div className="flex items-center gap-3 mb-2">
+                            <record.icon className="w-5 h-5 text-yellow" />
+                            <div className="text-sm uppercase tracking-wide text-gray-400">
+                              {record.label}
+                            </div>
+                          </div>
+                          <div className="font-mono text-3xl font-bold">
+                            {record.value}
+                          </div>
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -287,7 +380,7 @@ const Dashboard = () => {
                 <div className="text-center mb-6">
                   <div className="text-sm text-gray-400 uppercase mb-2">You're</div>
                   <div className="font-mono text-6xl font-bold text-blue">#23</div>
-                  <div className="text-sm text-gray-400 uppercase mt-2">in NEW YORK</div>
+                  <div className="text-sm text-gray-400 uppercase mt-2">in {(profile?.city || "YOUR CITY").toString().toUpperCase()}</div>
                 </div>
                 <div className="space-y-2">
                   {[1, 2, 3].map((rank) => (
@@ -303,7 +396,11 @@ const Dashboard = () => {
 
             {/* Last synced */}
             <div className="mt-8 text-center text-gray-500 text-sm">
-              Last synced: 2 mins ago
+              {error ? (
+                <span className="text-red-400">{error}</span>
+              ) : (
+                <>Last synced: {lastSynced || "just now"}</>
+              )}
             </div>
           </div>
         </section>
