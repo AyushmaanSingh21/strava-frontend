@@ -10,22 +10,22 @@ const Navigation = () => {
         
         <div className="hidden md:flex items-center gap-8">
           <a 
-            href="#features" 
+            href="/dashboard" 
             className="text-white uppercase text-sm tracking-widest hover:text-lime transition-colors duration-200"
           >
-            Features
+            Dashboard
           </a>
           <a 
-            href="#pricing" 
+            href="/cards" 
             className="text-white uppercase text-sm tracking-widest hover:text-lime transition-colors duration-200"
           >
-            Pricing
+            Cards
           </a>
           <a 
-            href="#demo" 
+            href="/roast" 
             className="text-white uppercase text-sm tracking-widest hover:text-lime transition-colors duration-200"
           >
-            Demo
+            Roast
           </a>
         </div>
         

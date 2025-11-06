@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Cards from "./pages/Cards";
+import Roast from "./pages/Roast";
 import NotFound from "./pages/NotFound";
 import Callback from "./pages/Callback";
 import DataTest from "./pages/DataTest";
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/cards" element={<Cards />} />
+          <Route path="/roast" element={<Roast />} />
           <Route path="/callback" element={<Callback />} />
           <Route
             path="/data-test"
