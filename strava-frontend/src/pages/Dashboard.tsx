@@ -113,18 +113,10 @@ const Dashboard = () => {
           </div>
           
           <div className="hidden md:flex items-center gap-8">
-            <a href="/dashboard" className="text-white uppercase text-sm tracking-widest hover:text-lime transition-colors duration-200 font-semibold">
-              Dashboard
-            </a>
-            <a href="#cards" className="text-white uppercase text-sm tracking-widest hover:text-lime transition-colors duration-200">
-              Cards
-            </a>
-            <a href="#roast" className="text-white uppercase text-sm tracking-widest hover:text-lime transition-colors duration-200">
-              Roast
-            </a>
-            <a href="#settings" className="text-white uppercase text-sm tracking-widest hover:text-lime transition-colors duration-200">
-              Settings
-            </a>
+            <a href="/dashboard" className="text-white uppercase text-sm tracking-widest hover:text-lime transition-colors duration-200 font-semibold">Dashboard</a>
+            <a href="/cards" className="text-white uppercase text-sm tracking-widest hover:text-lime transition-colors duration-200">Cards</a>
+            <a href="/roast" className="text-white uppercase text-sm tracking-widest hover:text-lime transition-colors duration-200">Roast</a>
+            <a href="#settings" className="text-white uppercase text-sm tracking-widest hover:text-lime transition-colors duration-200">Settings</a>
           </div>
           
           <div className="flex items-center gap-4">

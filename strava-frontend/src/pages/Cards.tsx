@@ -1,7 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Download, Share2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import StatsCard from "@/components/StatsCard";
+import html2canvas from "html2canvas";
+import { getAthleteProfile, getActivities } from "../services/stravaAPI";
+import { 
+  calculateTotalDistance, 
+  calculateTotalTime, 
+  getAveragePace,
+  findPersonalRecords 
+} from "../utils/dataProcessor";
 
 type TimePeriod = "week" | "month" | "3months" | "alltime";
 type CardStyle = "holographic" | "dark" | "retro" | "minimalist";
@@ -14,18 +22,111 @@ const Cards = () => {
   const [showLocation, setShowLocation] = useState(false);
   const [accentColor, setAccentColor] = useState("#CCFF00");
 
-  // Placeholder data
-  const statsData = {
-    name: "ALEX RUNNER",
-    totalDistance: 247.3,
-    totalTime: 24.5,
-    activities: 18,
-    avgPace: "5:23",
-    longestRun: 21.5,
-    rarity: "RARE" as const,
-    cardNumber: "001",
-    month: "NOV 2024",
-  };
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [cardData, setCardData] = useState<{
+    name: string;
+    profilePhoto?: string;
+    city?: string;
+    state?: string;
+    totalDistance: number;
+    totalTime: number;
+    activities: number;
+    avgPace: string;
+    longestRun: number;
+    rarity: "COMMON" | "UNCOMMON" | "RARE" | "EPIC" | "LEGENDARY";
+    cardNumber: string;
+    month: string;
+    period: TimePeriod;
+  } | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const profile = await getAthleteProfile();
+        const activities = await getActivities(1, 200);
+        if (!profile || !activities) throw new Error("Failed to fetch data");
+
+        const filtered = filterActivitiesByPeriod(activities, timePeriod);
+        const totalDistance = calculateTotalDistance(filtered);
+        const totalTime = calculateTotalTime(filtered);
+        const avgPaceNum = getAveragePace(filtered);
+        const prs = findPersonalRecords(filtered);
+
+        const stats = {
+          name: `${profile.firstname ?? ""} ${profile.lastname ?? ""}`.trim() || "Runner",
+          profilePhoto: profile.profile_medium || profile.profile,
+          city: profile.city,
+          state: profile.state,
+          totalDistance,
+          totalTime,
+          activities: filtered.length,
+          avgPace: avgPaceNum ? formatPace(avgPaceNum) : "-",
+          longestRun: prs.longestRun ? +(prs.longestRun.distance / 1000).toFixed(1) : 0,
+          rarity: calculateRarity(totalDistance),
+          cardNumber: "001",
+          month: new Date().toLocaleString("en-US", { month: "short", year: "numeric" }).toUpperCase(),
+          period: timePeriod,
+        } as const;
+
+        setCardData(stats as any);
+        // Suggest special move based on data
+        setSpecialMove(generateSpecialMove(filtered));
+      } catch (e: any) {
+        setError(e?.message || "Could not load stats");
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [timePeriod]);
+
+  function filterActivitiesByPeriod(activities: any[], period: TimePeriod) {
+    const now = new Date();
+    const cutoffDate = new Date();
+    switch (period) {
+      case "week":
+        cutoffDate.setDate(now.getDate() - 7);
+        break;
+      case "month":
+        cutoffDate.setMonth(now.getMonth() - 1);
+        break;
+      case "3months":
+        cutoffDate.setMonth(now.getMonth() - 3);
+        break;
+      case "alltime":
+        return activities;
+      default:
+        cutoffDate.setMonth(now.getMonth() - 1);
+    }
+    return activities.filter((a) => new Date(a.start_date_local || a.start_date) >= cutoffDate);
+  }
+
+  function calculateRarity(totalDistance: number) {
+    if (totalDistance < 50) return "COMMON" as const;
+    if (totalDistance < 150) return "UNCOMMON" as const;
+    if (totalDistance < 300) return "RARE" as const;
+    if (totalDistance < 500) return "EPIC" as const;
+    return "LEGENDARY" as const;
+  }
+
+  function generateSpecialMove(activities: any[]) {
+    const totalActivities = activities.length;
+    const avg = getAveragePace(activities);
+    if (totalActivities === 0) return "Just getting started";
+    if (totalActivities >= 20) return "Consistency Champion";
+    if (avg && Math.floor(avg) < 5) return "Speed Demon";
+    if (totalActivities >= 10) return "Building Momentum";
+    return "Steady Runner";
+  }
+
+  function formatPace(paceMinPerKm: number) {
+    const minutes = Math.floor(paceMinPerKm);
+    const seconds = Math.round((paceMinPerKm - minutes) * 60);
+    return `${minutes}:${String(seconds).padStart(2, "0")}`;
+  }
 
   const suggestions = [
     "Lightning fast runner ⚡",
@@ -35,9 +136,23 @@ const Cards = () => {
     "Speed demon unlocked 🔥",
   ];
 
-  const handleDownload = () => {
-    // TODO: Implement download using html2canvas
-    console.log("Downloading card...");
+  const handleDownload = async () => {
+    const el = document.getElementById("stats-card");
+    if (!el || !cardData) return;
+    try {
+      const canvas = await html2canvas(el as HTMLElement, { scale: 2, backgroundColor: null, logging: false });
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `strava-card-${(cardData.name || "runner").replace(/\s/g, "-")}-${cardData.period}.png`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }, "image/png");
+    } catch (e) {
+      console.error("Failed to download card", e);
+    }
   };
 
   const handleShare = () => {
@@ -59,7 +174,7 @@ const Cards = () => {
               <a href="/cards" className="text-[#CCFF00] uppercase text-sm font-bold border-b-2 border-[#CCFF00]">
                 Cards
               </a>
-              <a href="#" className="text-white uppercase text-sm font-bold hover:text-[#CCFF00] transition-colors">
+              <a href="/roast" className="text-white uppercase text-sm font-bold hover:text-[#CCFF00] transition-colors">
                 Roast
               </a>
               <a href="#" className="text-white uppercase text-sm font-bold hover:text-[#CCFF00] transition-colors">
@@ -88,6 +203,14 @@ const Cards = () => {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-12">
+        {loading && (
+          <div className="text-center text-white font-bold mb-6">Loading your stats...</div>
+        )}
+        {error && (
+          <div className="text-center text-red-400 font-bold mb-6">
+            {error} <button className="underline" onClick={() => setTimePeriod(timePeriod)}>Retry</button>
+          </div>
+        )}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           {/* LEFT SIDE: Card Preview */}
           <div className="lg:col-span-2">
@@ -95,7 +218,17 @@ const Cards = () => {
               <h2 className="text-white font-display text-2xl font-bold mb-6 uppercase">Card Preview</h2>
               <StatsCard
                 style={cardStyle}
-                data={statsData}
+                data={cardData ?? {
+                  name: "",
+                  totalDistance: 0,
+                  totalTime: 0,
+                  activities: 0,
+                  avgPace: "-",
+                  longestRun: 0,
+                  rarity: "COMMON",
+                  cardNumber: "001",
+                  month: new Date().toLocaleString("en-US", { month: "short", year: "numeric" }).toUpperCase(),
+                }}
                 specialMove={specialMove}
                 includePhoto={includePhoto}
                 accentColor={accentColor}

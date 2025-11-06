@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Cards from "./pages/Cards";
+import Roast from "./pages/Roast";
 import NotFound from "./pages/NotFound";
 import Callback from "./pages/Callback";
 import DataTest from "./pages/DataTest";
@@ -21,8 +22,30 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/cards" element={<Cards />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/cards"
+            element={
+              <ProtectedRoute>
+                <Cards />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/roast"
+            element={
+              <ProtectedRoute>
+                <Roast />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/callback" element={<Callback />} />
           <Route
             path="/data-test"
