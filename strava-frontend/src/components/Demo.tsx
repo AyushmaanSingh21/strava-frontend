@@ -1,115 +1,102 @@
-import { BarChart3, MapPin, Flame, Award, TrendingUp, Zap } from "lucide-react";
+import { Sparkles, Brain, TrendingUp } from "lucide-react";
+import dashboardImage from "@/assets/dashboard-demo.png";
 
 const Demo = () => {
-  const floatingEmojis = ["💪", "🔥", "😤", "⚡", "🏃"];
+  const allFeatures = [
+    {
+      icon: Brain,
+      title: "AI-Powered Analysis",
+      description: "Advanced AI algorithms analyze your running patterns, identifying strengths and areas for improvement with precision insights.",
+      color: "lime",
+      number: "01"
+    },
+    {
+      icon: Sparkles,
+      title: "Smart Insights",
+      description: "Get personalized recommendations based on your training data. Our AI learns from your activities to provide tailored guidance.",
+      color: "hot-pink",
+      number: "02"
+    },
+    {
+      icon: TrendingUp,
+      title: "Performance Tracking",
+      description: "Track your progress over time with detailed metrics and visualizations that help you understand your athletic journey.",
+      color: "electric-blue",
+      number: "03"
+    },
+    {
+      icon: TrendingUp,
+      title: "Real-Time Analytics",
+      description: "Access comprehensive statistics instantly. Monitor pace, distance, elevation, and more with our intelligent dashboard.",
+      color: "achievement-gold",
+      number: "04"
+    }
+  ];
   
   return (
     <section id="demo" className="py-8 md:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="rounded-3xl bg-white p-8 md:p-12 lg:p-16 shadow-xl relative overflow-hidden grid-pattern">
-          {/* Floating Emojis */}
-          <div className="absolute inset-0 pointer-events-none">
-        {floatingEmojis.map((emoji, i) => (
-          <div
-            key={i}
-            className="absolute text-4xl float-emoji opacity-30"
-            style={{
-              left: `${20 + i * 20}%`,
-              animationDelay: `${i * 0.8}s`,
-              animationDuration: `${3 + i * 0.5}s`
-            }}
-          >
-            {emoji}
-          </div>
-        ))}
-      </div>
-      
-      <div className="relative z-10">
-        <h2 className="text-black font-heading text-7xl md:text-8xl text-center mb-16">
-          WATCH IT RUN
-        </h2>
-        
-        {/* Bento Box Grid */}
-        <div className="max-w-6xl mx-auto grid grid-cols-12 gap-4">
-          {/* Large Center Video */}
-          <div className="col-span-12 md:col-span-8 md:row-span-2 border-4 border-black shadow-brutal-lg bg-black overflow-hidden group hover:-translate-y-1 hover:shadow-lime transition-all duration-200">
-            <div className="aspect-video flex items-center justify-center text-white relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-lime/20 to-hot-pink/20" />
-              <div className="relative z-10 text-center">
-                <Award className="w-24 h-24 mx-auto mb-4 text-lime animate-pulse" />
-                <p className="font-heading text-3xl">VIDEO DEMO</p>
-                <p className="font-mono text-sm mt-2 opacity-70">Dashboard in Action</p>
-              </div>
+        <div className="rounded-3xl p-8 md:p-12 lg:p-16 shadow-xl relative overflow-hidden" style={{ backgroundColor: '#2F71FF' }}>
+          
+          <h2 className="text-white font-heading text-5xl md:text-7xl text-center mb-12">
+            DASHBOARD PREVIEW
+          </h2>
+          
+          {/* Dashboard Image */}
+          <div className="flex justify-center mb-12">
+            <div className="relative max-w-4xl w-full">
+              <div className="absolute -inset-4 bg-gradient-to-r from-lime via-hot-pink to-electric-blue rounded-3xl blur-2xl opacity-30 animate-pulse"></div>
+              <img 
+                src={dashboardImage} 
+                alt="Dashboard Preview" 
+                className="relative rounded-2xl shadow-2xl w-full h-auto border-4 border-white/20"
+              />
             </div>
           </div>
           
-          {/* Small Card 1 */}
-          <div className="col-span-6 md:col-span-4 border-2 border-black shadow-brutal bg-white p-4 hover:-translate-y-1 hover:border-lime hover:shadow-lime transition-all duration-200">
-            <div className="flex items-center gap-2 mb-2">
-              <TrendingUp className="w-5 h-5 text-lime" />
-              <span className="text-xs font-body uppercase opacity-60">Total Distance</span>
-            </div>
-            <div className="font-mono text-3xl font-bold">342.8 KM</div>
-          </div>
-          
-          {/* Small Card 2 */}
-          <div className="col-span-6 md:col-span-4 border-2 border-black shadow-brutal bg-white p-4 hover:-translate-y-1 hover:border-hot-pink hover:shadow-pink transition-all duration-200">
-            <div className="flex items-center gap-2 mb-2">
-              <Flame className="w-5 h-5 text-hot-pink" />
-              <span className="text-xs font-body uppercase opacity-60">7 Day Streak</span>
-            </div>
-            <div className="font-mono text-3xl font-bold text-hot-pink">7 DAYS</div>
-          </div>
-          
-          {/* Small Card 3 */}
-          <div className="col-span-6 md:col-span-4 border-2 border-black shadow-brutal bg-white p-4 hover:-translate-y-1 hover:border-electric-blue hover:shadow-blue transition-all duration-200">
-            <div className="flex items-center gap-2 mb-2">
-              <MapPin className="w-5 h-5 text-electric-blue" />
-              <span className="text-xs font-body uppercase opacity-60">Local Rank</span>
-            </div>
-            <div className="font-mono text-3xl font-bold text-electric-blue">#23</div>
-          </div>
-          
-          {/* Small Card 4 */}
-          <div className="col-span-6 md:col-span-4 border-2 border-black shadow-brutal bg-white p-4 hover:-translate-y-1 hover:border-achievement-gold hover:shadow-brutal transition-all duration-200">
-            <div className="flex items-center gap-2 mb-2">
-              <Zap className="w-5 h-5 text-achievement-gold" />
-              <span className="text-xs font-body uppercase opacity-60">Avg Pace</span>
-            </div>
-            <div className="font-mono text-3xl font-bold">5:24 /KM</div>
-          </div>
-          
-          {/* Small Card 5 - Chart */}
-          <div className="col-span-12 md:col-span-4 border-2 border-black shadow-brutal bg-white p-4 hover:-translate-y-1 hover:border-lime hover:shadow-lime transition-all duration-200">
-            <div className="flex items-center gap-2 mb-3">
-              <BarChart3 className="w-5 h-5 text-lime" />
-              <span className="text-xs font-body uppercase opacity-60">Weekly Progress</span>
-            </div>
-            <div className="flex items-end justify-between h-16 gap-1">
-              {[40, 65, 45, 80, 55, 90, 70].map((height, i) => (
+          {/* Features Grid - Similar to Features Section */}
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+            {allFeatures.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
                 <div 
-                  key={i} 
-                  className="flex-1 bg-lime transition-all duration-300 hover:bg-hot-pink"
-                  style={{ height: `${height}%` }}
-                />
-              ))}
-            </div>
+                  key={index}
+                  className={`bg-white border-[3px] border-${feature.color} p-8 relative hover:scale-[1.02] transition-transform duration-200 group shadow-brutal`}
+                >
+                  {/* Corner Number */}
+                  <div className={`absolute top-4 right-4 text-${feature.color} font-mono text-sm opacity-50`}>
+                    {feature.number}
+                  </div>
+                  
+                  {/* Icon */}
+                  <div className="mb-4">
+                    <Icon className={`w-16 h-16 text-${feature.color}`} strokeWidth={1.5} />
+                  </div>
+                  
+                  {/* Title */}
+                  <h3 className="text-black font-heading text-3xl mb-3">
+                    {feature.title}
+                  </h3>
+                  
+                  {/* Description */}
+                  <p className="text-black/80 font-body text-base leading-relaxed">
+                    {feature.description}
+                  </p>
+                  
+                  {/* Diagonal Accent Line */}
+                  <div 
+                    className={`absolute bottom-0 right-0 w-16 h-16 bg-${feature.color} opacity-10`}
+                    style={{ clipPath: 'polygon(100% 0, 100% 100%, 0 100%)' }}
+                  />
+                </div>
+              );
+            })}
           </div>
-        </div>
-        
-        {/* Notification Cards */}
-        <div className="max-w-6xl mx-auto mt-8 flex flex-wrap gap-4 justify-center">
-          <div className="border-2 border-achievement-gold bg-black px-4 py-2 shadow-brutal animate-snap-in">
-            <span className="text-achievement-gold font-mono text-sm">🏆 New PR! +50 kudos</span>
-          </div>
-          <div className="border-2 border-hot-pink bg-black px-4 py-2 shadow-brutal animate-snap-in" style={{ animationDelay: '0.2s' }}>
-            <span className="text-hot-pink font-mono text-sm">🔥 7 day streak maintained</span>
-          </div>
-          <div className="border-2 border-lime bg-black px-4 py-2 shadow-brutal animate-snap-in" style={{ animationDelay: '0.4s' }}>
-            <span className="text-lime font-mono text-sm">⚡ Fastest 5K this month</span>
-          </div>
-        </div>
-      </div>
+          
+          <p className="text-center text-white/80 font-body text-sm mt-12 max-w-3xl mx-auto">
+            Experience the power of AI-driven analytics combined with beautiful, intuitive design. Transform your Strava data into actionable insights.
+          </p>
+          
         </div>
       </div>
     </section>
