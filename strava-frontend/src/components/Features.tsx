@@ -34,8 +34,9 @@ const Features = () => {
   ];
   
   return (
-    <section id="features" className="py-24 bg-black">
-      <div className="container mx-auto px-6">
+    <section id="features" className="py-8 md:py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="rounded-3xl bg-black p-8 md:p-12 lg:p-16 shadow-2xl">
         <h2 className="text-white font-heading text-7xl md:text-8xl text-center mb-16">
           BUILT DIFFERENT
         </h2>
@@ -86,6 +87,7 @@ const Features = () => {
         <p className="text-center text-white/60 font-body text-sm mt-12 max-w-2xl mx-auto">
           All features designed for athletes who take their stats seriously (but not too seriously)
         </p>
+        </div>
       </div>
     </section>
   );

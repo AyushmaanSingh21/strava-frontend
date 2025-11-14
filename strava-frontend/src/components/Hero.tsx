@@ -4,9 +4,11 @@ import heroImage from "@/assets/hero-runner.webp";
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden pt-16" style={{ backgroundColor: '#2F71FF' }}>
-      <div className="container mx-auto px-6 lg:px-12">
-        <div className="grid lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
+    <section className="pt-24 pb-8 md:pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="rounded-3xl shadow-2xl overflow-hidden" style={{ backgroundColor: '#2F71FF' }}>
+          <div className="p-8 md:p-12 lg:p-16">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
           
           {/* Left Content */}
           <div className="relative z-10 text-white space-y-8">
@@ -53,6 +55,8 @@ const Hero = () => {
                 alt="Runner in motion" 
                 className="h-full w-auto object-contain object-bottom"
               />
+            </div>
+          </div>
             </div>
           </div>
         </div>

@@ -4,9 +4,11 @@ const Demo = () => {
   const floatingEmojis = ["💪", "🔥", "😤", "⚡", "🏃"];
   
   return (
-    <section id="demo" className="py-24 bg-white grid-pattern relative overflow-hidden">
-      {/* Floating Emojis */}
-      <div className="absolute inset-0 pointer-events-none">
+    <section id="demo" className="py-8 md:py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="rounded-3xl bg-white p-8 md:p-12 lg:p-16 shadow-xl relative overflow-hidden grid-pattern">
+          {/* Floating Emojis */}
+          <div className="absolute inset-0 pointer-events-none">
         {floatingEmojis.map((emoji, i) => (
           <div
             key={i}
@@ -22,7 +24,7 @@ const Demo = () => {
         ))}
       </div>
       
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="relative z-10">
         <h2 className="text-black font-heading text-7xl md:text-8xl text-center mb-16">
           WATCH IT RUN
         </h2>
@@ -106,6 +108,8 @@ const Demo = () => {
           <div className="border-2 border-lime bg-black px-4 py-2 shadow-brutal animate-snap-in" style={{ animationDelay: '0.4s' }}>
             <span className="text-lime font-mono text-sm">⚡ Fastest 5K this month</span>
           </div>
+        </div>
+      </div>
         </div>
       </div>
     </section>
