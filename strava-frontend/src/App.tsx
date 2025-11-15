@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
+import NewDashboard from "./pages/NewDashboard";
 import Cards from "./pages/Cards";
 import Roast from "./pages/Roast";
 import NotFound from "./pages/NotFound";
@@ -24,6 +25,14 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route
             path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <NewDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard-old"
             element={
               <ProtectedRoute>
                 <Dashboard />
