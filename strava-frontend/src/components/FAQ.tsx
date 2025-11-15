@@ -38,9 +38,8 @@ const FAQ = () => {
   ];
   
   return (
-    <section className="py-8 md:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="rounded-3xl bg-black p-8 md:p-12 lg:p-16 shadow-2xl">
+    <section className="py-24 bg-black relative">
+      <div className="container mx-auto px-6">
         <h2 className="text-white font-heading text-7xl md:text-8xl text-center mb-16">
           REAL TALK
         </h2>
@@ -61,7 +60,6 @@ const FAQ = () => {
             </AccordionItem>
           ))}
         </Accordion>
-        </div>
       </div>
     </section>
   );

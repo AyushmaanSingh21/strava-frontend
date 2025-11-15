@@ -34,9 +34,8 @@ const Demo = () => {
   ];
   
   return (
-    <section id="demo" className="py-8 md:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="rounded-3xl p-8 md:p-12 lg:p-16 shadow-xl relative overflow-hidden" style={{ backgroundColor: '#2F71FF' }}>
+    <section id="demo" className="py-24 relative" style={{ backgroundColor: '#2F71FF' }}>
+      <div className="container mx-auto px-6">
           
           <h2 className="text-white font-heading text-5xl md:text-7xl text-center mb-12">
             DASHBOARD PREVIEW
@@ -96,8 +95,6 @@ const Demo = () => {
           <p className="text-center text-white/80 font-body text-sm mt-12 max-w-3xl mx-auto">
             Experience the power of AI-driven analytics combined with beautiful, intuitive design. Transform your Strava data into actionable insights.
           </p>
-          
-        </div>
       </div>
     </section>
   );

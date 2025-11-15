@@ -3,9 +3,8 @@ import { Check } from "lucide-react";
 
 const Pricing = () => {
   return (
-    <section id="pricing" className="py-8 md:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="rounded-3xl bg-white p-8 md:p-12 lg:p-16 shadow-xl grid-pattern relative">
+    <section id="pricing" className="py-24 bg-white grid-pattern relative">
+      <div className="container mx-auto px-6">
         <h2 className="text-black font-heading text-7xl md:text-8xl text-center mb-16">
           PICK YOUR PACE
         </h2>
@@ -102,7 +101,6 @@ const Pricing = () => {
           <div className="bg-black text-lime px-6 py-3 font-heading text-3xl border-4 border-lime transform rotate-12">
             VS
           </div>
-        </div>
         </div>
       </div>
     </section>
