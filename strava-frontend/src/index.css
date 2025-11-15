@@ -8,6 +8,16 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
+    /* Gaming Dashboard Colors */
+    --navy-dark: 218 28% 13%;
+    --navy-base: 218 28% 18%;
+    --purple-primary: 258 90% 66%;
+    --pink-primary: 330 81% 60%;
+    --blue-primary: 217 91% 60%;
+    --lime-accent: 73 100% 65%;
+    --cyan-accent: 187 100% 50%;
+    --pink-accent: 340 100% 50%;
+    
     /* Brutalist Athletic Base - Pure Contrast */
     --background: 0 0% 100%;
     --foreground: 0 0% 0%;

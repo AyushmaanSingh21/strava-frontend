@@ -14,6 +14,14 @@ export default {
     },
     extend: {
       colors: {
+        'navy-dark': 'hsl(var(--navy-dark))',
+        'navy-base': 'hsl(var(--navy-base))',
+        'purple-primary': 'hsl(var(--purple-primary))',
+        'pink-primary': 'hsl(var(--pink-primary))',
+        'blue-primary': 'hsl(var(--blue-primary))',
+        'lime-accent': 'hsl(var(--lime-accent))',
+        'cyan-accent': 'hsl(var(--cyan-accent))',
+        'pink-accent': 'hsl(var(--pink-accent))',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
