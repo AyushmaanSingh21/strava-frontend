@@ -113,87 +113,52 @@ const Roast = () => {
             </div>
           </div>
 
-          {/* Pricing Cards */}
+          {/* Pricing Card */}
           <div className="container mx-auto px-6 py-20">
-            <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div className="max-w-2xl mx-auto">
               {/* One-Time Roast */}
-              <Card className="bg-black border-4 border-white p-8 hover:border-pink-500 transition-all duration-200 hover:scale-105">
-                <Badge className="mb-4 bg-white text-black font-bold uppercase tracking-wide">
-                  SINGLE ROAST
+              <Card className="bg-black border-4 border-lime-500 p-12 relative hover:scale-105 transition-all duration-200 shadow-[0_0_40px_rgba(204,255,0,0.4)]">
+                <Badge className="absolute -top-3 -right-3 bg-pink-500 text-black font-bold uppercase text-xs px-4 py-2 rotate-12 shadow-lg">
+                  🔥 HOT
                 </Badge>
-                <div className="mb-6">
-                  <span className="text-6xl font-black">$2.99</span>
+                <Badge className="mb-6 bg-lime-500 text-black font-bold uppercase tracking-wide text-lg px-6 py-2">
+                  AI ROAST
+                </Badge>
+                <div className="mb-8">
+                  <span className="text-7xl font-black">$2.99</span>
+                  <span className="text-2xl text-white/70 ml-2">one-time</span>
                 </div>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-lime-500 shrink-0 mt-0.5" />
-                    <span>Full AI roast of your training</span>
+                <ul className="space-y-4 mb-10">
+                  <li className="flex items-start gap-3">
+                    <Check className="w-6 h-6 text-lime-500 shrink-0 mt-1" />
+                    <span className="text-lg">Full AI roast of your training data</span>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-lime-500 shrink-0 mt-0.5" />
-                    <span>10-minute chat session with AI</span>
+                  <li className="flex items-start gap-3">
+                    <Check className="w-6 h-6 text-lime-500 shrink-0 mt-1" />
+                    <span className="text-lg">10-minute chat session with AI coach</span>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-lime-500 shrink-0 mt-0.5" />
-                    <span>Personalized insights</span>
+                  <li className="flex items-start gap-3">
+                    <Check className="w-6 h-6 text-lime-500 shrink-0 mt-1" />
+                    <span className="text-lg">Personalized insights & analysis</span>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-lime-500 shrink-0 mt-0.5" />
-                    <span>Downloadable roast report</span>
+                  <li className="flex items-start gap-3">
+                    <Check className="w-6 h-6 text-lime-500 shrink-0 mt-1" />
+                    <span className="text-lg">Downloadable roast report</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Check className="w-6 h-6 text-lime-500 shrink-0 mt-1" />
+                    <span className="text-lg">Brutally honest feedback</span>
                   </li>
                 </ul>
                 <Button
                   onClick={() => handlePurchase("one-time")}
-                  className="w-full bg-pink-500 hover:bg-pink-600 text-black font-bold uppercase tracking-wide py-6 text-lg"
+                  className="w-full bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-black font-bold uppercase tracking-wide py-8 text-xl shadow-lg"
                 >
-                  GET ROASTED ONCE
+                  GET ROASTED NOW 🔥
                 </Button>
-              </Card>
-
-              {/* Unlimited Plan */}
-              <Card className="bg-black border-4 border-lime-500 p-8 relative hover:scale-105 transition-all duration-200 shadow-[0_0_30px_rgba(204,255,0,0.3)]">
-                <Badge className="mb-4 bg-lime-500 text-black font-bold uppercase tracking-wide animate-pulse">
-                  🔥 UNLIMITED
-                </Badge>
-                <Badge className="absolute -top-3 -right-3 bg-pink-500 text-black font-bold uppercase text-xs px-3 py-1 rotate-12">
-                  RECOMMENDED
-                </Badge>
-                <div className="mb-6">
-                  <span className="text-6xl font-black">$4.99</span>
-                  <span className="text-xl text-white/70">/month</span>
-                </div>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-lime-500 shrink-0 mt-0.5" />
-                    <span className="font-bold">Everything in One-Time</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-lime-500 shrink-0 mt-0.5" />
-                    <span>Unlimited roasts anytime</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-lime-500 shrink-0 mt-0.5" />
-                    <span>Unlimited AI chat</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-lime-500 shrink-0 mt-0.5" />
-                    <span>Weekly analysis reports</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-lime-500 shrink-0 mt-0.5" />
-                    <span>Priority support</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-lime-500 shrink-0 mt-0.5" />
-                    <span>Cancel anytime</span>
-                  </li>
-                </ul>
-                <Button
-                  onClick={() => handlePurchase("unlimited")}
-                  className="w-full bg-lime-500 hover:bg-lime-600 text-black font-bold uppercase tracking-wide py-6 text-lg"
-                >
-                  GO UNLIMITED
-                </Button>
+                <p className="text-center text-white/60 text-sm mt-6 uppercase tracking-wider">
+                  One payment • Instant access • No subscription
+                </p>
               </Card>
             </div>
           </div>
