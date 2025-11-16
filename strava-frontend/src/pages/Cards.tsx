@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
-import { Download, Share2, Sparkles } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import { Download, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import StatsCard from "@/components/StatsCard";
 import html2canvas from "html2canvas";
 import { getAthleteProfile, getActivities } from "../services/stravaAPI";
 import { 
@@ -11,33 +10,18 @@ import {
   findPersonalRecords 
 } from "../utils/dataProcessor";
 
-type TimePeriod = "week" | "month" | "3months" | "alltime";
-type CardStyle = "holographic" | "dark" | "retro" | "minimalist";
-
 const Cards = () => {
-  const [timePeriod, setTimePeriod] = useState<TimePeriod>("month");
-  const [cardStyle, setCardStyle] = useState<CardStyle>("holographic");
-  const [specialMove, setSpecialMove] = useState("Consistency Champion");
-  const [includePhoto, setIncludePhoto] = useState(true);
-  const [showLocation, setShowLocation] = useState(false);
-  const [accentColor, setAccentColor] = useState("#CCFF00");
-
+  const cardRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [cardData, setCardData] = useState<{
     name: string;
     profilePhoto?: string;
-    city?: string;
-    state?: string;
     totalDistance: number;
+    totalRuns: number;
     totalTime: number;
-    activities: number;
     avgPace: string;
-    longestRun: number;
-    rarity: "COMMON" | "UNCOMMON" | "RARE" | "EPIC" | "LEGENDARY";
-    cardNumber: string;
-    month: string;
-    period: TimePeriod;
+    topGenre: string;
   } | null>(null);
 
   useEffect(() => {
@@ -49,31 +33,35 @@ const Cards = () => {
         const activities = await getActivities(1, 200);
         if (!profile || !activities) throw new Error("Failed to fetch data");
 
-        const filtered = filterActivitiesByPeriod(activities, timePeriod);
-        const totalDistance = calculateTotalDistance(filtered);
-        const totalTime = calculateTotalTime(filtered);
-        const avgPaceNum = getAveragePace(filtered);
-        const prs = findPersonalRecords(filtered);
+        const totalDistance = calculateTotalDistance(activities);
+        const totalTime = calculateTotalTime(activities);
+        const avgPaceNum = getAveragePace(activities);
+
+        // Determine top genre based on time of day
+        const morningRuns = activities.filter((a: any) => {
+          const hour = new Date(a.start_date_local).getHours();
+          return hour >= 5 && hour < 11;
+        }).length;
+        const eveningRuns = activities.filter((a: any) => {
+          const hour = new Date(a.start_date_local).getHours();
+          return hour >= 17 && hour < 22;
+        }).length;
+        
+        let topGenre = "Consistent Runner";
+        if (morningRuns > eveningRuns && morningRuns > activities.length * 0.4) topGenre = "Morning Runner";
+        else if (eveningRuns > activities.length * 0.4) topGenre = "Evening Warrior";
 
         const stats = {
           name: `${profile.firstname ?? ""} ${profile.lastname ?? ""}`.trim() || "Runner",
           profilePhoto: profile.profile_medium || profile.profile,
-          city: profile.city,
-          state: profile.state,
-          totalDistance,
-          totalTime,
-          activities: filtered.length,
+          totalDistance: Math.round(totalDistance),
+          totalRuns: activities.length,
+          totalTime: Math.round(totalTime),
           avgPace: avgPaceNum ? formatPace(avgPaceNum) : "-",
-          longestRun: prs.longestRun ? +(prs.longestRun.distance / 1000).toFixed(1) : 0,
-          rarity: calculateRarity(totalDistance),
-          cardNumber: "001",
-          month: new Date().toLocaleString("en-US", { month: "short", year: "numeric" }).toUpperCase(),
-          period: timePeriod,
-        } as const;
+          topGenre,
+        };
 
-        setCardData(stats as any);
-        // Suggest special move based on data
-        setSpecialMove(generateSpecialMove(filtered));
+        setCardData(stats);
       } catch (e: any) {
         setError(e?.message || "Could not load stats");
       } finally {
@@ -81,46 +69,7 @@ const Cards = () => {
       }
     };
     load();
-  }, [timePeriod]);
-
-  function filterActivitiesByPeriod(activities: any[], period: TimePeriod) {
-    const now = new Date();
-    const cutoffDate = new Date();
-    switch (period) {
-      case "week":
-        cutoffDate.setDate(now.getDate() - 7);
-        break;
-      case "month":
-        cutoffDate.setMonth(now.getMonth() - 1);
-        break;
-      case "3months":
-        cutoffDate.setMonth(now.getMonth() - 3);
-        break;
-      case "alltime":
-        return activities;
-      default:
-        cutoffDate.setMonth(now.getMonth() - 1);
-    }
-    return activities.filter((a) => new Date(a.start_date_local || a.start_date) >= cutoffDate);
-  }
-
-  function calculateRarity(totalDistance: number) {
-    if (totalDistance < 50) return "COMMON" as const;
-    if (totalDistance < 150) return "UNCOMMON" as const;
-    if (totalDistance < 300) return "RARE" as const;
-    if (totalDistance < 500) return "EPIC" as const;
-    return "LEGENDARY" as const;
-  }
-
-  function generateSpecialMove(activities: any[]) {
-    const totalActivities = activities.length;
-    const avg = getAveragePace(activities);
-    if (totalActivities === 0) return "Just getting started";
-    if (totalActivities >= 20) return "Consistency Champion";
-    if (avg && Math.floor(avg) < 5) return "Speed Demon";
-    if (totalActivities >= 10) return "Building Momentum";
-    return "Steady Runner";
-  }
+  }, []);
 
   function formatPace(paceMinPerKm: number) {
     const minutes = Math.floor(paceMinPerKm);
@@ -128,25 +77,21 @@ const Cards = () => {
     return `${minutes}:${String(seconds).padStart(2, "0")}`;
   }
 
-  const suggestions = [
-    "Lightning fast runner ⚡",
-    "Marathon in training 🏃",
-    "Consistency champion 👑",
-    "Weekend warrior 💪",
-    "Speed demon unlocked 🔥",
-  ];
-
   const handleDownload = async () => {
-    const el = document.getElementById("stats-card");
-    if (!el || !cardData) return;
+    if (!cardRef.current || !cardData) return;
     try {
-      const canvas = await html2canvas(el as HTMLElement, { scale: 2, backgroundColor: null, logging: false });
+      const canvas = await html2canvas(cardRef.current, { 
+        scale: 2, 
+        backgroundColor: '#000000',
+        logging: false,
+        useCORS: true 
+      });
       canvas.toBlob((blob) => {
         if (!blob) return;
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `strava-card-${(cardData.name || "runner").replace(/\s/g, "-")}-${cardData.period}.png`;
+        a.download = `strava-wrapped-${(cardData.name || "runner").replace(/\s/g, "-")}.png`;
         a.click();
         URL.revokeObjectURL(url);
       }, "image/png");
@@ -155,222 +100,174 @@ const Cards = () => {
     }
   };
 
-  const handleShare = () => {
-    // TODO: Implement copy to clipboard
-    console.log("Copying to clipboard...");
+  const handleShare = async () => {
+    if (!cardRef.current) return;
+    try {
+      const canvas = await html2canvas(cardRef.current, {
+        scale: 2,
+        backgroundColor: '#000000',
+        logging: false,
+        useCORS: true
+      });
+      canvas.toBlob(async (blob) => {
+        if (!blob) return;
+        const file = new File([blob], "strava-wrapped.png", { type: "image/png" });
+        if (navigator.share && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: "My Strava Wrapped",
+            text: "Check out my running stats!"
+          });
+        } else {
+          // Fallback to download
+          handleDownload();
+        }
+      }, "image/png");
+    } catch (e) {
+      console.error("Failed to share", e);
+    }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white text-2xl font-bold">Loading your wrapped...</div>
+      </div>
+    );
+  }
+
+  if (error || !cardData) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-red-400 text-2xl font-bold">{error || "Failed to load data"}</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4 relative overflow-hidden">
       {/* Navbar */}
-      <nav className="fixed top-0 w-full bg-black border-b border-white z-50 h-[60px]">
-        <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <h1 className="text-white font-display text-xl font-bold">STRAVALYTICS</h1>
-            <div className="hidden md:flex gap-6">
-              <a href="/dashboard" className="text-white uppercase text-sm font-bold hover:text-[#CCFF00] transition-colors">
-                Dashboard
-              </a>
-              <a href="/cards" className="text-[#CCFF00] uppercase text-sm font-bold border-b-2 border-[#CCFF00]">
-                Cards
-              </a>
-              <a href="/roast" className="text-white uppercase text-sm font-bold hover:text-[#CCFF00] transition-colors">
-                Roast
-              </a>
-              <a href="#" className="text-white uppercase text-sm font-bold hover:text-[#CCFF00] transition-colors">
-                Settings
-              </a>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="text-white text-sm font-bold">ALEX</span>
-            <Button variant="destructive" size="sm">Logout</Button>
+      <nav className="fixed top-0 w-full bg-black/80 backdrop-blur-lg border-b border-gray-800 z-50 h-[60px]">
+        <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
+          <a href="/" className="text-white font-display text-xl font-bold bg-gradient-to-r from-[#2F71FF] to-[#FF006E] bg-clip-text text-transparent">
+            STRAVAWRAPPED
+          </a>
+          <div className="flex items-center gap-6">
+            <a href="/dashboard" className="text-gray-400 uppercase text-sm font-bold hover:text-white transition-colors">Dashboard</a>
+            <a href="/cards" className="text-white uppercase text-sm font-bold">Cards</a>
+            <a href="/roast" className="text-gray-400 uppercase text-sm font-bold hover:text-white transition-colors">Roast</a>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <div className="pt-[60px] bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 animate-gradient-shift">
-        <div className="max-w-7xl mx-auto px-4 py-12 text-center">
-          <h1 className="font-display text-6xl md:text-8xl font-bold text-white mb-4 uppercase tracking-tight">
-            YOUR STATS, CARDIFIED
-          </h1>
-          <p className="text-white text-xl md:text-2xl font-bold">
-            Turn your runs into collectible cards worth flexing ✨
-          </p>
+      {/* Spotify Wrapped Style Card */}
+      <div ref={cardRef} className="relative w-full max-w-[400px] aspect-[9/16] bg-black rounded-3xl overflow-hidden shadow-2xl">
+        {/* Background Layer - Decorative triangular rays extending outside */}
+        <div className="absolute inset-0 z-0">
+          {/* Left Triangle Rays */}
+          <div className="absolute left-0 top-1/4 -translate-x-1/2">
+            <div className="w-0 h-0 border-t-[60px] border-t-transparent border-r-[100px] border-r-yellow-500 border-b-[60px] border-b-transparent"></div>
+          </div>
+          <div className="absolute left-0 top-1/3 -translate-x-1/3">
+            <div className="w-0 h-0 border-t-[50px] border-t-transparent border-r-[80px] border-r-orange-600 border-b-[50px] border-b-transparent"></div>
+          </div>
+          
+          {/* Right Triangle Rays */}
+          <div className="absolute right-0 top-1/4 translate-x-1/2">
+            <div className="w-0 h-0 border-t-[60px] border-t-transparent border-l-[100px] border-l-yellow-500 border-b-[60px] border-b-transparent"></div>
+          </div>
+          <div className="absolute right-0 top-1/3 translate-x-1/3">
+            <div className="w-0 h-0 border-t-[50px] border-t-transparent border-l-[80px] border-l-orange-600 border-b-[50px] border-b-transparent"></div>
+          </div>
+
+          {/* Bottom Left Triangle Rays */}
+          <div className="absolute left-0 bottom-1/4 -translate-x-1/2">
+            <div className="w-0 h-0 border-t-[60px] border-t-transparent border-r-[100px] border-r-yellow-500 border-b-[60px] border-b-transparent"></div>
+          </div>
+          <div className="absolute left-0 bottom-1/3 -translate-x-1/3">
+            <div className="w-0 h-0 border-t-[50px] border-t-transparent border-r-[80px] border-r-orange-600 border-b-[50px] border-b-transparent"></div>
+          </div>
+
+          {/* Bottom Right Triangle Rays */}
+          <div className="absolute right-0 bottom-1/4 translate-x-1/2">
+            <div className="w-0 h-0 border-t-[60px] border-t-transparent border-l-[100px] border-l-yellow-500 border-b-[60px] border-b-transparent"></div>
+          </div>
+          <div className="absolute right-0 bottom-1/3 translate-x-1/3">
+            <div className="w-0 h-0 border-t-[50px] border-t-transparent border-l-[80px] border-l-orange-600 border-b-[50px] border-b-transparent"></div>
+          </div>
+
+          {/* Purple side circles */}
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-32 h-32 bg-purple-600 rounded-full"></div>
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-32 h-32 bg-purple-600 rounded-full"></div>
+        </div>
+
+        {/* Main Card Content */}
+        <div className="absolute inset-0 m-6 bg-black rounded-2xl overflow-hidden shadow-2xl z-10 flex flex-col">
+          {/* Top Section - Profile Photo and Name */}
+          <div className="flex-1 flex flex-col items-center justify-center pt-8 pb-4">
+            {/* Profile Photo */}
+            <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-white shadow-2xl bg-gray-800 mb-6">
+              {cardData.profilePhoto ? (
+                <img src={cardData.profilePhoto} alt={cardData.name} className="w-full h-full object-cover" crossOrigin="anonymous" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-white text-4xl font-bold bg-gradient-to-br from-gray-700 to-gray-900">
+                  {cardData.name.charAt(0)}
+                </div>
+              )}
+            </div>
+            
+            {/* Name and Category */}
+            <h1 className="text-white font-display text-2xl font-bold">{cardData.name.toUpperCase()}</h1>
+            <p className="text-yellow-400 font-bold text-sm uppercase tracking-wider mt-2">{cardData.topGenre} Runner</p>
+          </div>
+
+          {/* Bottom Stats Section */}
+          <div className="p-6 space-y-4 bg-gradient-to-b from-transparent to-black/50">
+            <div className="grid grid-cols-2 gap-4">
+              {/* Total Distance */}
+              <div>
+                <h3 className="text-yellow-400 font-bold mb-1 text-xs uppercase tracking-wider">Total Distance</h3>
+                <div className="text-white font-bold text-xl">{cardData.totalDistance.toFixed(1)} km</div>
+              </div>
+
+              {/* Total Runs */}
+              <div>
+                <h3 className="text-yellow-400 font-bold mb-1 text-xs uppercase tracking-wider">Total Runs</h3>
+                <div className="text-white font-bold text-xl">{cardData.totalRuns}</div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              {/* Total Time */}
+              <div>
+                <h3 className="text-yellow-400 font-bold mb-1 text-xs uppercase tracking-wider">Total Time</h3>
+                <div className="text-white font-bold text-lg">{Math.floor(cardData.totalTime / 60)}h {cardData.totalTime % 60}m</div>
+              </div>
+
+              {/* Avg Pace */}
+              <div>
+                <h3 className="text-yellow-400 font-bold mb-1 text-xs uppercase tracking-wider">Avg Pace</h3>
+                <div className="text-white font-bold text-lg">{cardData.avgPace}/km</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        {loading && (
-          <div className="text-center text-white font-bold mb-6">Loading your stats...</div>
-        )}
-        {error && (
-          <div className="text-center text-red-400 font-bold mb-6">
-            {error} <button className="underline" onClick={() => setTimePeriod(timePeriod)}>Retry</button>
-          </div>
-        )}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          {/* LEFT SIDE: Card Preview */}
-          <div className="lg:col-span-2">
-            <div className="sticky top-24">
-              <h2 className="text-white font-display text-2xl font-bold mb-6 uppercase">Card Preview</h2>
-              <StatsCard
-                style={cardStyle}
-                data={cardData ?? {
-                  name: "",
-                  totalDistance: 0,
-                  totalTime: 0,
-                  activities: 0,
-                  avgPace: "-",
-                  longestRun: 0,
-                  rarity: "COMMON",
-                  cardNumber: "001",
-                  month: new Date().toLocaleString("en-US", { month: "short", year: "numeric" }).toUpperCase(),
-                }}
-                specialMove={specialMove}
-                includePhoto={includePhoto}
-                accentColor={accentColor}
-              />
-            </div>
-          </div>
-
-          {/* RIGHT SIDE: Customization Panel */}
-          <div className="lg:col-span-3 space-y-8">
-            {/* Time Period */}
-            <div className="bg-black border-4 border-white p-6 shadow-[8px_8px_0px_0px_rgba(255,255,255,1)]">
-              <h3 className="text-white font-display text-xl font-bold mb-4 uppercase flex items-center gap-2">
-                <Sparkles className="w-5 h-5" /> Select Time Period
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {[
-                  { value: "week", label: "This Week" },
-                  { value: "month", label: "This Month" },
-                  { value: "3months", label: "Last 3 Months" },
-                  { value: "alltime", label: "All Time" },
-                ].map((period) => (
-                  <button
-                    key={period.value}
-                    onClick={() => setTimePeriod(period.value as TimePeriod)}
-                    className={`p-4 border-3 border-white font-bold uppercase text-sm transition-all ${
-                      timePeriod === period.value
-                        ? "bg-[#CCFF00] text-black"
-                        : "bg-black text-white hover:bg-white hover:text-black"
-                    }`}
-                  >
-                    {period.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Card Style Selector */}
-            <div className="bg-black border-4 border-white p-6 shadow-[8px_8px_0px_0px_rgba(255,255,255,1)]">
-              <h3 className="text-white font-display text-xl font-bold mb-4 uppercase">Card Style</h3>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { value: "holographic", label: "Holographic", color: "from-purple-500 to-pink-500" },
-                  { value: "dark", label: "Dark Mode", color: "from-black to-gray-900" },
-                  { value: "retro", label: "Retro", color: "from-amber-600 to-orange-800" },
-                  { value: "minimalist", label: "Minimalist", color: "from-white to-gray-100" },
-                ].map((style) => (
-                  <button
-                    key={style.value}
-                    onClick={() => setCardStyle(style.value as CardStyle)}
-                    className={`p-6 border-3 transition-all ${
-                      cardStyle === style.value
-                        ? "border-[#CCFF00] shadow-[0_0_20px_rgba(204,255,0,0.5)]"
-                        : "border-white hover:border-[#FF0066]"
-                    }`}
-                  >
-                    <div className={`h-24 bg-gradient-to-br ${style.color} mb-3 border-2 border-black`}></div>
-                    <p className="text-white font-bold uppercase text-sm">{style.label}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Customize Message */}
-            <div className="bg-black border-4 border-white p-6 shadow-[8px_8px_0px_0px_rgba(255,255,255,1)]">
-              <h3 className="text-white font-display text-xl font-bold mb-4 uppercase">Special Move</h3>
-              <input
-                type="text"
-                value={specialMove}
-                onChange={(e) => setSpecialMove(e.target.value)}
-                className="w-full bg-white border-3 border-black p-3 font-mono text-black font-bold mb-4 focus:outline-none focus:ring-4 focus:ring-[#CCFF00]"
-                placeholder="Lightning fast runner"
-              />
-              <div className="flex flex-wrap gap-2">
-                {suggestions.map((suggestion, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setSpecialMove(suggestion)}
-                    className="px-3 py-2 bg-[#FF0066] text-white text-xs font-bold uppercase border-2 border-white hover:bg-white hover:text-black transition-all"
-                  >
-                    {suggestion}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Card Details */}
-            <div className="bg-black border-4 border-white p-6 shadow-[8px_8px_0px_0px_rgba(255,255,255,1)]">
-              <h3 className="text-white font-display text-xl font-bold mb-4 uppercase">Card Details</h3>
-              <div className="space-y-4">
-                <label className="flex items-center justify-between cursor-pointer">
-                  <span className="text-white font-bold uppercase text-sm">Include Profile Photo</span>
-                  <input
-                    type="checkbox"
-                    checked={includePhoto}
-                    onChange={(e) => setIncludePhoto(e.target.checked)}
-                    className="w-6 h-6 accent-[#CCFF00]"
-                  />
-                </label>
-                <label className="flex items-center justify-between cursor-pointer">
-                  <span className="text-white font-bold uppercase text-sm">Show Location</span>
-                  <input
-                    type="checkbox"
-                    checked={showLocation}
-                    onChange={(e) => setShowLocation(e.target.checked)}
-                    className="w-6 h-6 accent-[#CCFF00]"
-                  />
-                </label>
-                <label className="flex items-center justify-between cursor-pointer">
-                  <span className="text-white font-bold uppercase text-sm">Accent Color</span>
-                  <input
-                    type="color"
-                    value={accentColor}
-                    onChange={(e) => setAccentColor(e.target.value)}
-                    className="w-12 h-12 border-3 border-white cursor-pointer"
-                  />
-                </label>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="space-y-4">
-              <Button
-                onClick={handleDownload}
-                className="w-full h-16 bg-[#CCFF00] hover:bg-white text-black font-display text-xl font-bold uppercase border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
-              >
-                <Download className="w-6 h-6 mr-2" /> Download Card
-              </Button>
-              <Button
-                onClick={handleShare}
-                className="w-full h-16 bg-[#FF0066] hover:bg-[#00F0FF] text-white font-display text-xl font-bold uppercase border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
-              >
-                <Share2 className="w-6 h-6 mr-2" /> Share to Instagram
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full h-16 bg-black hover:bg-white text-white hover:text-black font-bold uppercase border-4 border-white transition-all"
-              >
-                Generate New
-              </Button>
-            </div>
-          </div>
-        </div>
+      {/* Action Buttons */}
+      <div className="mt-8 flex gap-4">
+        <Button
+          onClick={handleDownload}
+          className="bg-white hover:bg-gray-100 text-black font-bold px-8 py-6 rounded-full flex items-center gap-2"
+        >
+          <Download className="w-5 h-5" /> Download
+        </Button>
+        <Button
+          onClick={handleShare}
+          className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold px-8 py-6 rounded-full flex items-center gap-2"
+        >
+          <Share2 className="w-5 h-5" /> Share
+        </Button>
       </div>
     </div>
   );
