@@ -24,6 +24,12 @@ const Cards = () => {
     topGenre: string;
   } | null>(null);
 
+  // Helper function to get proxied image URL
+  const getProxiedImageUrl = (url: string): string => {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+    return `${backendUrl}/api/proxy/image?url=${encodeURIComponent(url)}`;
+  };
+
   useEffect(() => {
     const load = async () => {
       try {
@@ -51,9 +57,13 @@ const Cards = () => {
         if (morningRuns > eveningRuns && morningRuns > activities.length * 0.4) topGenre = "Morning Runner";
         else if (eveningRuns > activities.length * 0.4) topGenre = "Evening Warrior";
 
+        // Get proxied profile photo URL
+        const photoUrl = profile.profile_medium || profile.profile;
+        const profilePhotoUrl = photoUrl ? getProxiedImageUrl(photoUrl) : undefined;
+
         const stats = {
           name: `${profile.firstname ?? ""} ${profile.lastname ?? ""}`.trim() || "Runner",
-          profilePhoto: profile.profile_medium || profile.profile,
+          profilePhoto: profilePhotoUrl,
           totalDistance: Math.round(totalDistance),
           totalRuns: activities.length,
           totalTime: Math.round(totalTime),
@@ -208,7 +218,7 @@ const Cards = () => {
             {/* Profile Photo */}
             <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-white shadow-2xl bg-gray-800 mb-6">
               {cardData.profilePhoto ? (
-                <img src={cardData.profilePhoto} alt={cardData.name} className="w-full h-full object-cover" crossOrigin="anonymous" />
+                <img src={cardData.profilePhoto} alt={cardData.name} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-white text-4xl font-bold bg-gradient-to-br from-gray-700 to-gray-900">
                   {cardData.name.charAt(0)}
