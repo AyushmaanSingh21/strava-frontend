@@ -50,10 +50,21 @@ const Roast = () => {
     (async () => {
       try {
         const token = getStoredToken();
-        if (!token?.access_token) throw new Error("Please login with Strava first");
+        console.log("Token:", token);
+        if (!token?.access_token) {
+          console.error("No access token found");
+          throw new Error("Please login with Strava first");
+        }
+        console.log("Calling generateRoast API...");
         const result = await generateRoast(token.access_token);
-        setRoastText(result.roast || "");
-        setRawStats(result.stats || null);
+        console.log("Roast result:", result);
+        
+        const roastContent = result.roast || "No roast generated";
+        const statsData = result.stats || null;
+        
+        setRoastText(roastContent);
+        setRawStats(statsData);
+        
         // Build simple stats list for display
         const s = result.stats || {};
         const statsList = [
@@ -64,12 +75,16 @@ const Roast = () => {
           s.consistencyScore ? { label: "Consistency score", value: `${s.consistencyScore}/10` } : null,
         ].filter(Boolean) as Array<{ label: string; value: string; comment?: string }>;
         setAnalysisStats(statsList);
-      } catch (e: any) {
-        toast({ title: "Roast failed", description: e?.message || "Try again later", variant: "destructive" });
-      } finally {
+        
         clearInterval(progressInterval);
         clearInterval(messageInterval);
         setTimeout(() => setPageState("roast"), 300);
+      } catch (e: any) {
+        console.error("Roast generation error:", e);
+        clearInterval(progressInterval);
+        clearInterval(messageInterval);
+        toast({ title: "Roast failed", description: e?.response?.data?.error || e?.message || "Try again later", variant: "destructive" });
+        setPageState("pricing");
       }
     })();
 

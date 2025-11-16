@@ -12,16 +12,13 @@ interface RoastCardProps {
 const RoastCard = ({ onStartChat, roastText, stats }: RoastCardProps) => {
   const { toast } = useToast();
 
-  const roastData = {
-    mainRoast: roastText || `You ran 18 times this month but 15 of those were under 5K. Are you training or just getting Strava kudos? Your pace is more consistent than your commitment. Also, 3 rest weeks in 2 months? Your legs aren't the problem, your calendar is.`,
-    stats: stats || [
-      { label: "Longest run", value: "21.5 km", comment: "(not bad)" },
-      { label: "Shortest run", value: "2.1 km", comment: "(lol)" },
-      { label: "Most common excuse", value: "Too tired", comment: "" },
-      { label: "Skipped long runs", value: "4", comment: "" },
-      { label: "Consistency score", value: "6/10", comment: "" },
-    ],
-  };
+  console.log("RoastCard received roastText:", roastText);
+  console.log("RoastCard received stats:", stats);
+
+  const displayRoast = roastText || "No roast generated. Please try again.";
+  const displayStats = stats && stats.length > 0 ? stats : [
+    { label: "No stats available", value: "Please try again", comment: "" }
+  ];
 
   const handleDownload = () => {
     toast({
@@ -62,29 +59,10 @@ const RoastCard = ({ onStartChat, roastText, stats }: RoastCardProps) => {
           </div>
 
           {/* Main Roast Text */}
-          <div className="bg-white/5 border-2 border-white/20 rounded-lg p-6 mb-8">
-            <p className="text-lg md:text-xl leading-relaxed font-mono">
-              {roastData.mainRoast}
+          <div className="bg-white/10 border-2 border-white/30 rounded-lg p-10 mb-8 min-h-[400px] flex items-center">
+            <p className="text-xl md:text-2xl leading-relaxed font-mono whitespace-pre-wrap text-white">
+              {displayRoast}
             </p>
-          </div>
-
-          {/* Stats Section */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-black uppercase mb-4 tracking-wider">
-              📊 BY THE NUMBERS:
-            </h2>
-            <ul className="space-y-3 font-mono">
-              {roastData.stats.map((stat, index) => (
-                <li key={index} className="flex items-baseline gap-2">
-                  <span className="text-pink-500">•</span>
-                  <span className="text-white/80">{stat.label}:</span>
-                  <span className="font-bold text-white">{stat.value}</span>
-                  {stat.comment && (
-                    <span className="text-lime-500 italic">{stat.comment}</span>
-                  )}
-                </li>
-              ))}
-            </ul>
           </div>
 
           <div className="w-full h-1 bg-white mb-8" />
