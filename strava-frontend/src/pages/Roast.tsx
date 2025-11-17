@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import Navigation from "@/components/Navigation";
+import DashboardNav from "@/components/DashboardNav";
 import RoastCard from "@/components/RoastCard";
 import ChatInterface from "@/components/ChatInterface";
 import { Check, Flame, Sparkles } from "lucide-react";
@@ -108,7 +108,7 @@ const Roast = () => {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Navigation />
+      <DashboardNav currentPage="roast" />
 
       {pageState === "pricing" && (
         <div className="pt-16">

@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Trophy, Zap, Mountain, Activity, Clock, Ruler, Flame, Award, TrendingUp, MapPin, Target, Calendar, Star, Sparkles, Menu, X } from "lucide-react";
+import { Trophy, Zap, Mountain, Activity, Clock, Ruler, Flame, Award, TrendingUp, MapPin, Target, Calendar, Star, Sparkles, X, Menu } from "lucide-react";
 import { getAthleteProfile, getActivities } from "@/services/stravaAPI";
 import RunMapViz from "@/components/RunMapViz";
+import DashboardNav from "@/components/DashboardNav";
 import {
   calculateTotalDistance,
   calculateTotalTime,
@@ -35,9 +36,18 @@ const Dashboard = () => {
         setLoading(true);
         setError(null);
         const prof = await getAthleteProfile();
-        setProfile(prof || null);
+        if (!prof) {
+          throw new Error("Failed to load athlete profile. Please try logging in again.");
+        }
+        setProfile(prof);
+        // Save profile to localStorage for DashboardNav
+        localStorage.setItem("strava_profile", JSON.stringify(prof));
+        
         const acts = (await getActivities(1, 200)) || [];
-        setActivities(Array.isArray(acts) ? acts : []);
+        if (!Array.isArray(acts) || acts.length === 0) {
+          throw new Error("No activities found. Start running to see your stats!");
+        }
+        setActivities(acts);
         setLastSynced(new Date().toLocaleTimeString());
       } catch (e: any) {
         console.error("Dashboard data fetch error:", e);
@@ -520,6 +530,31 @@ const Dashboard = () => {
   // Memoize predictions after all functions are defined
   const predictions = useMemo(() => getPredictions(), [activities, profile]);
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white mx-auto mb-4"></div>
+          <p className="text-white text-xl font-bold">Loading your story...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-900 via-gray-900 to-black">
+        <div className="text-center max-w-md px-6">
+          <p className="text-red-400 text-2xl font-bold mb-4">⚠️ Error Loading Dashboard</p>
+          <p className="text-white mb-6">{error}</p>
+          <Button onClick={() => window.location.reload()} className="bg-white text-black hover:bg-gray-100">
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex w-full">
       {/* SIDEBAR */}
@@ -580,43 +615,12 @@ const Dashboard = () => {
         sidebarOpen ? 'lg:ml-0' : 'ml-0'
       }`}>
           {/* NAVBAR */}
-          <nav className="sticky top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-200 shadow-sm">
-            <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <button 
-                  onClick={() => setSidebarOpen(!sidebarOpen)}
-                  className="text-gray-700 hover:text-[#2F71FF] transition-colors"
-                  title={sidebarOpen ? "Close sidebar" : "Open sidebar"}
-                >
-                  {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-                </button>
-                <a href="/" className="bg-gradient-to-r from-[#2F71FF] to-[#FF006E] bg-clip-text text-transparent font-heading text-2xl tracking-wider font-bold">
-                  STRAVAWRAPPED
-                </a>
-              </div>
-              
-              <div className="hidden md:flex items-center gap-8">
-                <a href="/dashboard" className="text-[#2F71FF] uppercase text-sm tracking-widest font-bold">Dashboard</a>
-                <a href="/cards" className="text-gray-600 uppercase text-sm tracking-widest hover:text-[#2F71FF] transition-colors duration-200">Cards</a>
-                <a href="/roast" className="text-gray-600 uppercase text-sm tracking-widest hover:text-[#2F71FF] transition-colors duration-200">Roast</a>
-              </div>
-              
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#2F71FF] to-[#FF006E] flex items-center justify-center text-white font-bold">
-                    {userName[0]}
-                  </div>
-                  <span className="text-black font-bold hidden md:block">{userName}</span>
-                </div>
-                <Button 
-                  variant="ghost"
-                  className="text-red-500 hover:text-red-400 hover:bg-red-500/10 uppercase text-xs tracking-wider font-bold"
-                >
-                  Logout
-                </Button>
-              </div>
-            </div>
-          </nav>
+          <DashboardNav 
+            currentPage="dashboard" 
+            sidebarOpen={sidebarOpen} 
+            onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+            showSidebarToggle={true}
+          />
 
           {/* STORY CONTENT */}
           <div className="relative">

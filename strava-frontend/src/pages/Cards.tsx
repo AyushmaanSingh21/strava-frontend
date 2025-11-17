@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Download, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import html2canvas from "html2canvas";
+import DashboardNav from "@/components/DashboardNav";
 import { getAthleteProfile, getActivities } from "../services/stravaAPI";
 import { 
   calculateTotalDistance, 
@@ -155,22 +156,32 @@ const Cards = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black relative overflow-hidden">
+      {/* Animated background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-900/20 via-pink-900/20 to-blue-900/20 animate-gradient-shift"></div>
+      
       {/* Navbar */}
-      <nav className="fixed top-0 w-full bg-black/80 backdrop-blur-lg border-b border-gray-800 z-50 h-[60px]">
-        <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
-          <a href="/" className="text-white font-display text-xl font-bold bg-gradient-to-r from-[#2F71FF] to-[#FF006E] bg-clip-text text-transparent">
-            STRAVAWRAPPED
-          </a>
-          <div className="flex items-center gap-6">
-            <a href="/dashboard" className="text-gray-400 uppercase text-sm font-bold hover:text-white transition-colors">Dashboard</a>
-            <a href="/cards" className="text-white uppercase text-sm font-bold">Cards</a>
-            <a href="/roast" className="text-gray-400 uppercase text-sm font-bold hover:text-white transition-colors">Roast</a>
-          </div>
-        </div>
-      </nav>
+      <DashboardNav currentPage="cards" />
 
-      {/* Spotify Wrapped Style Card */}
+      {/* Main Content */}
+      <div className="pt-20 pb-16 px-4 relative z-10">
+        <div className="container mx-auto max-w-6xl">
+          {/* Header Section */}
+          <div className="text-center mb-12">
+            <h1 className="text-white font-display text-5xl md:text-7xl font-black mb-4 uppercase tracking-tight">
+              YOUR <span className="bg-gradient-to-r from-[#CCFF00] to-[#00F0FF] bg-clip-text text-transparent">WRAPPED</span> CARD
+            </h1>
+            <p className="text-gray-400 text-lg md:text-xl font-bold uppercase tracking-wider mb-2">
+              Spotify Wrapped Style • Powered by Your Strava Data
+            </p>
+            <p className="text-gray-500 text-sm md:text-base">
+              Share your running story with the world. Download or share directly to social media.
+            </p>
+          </div>
+
+          {/* Card Container */}
+          <div className="flex flex-col items-center gap-8">
+            {/* Spotify Wrapped Style Card */}
       <div ref={cardRef} className="relative w-full max-w-[400px] aspect-[9/16] bg-black rounded-3xl overflow-hidden shadow-2xl">
         {/* Background Layer - Decorative triangular rays extending outside */}
         <div className="absolute inset-0 z-0">
@@ -264,20 +275,71 @@ const Cards = () => {
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="mt-8 flex gap-4">
-        <Button
-          onClick={handleDownload}
-          className="bg-white hover:bg-gray-100 text-black font-bold px-8 py-6 rounded-full flex items-center gap-2"
-        >
-          <Download className="w-5 h-5" /> Download
-        </Button>
-        <Button
-          onClick={handleShare}
-          className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold px-8 py-6 rounded-full flex items-center gap-2"
-        >
-          <Share2 className="w-5 h-5" /> Share
-        </Button>
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+              <Button
+                onClick={handleDownload}
+                className="flex-1 bg-[#CCFF00] hover:bg-white text-black font-bold uppercase tracking-wide px-8 py-6 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center gap-2"
+              >
+                <Download className="w-5 h-5" /> DOWNLOAD
+              </Button>
+              <Button
+                onClick={handleShare}
+                className="flex-1 bg-[#FF0066] hover:bg-[#00F0FF] text-white font-bold uppercase tracking-wide px-8 py-6 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center gap-2"
+              >
+                <Share2 className="w-5 h-5" /> SHARE
+              </Button>
+            </div>
+
+            {/* Info Section */}
+            <div className="mt-8 max-w-2xl mx-auto">
+              <div className="bg-black border-4 border-white p-8 shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)]">
+                <h2 className="text-white font-display text-2xl font-black mb-4 uppercase text-center">
+                  💡 PRO TIPS
+                </h2>
+                <ul className="space-y-3 text-gray-300">
+                  <li className="flex items-start gap-3">
+                    <span className="text-[#CCFF00] font-bold">→</span>
+                    <span><strong className="text-white">Download</strong> the card to save it locally or share on any platform</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-[#CCFF00] font-bold">→</span>
+                    <span><strong className="text-white">Share</strong> directly to Instagram, Twitter, or WhatsApp with one tap</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-[#CCFF00] font-bold">→</span>
+                    <span><strong className="text-white">Runner Type</strong> is determined by your most active time of day</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-[#CCFF00] font-bold">→</span>
+                    <span><strong className="text-white">Stats Update</strong> automatically each time you visit this page</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Call to Action */}
+            <div className="mt-12 text-center">
+              <p className="text-gray-400 text-sm uppercase tracking-wider mb-4 font-bold">
+                Want more insights?
+              </p>
+              <div className="flex flex-wrap justify-center gap-4">
+                <a 
+                  href="/dashboard" 
+                  className="inline-block bg-transparent hover:bg-white/10 text-white font-bold uppercase tracking-wide px-6 py-3 border-4 border-white transition-all"
+                >
+                  VIEW FULL STORY MODE
+                </a>
+                <a 
+                  href="/roast" 
+                  className="inline-block bg-transparent hover:bg-[#FF0066]/10 text-[#FF0066] font-bold uppercase tracking-wide px-6 py-3 border-4 border-[#FF0066] transition-all"
+                >
+                  GET ROASTED 🔥
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
