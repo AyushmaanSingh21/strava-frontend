@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Trophy, Zap, Mountain, Activity, Clock, Ruler, Flame, Award, TrendingUp, MapPin, Target, Calendar, Star, Sparkles, X, Menu } from "lucide-react";
+import { Trophy, Zap, Mountain, Activity, Clock, Ruler, Flame, Award, TrendingUp, MapPin, Target, Calendar, Star, Sparkles } from "lucide-react";
 import { getAthleteProfile, getActivities } from "@/services/stravaAPI";
 import RunMapViz from "@/components/RunMapViz";
-import DashboardNav from "@/components/DashboardNav";
+import Navigation from "@/components/Navigation";
 import maskImage from "@/assets/paoel.jpg";
 import {
   calculateTotalDistance,
@@ -20,7 +20,6 @@ const Dashboard = () => {
   const [activities, setActivities] = useState<any[]>([]);
   const [lastSynced, setLastSynced] = useState<string>("");
   const [currentAct, setCurrentAct] = useState(1);
-  const [sidebarOpen, setSidebarOpen] = useState(true); // Open by default on desktop
 
   // Refs for scrolling to acts
   const act1Ref = useRef<HTMLDivElement>(null);
@@ -557,79 +556,18 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex w-full">
-      {/* SIDEBAR */}
-      <aside 
-        className={`fixed top-0 left-0 h-full w-72 bg-black border-r border-gray-800 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} overflow-y-auto`}
-      >
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-black bg-gradient-to-r from-[#2F71FF] to-[#FF006E] bg-clip-text text-transparent">
-              YOUR STORY
-            </h2>
-            <button 
-              onClick={() => setSidebarOpen(false)}
-              className="text-gray-400 hover:text-white transition-colors"
-              title="Close sidebar"
-            >
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-          
-          <div className="space-y-2">
-            {acts.map((act) => {
-              const isActive = currentAct === act.num;
-              const buttonClass = isActive 
-                ? `w-full text-left py-4 px-4 rounded-lg transition-all bg-gradient-to-r ${act.color} text-white shadow-lg scale-105`
-                : 'w-full text-left py-4 px-4 rounded-lg transition-all hover:bg-gray-800 text-gray-300 hover:text-white';
-              
-              return (
-                <button
-                  key={act.num}
-                  onClick={() => scrollToAct(act.num)}
-                  className={buttonClass}
-                >
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl">{act.emoji}</span>
-                      <span className="text-xs font-bold tracking-wider opacity-70">ACT {act.num}</span>
-                    </div>
-                    <span className="text-sm font-bold">{act.title}</span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </aside>
-
-      {/* Overlay for mobile */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+    <div className="min-h-screen bg-black w-full">
+      <Navigation />
 
       {/* MAIN CONTENT */}
-      <div className={`flex-1 w-full transition-all duration-300 ${
-        sidebarOpen ? 'lg:ml-0' : 'ml-0'
-      }`}>
-          {/* NAVBAR */}
-          <DashboardNav 
-            currentPage="dashboard" 
-            sidebarOpen={sidebarOpen} 
-            onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-            showSidebarToggle={true}
-          />
-
+      <div className="w-full">
           {/* STORY CONTENT */}
           <div className="relative">
 
             {/* ===================== ACT 1: THE HERO'S INTRODUCTION ===================== */}
-            <section ref={act1Ref} className="relative min-h-screen overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
+            <section ref={act1Ref} className="relative min-h-screen overflow-hidden bg-black">
               {/* Animated background - base layer */}
-              <div className="absolute inset-0 z-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 animate-gradient-shift" style={{ backgroundSize: '400% 400%' }} />
+              <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-900/20 via-black to-black" />
               
               {/* Image mask layer - modern aesthetic integration */}
               <div 
@@ -659,7 +597,7 @@ const Dashboard = () => {
 
                 {/* PERSONA */}
                 <div className="max-w-4xl mx-auto mb-16">
-                  <Card className={`bg-gradient-to-r ${getRunnerPersona().color} p-12 text-white border-0 shadow-2xl`}>
+                  <Card className={`bg-gradient-to-r ${getRunnerPersona().color} p-12 text-white border-0 shadow-2xl rounded-3xl`}>
                     <div className="text-center">
                       <div className="text-8xl mb-6">{getRunnerPersona().emoji}</div>
                       <h2 className="text-5xl font-black mb-4">{getRunnerPersona().title}</h2>
@@ -670,21 +608,21 @@ const Dashboard = () => {
 
                 {/* ORIGIN STORY, TERRITORY, SIGNATURE MOVE */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-                  <Card className="bg-white/10 backdrop-blur-lg border-white/20 p-8 text-white">
+                  <Card className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-lg border-white/20 p-8 text-white rounded-3xl">
                     <div className="text-5xl mb-4">📜</div>
                     <h3 className="text-xl font-bold mb-2 uppercase tracking-wider">Origin Story</h3>
                     <p className="text-3xl font-black mb-2">{getOriginStory()}</p>
                     <p className="text-sm opacity-80">Since you joined the community</p>
                   </Card>
 
-                  <Card className="bg-white/10 backdrop-blur-lg border-white/20 p-8 text-white">
+                  <Card className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-lg border-white/20 p-8 text-white rounded-3xl">
                     <div className="text-5xl mb-4">🗺️</div>
                     <h3 className="text-xl font-bold mb-2 uppercase tracking-wider">Territory</h3>
                     <p className="text-lg font-bold mb-2">{getTerritory().location}</p>
                     <p className="text-sm opacity-80">{getTerritory().zones} unique zones explored</p>
                   </Card>
 
-                  <Card className="bg-white/10 backdrop-blur-lg border-white/20 p-8 text-white">
+                  <Card className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-lg border-white/20 p-8 text-white rounded-3xl">
                     <div className="text-5xl mb-4">⚡</div>
                     <h3 className="text-xl font-bold mb-2 uppercase tracking-wider">Signature Move</h3>
                     <p className="text-2xl font-black">{getSignatureMove()}</p>
@@ -695,9 +633,9 @@ const Dashboard = () => {
             </section>
 
             {/* ===================== ACT 2: THE JOURNEY ===================== */}
-            <section ref={act2Ref} className="relative min-h-screen overflow-hidden bg-gradient-to-br from-orange-600 via-red-600 to-purple-900">
-              {/* Animated sunrise background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-orange-600 via-red-600 to-purple-900 animate-gradient-shift" style={{ backgroundSize: '400% 400%' }} />
+            <section ref={act2Ref} className="relative min-h-screen overflow-hidden bg-black">
+              {/* Animated background */}
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-orange-900/20 via-black to-black" />
               
               {/* Mountain silhouettes */}
               <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/40 to-transparent" />
@@ -718,7 +656,7 @@ const Dashboard = () => {
                 <div className="max-w-5xl mx-auto">
                   <div className="space-y-6">
                     {getTimeline().map((month, idx) => (
-                      <Card key={idx} className="bg-white/10 backdrop-blur-lg border-white/20 p-8 hover:bg-white/20 transition-all">
+                      <Card key={idx} className="bg-gradient-to-br from-orange-500/10 to-red-500/10 backdrop-blur-lg border-white/20 p-8 hover:bg-white/20 transition-all rounded-3xl">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-6">
                             <div className="text-6xl">{month.emoji}</div>
@@ -740,9 +678,9 @@ const Dashboard = () => {
             </section>
 
             {/* ===================== ACT 3: THE TURNING POINTS ===================== */}
-            <section ref={act3Ref} className="relative min-h-screen overflow-hidden bg-gradient-to-br from-yellow-500 via-lime-600 to-green-700">
+            <section ref={act3Ref} className="relative min-h-screen overflow-hidden bg-black">
               {/* Electric theme */}
-              <div className="absolute inset-0 bg-gradient-to-br from-yellow-500 via-lime-600 to-green-700 animate-gradient-shift" style={{ backgroundSize: '400% 400%' }} />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-lime-900/20 via-black to-black" />
               
               {/* Lightning effect */}
               <div className="absolute top-1/4 left-1/4 w-2 h-64 bg-white/50 blur-sm animate-pulse-slow" />
@@ -762,7 +700,7 @@ const Dashboard = () => {
                 {/* MILESTONES */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
                   {getMilestones().map((milestone, idx) => (
-                    <Card key={idx} className={`bg-gradient-to-br ${milestone.color} p-8 text-white border-0 shadow-2xl hover:scale-105 transition-all`}>
+                    <Card key={idx} className={`bg-gradient-to-br ${milestone.color} p-8 text-white border-0 shadow-2xl hover:scale-105 transition-all rounded-3xl`}>
                       <div className="text-6xl mb-4">{milestone.icon}</div>
                       <h3 className="text-2xl font-black mb-2">{milestone.title}</h3>
                       <p className="text-lg opacity-90">{milestone.desc}</p>
@@ -773,9 +711,9 @@ const Dashboard = () => {
             </section>
 
             {/* ===================== ACT 4: THE DATA ===================== */}
-            <section ref={act4Ref} className="relative min-h-screen overflow-hidden bg-gradient-to-br from-teal-900 via-blue-900 to-indigo-950">
+            <section ref={act4Ref} className="relative min-h-screen overflow-hidden bg-black">
               {/* Map theme */}
-              <div className="absolute inset-0 bg-gradient-to-br from-teal-900 via-blue-900 to-indigo-950 animate-gradient-shift" style={{ backgroundSize: '400% 400%' }} />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-900/20 via-black to-black" />
               
               {/* Grid pattern */}
               <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjA1Ii8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-40" />
@@ -803,7 +741,7 @@ const Dashboard = () => {
                 {/* FUN STATS */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
                   {getFunStats().map((stat, idx) => (
-                    <Card key={idx} className="bg-white/10 backdrop-blur-lg border-white/20 p-8 text-white hover:bg-white/20 transition-all">
+                    <Card key={idx} className="bg-gradient-to-br from-teal-500/10 to-blue-500/10 backdrop-blur-lg border-white/20 p-8 text-white hover:bg-white/20 transition-all rounded-3xl">
                       <div className="text-5xl mb-4">{stat.icon}</div>
                       <div className="text-4xl font-black mb-2">{stat.value}</div>
                       <h3 className="text-sm uppercase tracking-wider font-bold mb-2 text-teal-300">{stat.label}</h3>
@@ -815,9 +753,9 @@ const Dashboard = () => {
             </section>
 
             {/* ===================== ACT 5: WHAT'S NEXT ===================== */}
-            <section ref={act5Ref} className="relative min-h-screen overflow-hidden bg-gradient-to-br from-violet-900 via-blue-900 to-cyan-900">
+            <section ref={act5Ref} className="relative min-h-screen overflow-hidden bg-black">
               {/* Cosmic theme */}
-              <div className="absolute inset-0 bg-gradient-to-br from-violet-900 via-blue-900 to-cyan-900 animate-gradient-shift" style={{ backgroundSize: '400% 400%' }} />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-violet-900/20 via-black to-black" />
               
               {/* Stars */}
               {[...Array(20)].map((_, i) => (
@@ -845,14 +783,14 @@ const Dashboard = () => {
 
                 {/* PREDICTIONS */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                  <Card className="bg-white/10 backdrop-blur-lg border-white/20 p-10 text-white text-center">
+                  <Card className="bg-gradient-to-br from-violet-500/10 to-cyan-500/10 backdrop-blur-lg border-white/20 p-10 text-white text-center rounded-3xl">
                     <div className="text-6xl mb-4">🎯</div>
                     <h3 className="text-xl font-bold mb-4 uppercase tracking-wider text-cyan-300">End of Year</h3>
                     <div className="text-5xl font-black mb-2">{predictions.endOfYear.toFixed(0)}</div>
                     <p className="text-lg opacity-80">kilometers projected</p>
                   </Card>
 
-                  <Card className="bg-white/10 backdrop-blur-lg border-white/20 p-10 text-white text-center">
+                  <Card className="bg-white/10 backdrop-blur-lg border-white/20 p-10 text-white text-center rounded-3xl">
                     <div className="text-6xl mb-4">🏆</div>
                     <h3 className="text-xl font-bold mb-4 uppercase tracking-wider text-violet-300">Next Milestone</h3>
                     <div className="text-5xl font-black mb-2">
@@ -863,7 +801,7 @@ const Dashboard = () => {
                     </p>
                   </Card>
 
-                  <Card className="bg-white/10 backdrop-blur-lg border-white/20 p-10 text-white text-center">
+                  <Card className="bg-white/10 backdrop-blur-lg border-white/20 p-10 text-white text-center rounded-3xl">
                     <div className="text-6xl mb-4">🏃‍♂️</div>
                     <h3 className="text-xl font-bold mb-4 uppercase tracking-wider text-blue-300">Marathon Ready?</h3>
                     <div className="text-3xl font-black mb-2">{predictions.marathonReady}</div>
@@ -874,9 +812,9 @@ const Dashboard = () => {
             </section>
 
             {/* ===================== ACT 6: THE CHALLENGES ===================== */}
-            <section ref={act6Ref} className="relative min-h-screen overflow-hidden bg-gradient-to-br from-red-900 via-orange-700 to-yellow-600">
+            <section ref={act6Ref} className="relative min-h-screen overflow-hidden bg-black">
               {/* Fire theme */}
-              <div className="absolute inset-0 bg-gradient-to-br from-red-900 via-orange-700 to-yellow-600 animate-gradient-shift" style={{ backgroundSize: '400% 400%' }} />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-red-900/20 via-black to-black" />
               
               {/* Flame effect */}
               <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-gradient-to-t from-orange-500/20 to-transparent blur-3xl" />
@@ -895,7 +833,7 @@ const Dashboard = () => {
                 {/* CHALLENGES */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
                   {getChallenges().map((challenge, idx) => (
-                    <Card key={idx} className="bg-white/10 backdrop-blur-lg border-white/20 p-8 text-white">
+                    <Card key={idx} className="bg-white/10 backdrop-blur-lg border-white/20 p-8 text-white rounded-3xl">
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-2xl font-black">{challenge.title}</h3>
                         <div className={`px-4 py-2 rounded-full text-sm font-bold bg-gradient-to-r ${challenge.color}`}>
@@ -918,9 +856,9 @@ const Dashboard = () => {
             </section>
 
             {/* ===================== ACT 7: THE FINALE ===================== */}
-            <section ref={act7Ref} className="relative min-h-screen overflow-hidden bg-gradient-to-br from-pink-600 via-purple-700 to-indigo-900">
+            <section ref={act7Ref} className="relative min-h-screen overflow-hidden bg-black">
               {/* Celebration theme */}
-              <div className="absolute inset-0 bg-gradient-to-br from-pink-600 via-purple-700 to-indigo-900 animate-gradient-shift" style={{ backgroundSize: '400% 400%' }} />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-pink-900/20 via-black to-black" />
               
               {/* Confetti */}
               {[...Array(30)].map((_, i) => (
@@ -952,7 +890,7 @@ const Dashboard = () => {
                 {/* HIGHLIGHT REEL */}
                 <div className="max-w-4xl mx-auto space-y-6 mb-12">
                   {getHighlightReel().map((highlight, idx) => (
-                    <Card key={idx} className="bg-white/10 backdrop-blur-lg border-white/20 p-10 text-white hover:bg-white/20 transition-all">
+                    <Card key={idx} className="bg-white/10 backdrop-blur-lg border-white/20 p-10 text-white hover:bg-white/20 transition-all rounded-3xl">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-6">
                           <div className="text-6xl">{highlight.emoji}</div>
@@ -968,7 +906,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* FINAL MESSAGE */}
-                <Card className="bg-white/10 backdrop-blur-lg border-white/20 p-12 text-center text-white max-w-3xl mx-auto">
+                <Card className="bg-white/10 backdrop-blur-lg border-white/20 p-12 text-center text-white max-w-3xl mx-auto rounded-3xl">
                   <h2 className="text-4xl font-black mb-4">THIS IS YOUR STORY</h2>
                   <p className="text-xl opacity-90 mb-8">
                     {processed.totalDistance.toFixed(1)} kilometers. {activities.length} runs. Countless moments of pushing through when it got hard.
@@ -981,7 +919,7 @@ const Dashboard = () => {
             </section>
 
             {/* Last synced */}
-            <div className="py-8 text-center text-gray-500 text-sm bg-gray-50">
+            <div className="py-8 text-center text-gray-500 text-sm bg-black">
               {error ? (
                 <span className="text-red-400">{error}</span>
               ) : (
