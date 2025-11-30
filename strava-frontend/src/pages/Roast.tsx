@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import DashboardNav from "@/components/DashboardNav";
+import Navigation from "@/components/Navigation";
 import RoastCard from "@/components/RoastCard";
 import ChatInterface from "@/components/ChatInterface";
-import { Check, Flame, Sparkles } from "lucide-react";
+import { Check, Flame, Sparkles, Download, Share2, MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { generateRoast, chatWithAI } from "../services/roastAPI";
 import { getStoredToken } from "../services/stravaAuth";
@@ -94,146 +94,196 @@ const Roast = () => {
     };
   }, [pageState, toast]);
 
-  const handlePurchase = (plan: "one-time" | "unlimited") => {
-    // TODO: Add Stripe payment integration before production launch
+  const handleStartRoast = () => {
+    setPageState("analyzing");
+  };
+
+  const handleDownload = () => {
     toast({
-      title: "Payment Processing",
-      description: "Redirecting to Stripe...",
+      title: "Downloading...",
+      description: "Your roast report is being prepared",
     });
-    // Simulate payment
-    setTimeout(() => {
-      setPageState("analyzing");
-    }, 1500);
+  };
+
+  const handleShare = () => {
+    toast({
+      title: "Copied!",
+      description: "Roast card copied to clipboard 📸",
+    });
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <DashboardNav currentPage="roast" />
+    <div className="min-h-screen bg-black text-white relative overflow-hidden selection:bg-lime-500/30">
+      <Navigation />
+      
+      {/* Ambient Background */}
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-black to-black pointer-events-none" />
 
-      {pageState === "pricing" && (
-        <div className="pt-16">
-          {/* Hero Section */}
-          <div className="relative overflow-hidden border-b-4 border-white py-20">
-            <div className="absolute inset-0 bg-gradient-to-br from-pink-500/20 via-black to-lime-500/20 animate-gradient-shift" />
-            <div className="container mx-auto px-6 relative z-10 text-center">
-              <Badge className="mb-6 bg-pink-500 text-black animate-pulse px-6 py-2 text-sm font-bold uppercase tracking-widest">
-                ⚠️ PREMIUM FEATURE
-              </Badge>
-              <h1 className="font-heading text-7xl md:text-9xl font-black mb-6 tracking-tighter">
-                GET ROASTED 🔥
+      <div className="container mx-auto px-4 pt-24 pb-12 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-12 items-start min-h-[80vh]">
+          {/* Left Column: Content */}
+          <div className="space-y-8 animate-fade-in-up sticky top-24">
+            <div className="space-y-4">
+              <h1 className="font-heading text-6xl md:text-8xl font-black tracking-tighter leading-[0.9]">
+                GET <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">ROASTED</span> 🔥
               </h1>
-              <p className="text-xl md:text-2xl max-w-3xl mx-auto uppercase tracking-wider text-white/90">
+              <p className="text-xl md:text-2xl text-white/60 max-w-xl leading-relaxed">
                 AI will analyze your runs and serve the truth. Can you handle it?
               </p>
             </div>
-          </div>
 
-          {/* Pricing Card */}
-          <div className="container mx-auto px-6 py-20">
-            <div className="max-w-2xl mx-auto">
-              {/* One-Time Roast */}
-              <Card className="bg-black border-4 border-lime-500 p-12 relative hover:scale-105 transition-all duration-200 shadow-[0_0_40px_rgba(204,255,0,0.4)]">
-                <Badge className="absolute -top-3 -right-3 bg-pink-500 text-black font-bold uppercase text-xs px-4 py-2 rotate-12 shadow-lg">
-                  🔥 HOT
-                </Badge>
-                <Badge className="mb-6 bg-lime-500 text-black font-bold uppercase tracking-wide text-lg px-6 py-2">
-                  AI ROAST
-                </Badge>
-                <div className="mb-8">
-                  <span className="text-7xl font-black">$2.99</span>
-                  <span className="text-2xl text-white/70 ml-2">one-time</span>
+            <div className="space-y-4 pt-4">
+              <div className="flex items-center gap-3 text-white/80">
+                <div className="p-2 rounded-full bg-lime-500/10 text-lime-500">
+                  <Check className="w-5 h-5" />
                 </div>
-                <ul className="space-y-4 mb-10">
-                  <li className="flex items-start gap-3">
-                    <Check className="w-6 h-6 text-lime-500 shrink-0 mt-1" />
-                    <span className="text-lg">Full AI roast of your training data</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="w-6 h-6 text-lime-500 shrink-0 mt-1" />
-                    <span className="text-lg">10-minute chat session with AI coach</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="w-6 h-6 text-lime-500 shrink-0 mt-1" />
-                    <span className="text-lg">Personalized insights & analysis</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="w-6 h-6 text-lime-500 shrink-0 mt-1" />
-                    <span className="text-lg">Downloadable roast report</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <Check className="w-6 h-6 text-lime-500 shrink-0 mt-1" />
-                    <span className="text-lg">Brutally honest feedback</span>
-                  </li>
-                </ul>
-                <Button
-                  onClick={() => handlePurchase("one-time")}
-                  className="w-full bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-black font-bold uppercase tracking-wide py-8 text-xl shadow-lg"
-                >
-                  GET ROASTED NOW 🔥
-                </Button>
-                <p className="text-center text-white/60 text-sm mt-6 uppercase tracking-wider">
-                  One payment • Instant access • No subscription
-                </p>
+                <span className="text-lg">Full AI roast of your training data</span>
+              </div>
+              <div className="flex items-center gap-3 text-white/80">
+                <div className="p-2 rounded-full bg-lime-500/10 text-lime-500">
+                  <Check className="w-5 h-5" />
+                </div>
+                <span className="text-lg">10-minute chat session with AI coach</span>
+              </div>
+              <div className="flex items-center gap-3 text-white/80">
+                <div className="p-2 rounded-full bg-lime-500/10 text-lime-500">
+                  <Check className="w-5 h-5" />
+                </div>
+                <span className="text-lg">Personalized insights & analysis</span>
+              </div>
+              <div className="flex items-center gap-3 text-white/80">
+                <div className="p-2 rounded-full bg-lime-500/10 text-lime-500">
+                  <Check className="w-5 h-5" />
+                </div>
+                <span className="text-lg">Brutally honest feedback</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Dynamic Content */}
+          <div className="flex justify-center lg:justify-end w-full animate-fade-in-up delay-200">
+            {pageState === "pricing" && (
+              <Card className="w-full max-w-[500px] bg-white/5 backdrop-blur-xl border-white/10 p-8 relative overflow-hidden rounded-[32px] hover:scale-[1.02] transition-all duration-500 group">
+                <div className="absolute inset-0 bg-gradient-to-br from-pink-500/10 via-transparent to-lime-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                <div className="text-center space-y-8 py-8">
+                  <div className="w-24 h-24 mx-auto bg-gradient-to-br from-lime-400 to-lime-600 rounded-full flex items-center justify-center shadow-lg shadow-lime-500/20 group-hover:rotate-12 transition-transform duration-500">
+                    <Flame className="w-12 h-12 text-black" />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <h3 className="text-3xl font-bold text-white">Ready to get cooked?</h3>
+                    <p className="text-white/60 text-lg">Connect your Strava and let the AI do its worst.</p>
+                  </div>
+
+                  <Button
+                    onClick={handleStartRoast}
+                    className="w-full bg-white text-black hover:bg-white/90 font-bold uppercase tracking-wide py-8 text-xl rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    GENERATE ROAST
+                  </Button>
+                  
+                  <p className="text-white/40 text-sm font-medium">
+                    Warning: Emotional damage may occur
+                  </p>
+                </div>
               </Card>
-            </div>
+            )}
+
+            {pageState === "analyzing" && (
+              <Card className="w-full max-w-[500px] bg-white/5 backdrop-blur-xl border-white/10 p-12 relative overflow-hidden rounded-[32px]">
+                <div className="text-center space-y-8 py-8">
+                  <div className="relative w-24 h-24 mx-auto">
+                    <div className="absolute inset-0 bg-pink-500/20 rounded-full animate-ping" />
+                    <div className="relative bg-black border-2 border-pink-500 rounded-full w-full h-full flex items-center justify-center">
+                      <Flame className="w-10 h-10 text-pink-500 animate-pulse" />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold text-white animate-pulse">
+                      {loadingMessage}
+                    </h3>
+                    <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-pink-500 to-purple-500 transition-all duration-300 ease-out"
+                        style={{ width: `${progress}%` }}
+                      />
+                    </div>
+                    <p className="text-white/40 text-sm font-mono">
+                      {progress}% Complete
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {pageState === "roast" && (
+              <Card className="w-full max-w-[600px] bg-black border-4 border-pink-500 p-8 relative overflow-hidden rounded-[32px] shadow-[0_0_50px_rgba(255,0,102,0.3)] animate-fade-in">
+                <div className="absolute top-4 left-4 text-2xl animate-pulse">🔥</div>
+                <div className="absolute top-4 right-4 text-2xl animate-pulse delay-100">🔥</div>
+                
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-6">
+                    <h2 className="font-heading text-3xl font-black uppercase tracking-tighter">Your Roast</h2>
+                    <div className="flex gap-2">
+                      <Button size="icon" variant="ghost" onClick={handleDownload} className="hover:bg-white/10 rounded-full">
+                        <Download className="w-5 h-5" />
+                      </Button>
+                      <Button size="icon" variant="ghost" onClick={handleShare} className="hover:bg-white/10 rounded-full">
+                        <Share2 className="w-5 h-5" />
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white/5 rounded-xl p-6 min-h-[300px] max-h-[500px] overflow-y-auto custom-scrollbar">
+                    <p className="text-lg leading-relaxed font-mono text-white/90 whitespace-pre-wrap">
+                      {roastText || "No roast generated. Please try again."}
+                    </p>
+                  </div>
+
+                  <Button
+                    onClick={() => setPageState("chat")}
+                    className="w-full bg-lime-500 text-black hover:bg-lime-600 font-bold uppercase tracking-wide py-6 rounded-xl shadow-lg hover:shadow-lime-500/20 transition-all"
+                  >
+                    <MessageSquare className="w-5 h-5 mr-2" />
+                    Chat with AI Coach
+                  </Button>
+                </div>
+              </Card>
+            )}
           </div>
         </div>
-      )}
-
-      {pageState === "analyzing" && (
-        <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
-          <div className="max-w-2xl w-full px-6">
-            <div className="text-center mb-8">
-              <Flame className="w-20 h-20 text-pink-500 mx-auto mb-6 animate-pulse" />
-              <p className="text-2xl font-bold uppercase tracking-wide mb-2">
-                {loadingMessage}
-              </p>
-            </div>
-            <div className="w-full bg-white/20 h-4 rounded-full overflow-hidden border-2 border-white">
-              <div
-                className="h-full bg-gradient-to-r from-pink-500 to-lime-500 transition-all duration-300 ease-out"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-            <p className="text-center text-white/60 mt-4 text-sm uppercase tracking-wider">
-              {progress}% Complete
-            </p>
-          </div>
-        </div>
-      )}
-
-      {pageState === "roast" && (
-        <div className="pt-16 min-h-screen">
-          <RoastCard onStartChat={() => setPageState("chat")} roastText={roastText} stats={analysisStats || undefined} />
-        </div>
-      )}
+      </div>
 
       {pageState === "chat" && (
-        <div className="pt-16 min-h-screen">
+        <div className="fixed inset-0 z-50 bg-black animate-in slide-in-from-bottom duration-300">
           <ChatInterface onEndSession={() => setPageState("summary")} userData={rawStats} />
         </div>
       )}
 
       {pageState === "summary" && (
-        <div className="pt-16 min-h-screen flex items-center justify-center px-6">
-          <Card className="bg-black border-4 border-lime-500 p-12 max-w-2xl w-full text-center">
-            <Sparkles className="w-16 h-16 text-lime-500 mx-auto mb-6" />
-            <h2 className="font-heading text-5xl font-black mb-4 uppercase">
-              SESSION COMPLETE ✅
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center px-6 animate-in fade-in duration-300">
+          <Card className="bg-black border-4 border-lime-500 p-12 max-w-xl w-full text-center rounded-[32px] shadow-[0_0_50px_rgba(204,255,0,0.3)]">
+            <div className="w-20 h-20 mx-auto bg-lime-500/10 rounded-full flex items-center justify-center mb-8">
+              <Sparkles className="w-10 h-10 text-lime-500" />
+            </div>
+            <h2 className="font-heading text-4xl font-black mb-4 uppercase text-white">
+              Session Complete
             </h2>
-            <p className="text-xl mb-8 text-white/80">
+            <p className="text-lg mb-8 text-white/60">
               You exchanged 12 messages with your AI coach
             </p>
-            <div className="space-y-4 mb-8">
-              <Button className="w-full bg-pink-500 hover:bg-pink-600 text-black font-bold uppercase tracking-wide py-6">
-                DOWNLOAD ROAST REPORT
+            <div className="space-y-4">
+              <Button className="w-full bg-white text-black hover:bg-white/90 font-bold uppercase tracking-wide py-6 rounded-xl">
+                Download Report
               </Button>
               <Button
                 variant="outline"
-                className="w-full border-2 border-white text-white font-bold uppercase tracking-wide py-6"
+                className="w-full border-white/20 text-white hover:bg-white/10 font-bold uppercase tracking-wide py-6 rounded-xl"
                 onClick={() => setPageState("pricing")}
               >
-                BACK TO DASHBOARD
+                Back to Dashboard
               </Button>
             </div>
           </Card>
