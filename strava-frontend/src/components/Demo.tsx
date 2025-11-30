@@ -47,21 +47,19 @@ const Demo = () => {
               return (
                 <div 
                   key={index}
-                  className="bg-black border-4 border-white p-8 md:p-12 relative hover:translate-x-2 transition-all duration-300 group shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)] hover:shadow-[12px_12px_0px_0px_rgba(204,255,0,0.3)]"
+                  className="bg-black border-4 border-white p-8 md:p-12 relative hover:translate-x-2 transition-all duration-300 group shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)] hover:shadow-[12px_12px_0px_0px_rgba(204,255,0,0.3)] rounded-3xl"
                 >
-                  <div className="flex flex-col md:flex-row items-start gap-8">
+                  <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
                     {/* Number & Icon */}
-                    <div className="flex-shrink-0">
-                      <div className="relative">
-                        <div className="text-8xl md:text-9xl font-black text-gray-800 absolute -top-4 -left-2">
-                          {step.number}
-                        </div>
-                        <Icon className="w-24 h-24 relative z-10" style={{ color: step.color }} strokeWidth={2} />
+                    <div className="flex-shrink-0 relative w-32 h-32 flex items-center justify-center">
+                      <div className="text-8xl font-black text-white/5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none">
+                        {step.number}
                       </div>
+                      <Icon className="w-16 h-16 relative z-10 drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" style={{ color: step.color }} strokeWidth={1.5} />
                     </div>
                     
                     {/* Content */}
-                    <div className="flex-1">
+                    <div className="flex-1 text-center md:text-left">
                       <h3 className="text-white font-display text-3xl md:text-4xl font-black mb-4 uppercase" style={{ color: step.color }}>
                         {step.title}
                       </h3>

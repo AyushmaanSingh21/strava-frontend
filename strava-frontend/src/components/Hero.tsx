@@ -4,7 +4,7 @@ import { Footprints, Map, Flame, Trophy, Timer, Activity, Zap } from "lucide-rea
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-black pt-16">
+    <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-black pt-40 pb-20">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-900/20 via-black to-black"></div>
       
@@ -43,7 +43,7 @@ const Hero = () => {
       <div className="container mx-auto px-6 relative z-10 text-center">
         
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8 animate-fade-in-up backdrop-blur-md">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-12 animate-fade-in-up backdrop-blur-md mt-12">
           <span className="relative flex h-3 w-3">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#CCFF00] opacity-75"></span>
             <span className="relative inline-flex rounded-full h-3 w-3 bg-[#CCFF00]"></span>
@@ -83,18 +83,18 @@ const Hero = () => {
         </div>
 
         {/* Stats Strip */}
-        <div className="mt-24 flex flex-wrap justify-center gap-8 md:gap-16 opacity-60 hover:opacity-100 transition-opacity duration-500">
-            <div className="flex items-center gap-3">
-                <Activity className="w-6 h-6 text-[#CCFF00]" />
-                <span className="text-white font-bold tracking-wider">10K+ RUNS</span>
+        <div className="mt-32 flex flex-wrap justify-center gap-12 md:gap-24 opacity-80 hover:opacity-100 transition-opacity duration-500">
+            <div className="flex items-center gap-4 group cursor-default">
+                <Activity className="w-6 h-6 text-[#CCFF00] group-hover:scale-110 transition-transform" />
+                <span className="text-white font-bold tracking-wider text-sm md:text-base">10K+ RUNS</span>
             </div>
-            <div className="flex items-center gap-3">
-                <Zap className="w-6 h-6 text-[#00F0FF]" />
-                <span className="text-white font-bold tracking-wider">AI POWERED</span>
+            <div className="flex items-center gap-4 group cursor-default">
+                <Zap className="w-6 h-6 text-[#00F0FF] group-hover:scale-110 transition-transform" />
+                <span className="text-white font-bold tracking-wider text-sm md:text-base">AI POWERED</span>
             </div>
-            <div className="flex items-center gap-3">
-                <Timer className="w-6 h-6 text-[#FF0066]" />
-                <span className="text-white font-bold tracking-wider">INSTANT RECAP</span>
+            <div className="flex items-center gap-4 group cursor-default">
+                <Timer className="w-6 h-6 text-[#FF0066] group-hover:scale-110 transition-transform" />
+                <span className="text-white font-bold tracking-wider text-sm md:text-base">INSTANT RECAP</span>
             </div>
         </div>
       </div>

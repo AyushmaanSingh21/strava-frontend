@@ -2,10 +2,15 @@ import { Github, Twitter, Instagram } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-black border-t-4 border-white py-16">
-      <div className="container mx-auto px-6">
+    <footer className="bg-black border-t border-white/10 py-16 relative overflow-hidden">
+      {/* Background Glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-[#CCFF00]/50 to-transparent"></div>
+      
+      <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-12">
-          <h3 className="text-white font-display text-4xl font-black mb-3 uppercase tracking-tight">STRAVAWRAPPED</h3>
+          <h3 className="text-white font-display text-4xl font-black mb-3 uppercase tracking-tight flex items-center justify-center gap-1">
+            STR<span className="text-[#CCFF00]">▲</span>V<span className="text-[#CCFF00]">▲</span>WR<span className="text-[#CCFF00]">▲</span>PPED
+          </h3>
           <p className="text-gray-400 font-bold text-sm uppercase tracking-wider">Your stats, elevated</p>
         </div>
         
@@ -30,24 +35,24 @@ const Footer = () => {
         <div className="flex justify-center gap-6 mb-12">
           <a 
             href="#" 
-            className="w-12 h-12 border-4 border-white hover:border-[#CCFF00] hover:bg-[#CCFF00] flex items-center justify-center transition-all duration-200 group"
+            className="w-12 h-12 rounded-full bg-white/5 border border-white/10 hover:border-[#CCFF00] hover:bg-[#CCFF00] flex items-center justify-center transition-all duration-300 group"
             aria-label="Twitter"
           >
-            <Twitter className="w-6 h-6 text-white group-hover:text-black" />
+            <Twitter className="w-5 h-5 text-white group-hover:text-black transition-colors" />
           </a>
           <a 
             href="#" 
-            className="w-12 h-12 border-4 border-white hover:border-[#CCFF00] hover:bg-[#CCFF00] flex items-center justify-center transition-all duration-200 group"
+            className="w-12 h-12 rounded-full bg-white/5 border border-white/10 hover:border-[#CCFF00] hover:bg-[#CCFF00] flex items-center justify-center transition-all duration-300 group"
             aria-label="Instagram"
           >
-            <Instagram className="w-6 h-6 text-white group-hover:text-black" />
+            <Instagram className="w-5 h-5 text-white group-hover:text-black transition-colors" />
           </a>
           <a 
             href="#" 
-            className="w-12 h-12 border-4 border-white hover:border-[#CCFF00] hover:bg-[#CCFF00] flex items-center justify-center transition-all duration-200 group"
+            className="w-12 h-12 rounded-full bg-white/5 border border-white/10 hover:border-[#CCFF00] hover:bg-[#CCFF00] flex items-center justify-center transition-all duration-300 group"
             aria-label="GitHub"
           >
-            <Github className="w-6 h-6 text-white group-hover:text-black" />
+            <Github className="w-5 h-5 text-white group-hover:text-black transition-colors" />
           </a>
         </div>
         

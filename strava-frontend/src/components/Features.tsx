@@ -50,10 +50,10 @@ const Features = () => {
             return (
               <div 
                 key={index}
-                className="bg-black border-4 border-white p-8 relative hover:scale-105 transition-all duration-300 group shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)] hover:shadow-[12px_12px_0px_0px_rgba(204,255,0,0.3)]"
+                className="bg-black border-4 border-white p-8 relative hover:scale-105 transition-all duration-300 group shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)] hover:shadow-[12px_12px_0px_0px_rgba(204,255,0,0.3)] rounded-3xl"
               >
                 {/* Gradient background on hover */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
+                <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-3xl`}></div>
                 
                 {/* Corner Number */}
                 <div className="absolute top-4 right-4 text-gray-600 font-mono text-xl font-bold">

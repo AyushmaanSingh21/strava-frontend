@@ -18,10 +18,10 @@ const Pricing = () => {
         
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Free Tier */}
-          <div className="bg-black border-4 border-white p-10 hover:scale-105 transition-all duration-300 shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)]">
+          <div className="bg-black border-4 border-white p-10 hover:scale-105 transition-all duration-300 shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)] rounded-3xl">
             <div className="flex items-start justify-between mb-6">
               <h3 className="font-display text-4xl font-black uppercase text-white">FREE FOREVER</h3>
-              <span className="bg-[#CCFF00] text-black px-3 py-2 text-xs font-bold uppercase border-2 border-white">
+              <span className="bg-[#CCFF00] text-black px-3 py-2 text-xs font-bold uppercase border-2 border-white rounded-lg">
                 START HERE
               </span>
             </div>
@@ -42,7 +42,7 @@ const Pricing = () => {
                 "Export to social media"
               ].map((feature, i) => (
                 <li key={i} className="flex items-start gap-3 font-body text-gray-300">
-                  <div className="w-6 h-6 bg-[#CCFF00] flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-6 h-6 bg-[#CCFF00] flex items-center justify-center flex-shrink-0 mt-0.5 rounded-full">
                     <Check className="w-4 h-4 text-black" strokeWidth={3} />
                   </div>
                   <span>{feature}</span>
@@ -51,15 +51,15 @@ const Pricing = () => {
             </ul>
             
             <Button 
-              className="w-full bg-white hover:bg-[#CCFF00] text-black font-bold uppercase tracking-wide py-6 border-4 border-white transition-all duration-200"
+              className="w-full bg-white hover:bg-[#CCFF00] text-black font-bold uppercase tracking-wide py-6 border-4 border-white transition-all duration-200 rounded-xl"
             >
               START FREE
             </Button>
           </div>
           
           {/* Premium Tier */}
-          <div className="bg-black border-4 border-[#FF0066] p-10 relative hover:scale-105 transition-all duration-300 shadow-[8px_8px_0px_0px_rgba(255,0,102,0.3)]">
-            <div className="absolute -top-4 -right-4 bg-[#FF0066] text-white px-4 py-2 font-bold text-xs uppercase border-2 border-white rotate-3">
+          <div className="bg-black border-4 border-[#FF0066] p-10 relative hover:scale-105 transition-all duration-300 shadow-[8px_8px_0px_0px_rgba(255,0,102,0.3)] rounded-3xl">
+            <div className="absolute -top-4 -right-4 bg-[#FF0066] text-white px-4 py-2 font-bold text-xs uppercase border-2 border-white rotate-3 rounded-lg shadow-lg">
               🔥 MOST POPULAR
             </div>
             
@@ -86,7 +86,7 @@ const Pricing = () => {
                 "Priority support"
               ].map((feature, i) => (
                 <li key={i} className="flex items-start gap-3 font-body text-gray-300">
-                  <div className="w-6 h-6 bg-[#FF0066] flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-6 h-6 bg-[#FF0066] flex items-center justify-center flex-shrink-0 mt-0.5 rounded-full">
                     <Check className="w-4 h-4 text-white" strokeWidth={3} />
                   </div>
                   <span>{feature}</span>
@@ -95,7 +95,7 @@ const Pricing = () => {
             </ul>
             
             <Button 
-              className="w-full bg-[#FF0066] hover:bg-white hover:text-black text-white font-bold uppercase tracking-wide py-6 border-4 border-[#FF0066] hover:border-white transition-all duration-200"
+              className="w-full bg-[#FF0066] hover:bg-white hover:text-black text-white font-bold uppercase tracking-wide py-6 border-4 border-[#FF0066] hover:border-white transition-all duration-200 rounded-xl"
             >
               GET PREMIUM
             </Button>
