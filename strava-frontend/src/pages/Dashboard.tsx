@@ -5,6 +5,7 @@ import { Trophy, Zap, Mountain, Activity, Clock, Ruler, Flame, Award, TrendingUp
 import { getAthleteProfile, getActivities } from "@/services/stravaAPI";
 import RunMapViz from "@/components/RunMapViz";
 import DashboardNav from "@/components/DashboardNav";
+import maskImage from "@/assets/paoel.jpg";
 import {
   calculateTotalDistance,
   calculateTotalTime,
@@ -627,12 +628,23 @@ const Dashboard = () => {
 
             {/* ===================== ACT 1: THE HERO'S INTRODUCTION ===================== */}
             <section ref={act1Ref} className="relative min-h-screen overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
-              {/* Animated background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 animate-gradient-shift" style={{ backgroundSize: '400% 400%' }} />
+              {/* Animated background - base layer */}
+              <div className="absolute inset-0 z-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 animate-gradient-shift" style={{ backgroundSize: '400% 400%' }} />
+              
+              {/* Image mask layer - modern aesthetic integration */}
+              <div 
+                className="absolute inset-0 z-[1] opacity-20 mix-blend-soft-light"
+                style={{
+                  backgroundImage: `url(${maskImage})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  filter: 'grayscale(40%) contrast(1.3)',
+                }}
+              />
               
               {/* Floating orbs */}
-              <div className="absolute top-20 left-10 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl animate-float" />
-              <div className="absolute bottom-20 right-10 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl animate-float-delayed" />
+              <div className="absolute top-20 left-10 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl animate-float z-[2]" />
+              <div className="absolute bottom-20 right-10 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl animate-float-delayed z-[2]" />
               
               <div className="container mx-auto px-6 relative z-10 py-20">
                 <div className="text-center mb-12">
