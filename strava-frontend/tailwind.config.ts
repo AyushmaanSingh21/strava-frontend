@@ -68,6 +68,8 @@ export default {
         heading: "var(--font-heading)",
         body: "var(--font-body)",
         mono: "var(--font-mono)",
+        bangers: ["Bangers", "cursive"],
+        fredoka: ["Fredoka", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
