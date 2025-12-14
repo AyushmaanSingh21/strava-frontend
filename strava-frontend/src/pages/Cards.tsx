@@ -17,12 +17,16 @@ const Cards = () => {
   const [error, setError] = useState<string | null>(null);
   const [cardData, setCardData] = useState<{
     name: string;
+    username: string;
     profilePhoto?: string;
     totalDistance: number;
     totalRuns: number;
     totalTime: number;
     avgPace: string;
     topGenre: string;
+    calories: number;
+    fastestPace: string;
+    longestRun: number;
   } | null>(null);
 
   // Helper function to get proxied image URL
@@ -44,6 +48,26 @@ const Cards = () => {
         const totalTime = calculateTotalTime(activities);
         const avgPaceNum = getAveragePace(activities);
 
+        // Calculate additional stats
+        // Calories
+        const totalCalories = activities.reduce((acc: number, curr: any) => {
+            if (curr.calories) return acc + curr.calories;
+            if (curr.kilojoules) return acc + (curr.kilojoules * 0.239);
+            return acc + ((curr.distance || 0) / 1000 * 60);
+        }, 0);
+
+        // Fastest Run
+        const fastestRunObj = [...activities]
+            .filter((a: any) => a.type === "Run")
+            .sort((a: any, b: any) => (b.average_speed || 0) - (a.average_speed || 0))[0];
+        const fastestPaceVal = fastestRunObj ? (16.666666666667 / (fastestRunObj.average_speed || 1)) : 0;
+
+        // Longest Run
+        const longestRunObj = [...activities]
+            .filter((a: any) => a.type === "Run")
+            .sort((a: any, b: any) => (b.distance || 0) - (a.distance || 0))[0];
+        const longestRunDist = longestRunObj ? (longestRunObj.distance / 1000) : 0;
+
         // Determine top genre based on time of day
         const morningRuns = activities.filter((a: any) => {
           const hour = new Date(a.start_date_local).getHours();
@@ -64,12 +88,16 @@ const Cards = () => {
 
         const stats = {
           name: `${profile.firstname ?? ""} ${profile.lastname ?? ""}`.trim() || "Runner",
+          username: profile.username || profile.firstname || "athlete",
           profilePhoto: profilePhotoUrl,
           totalDistance: Math.round(totalDistance),
           totalRuns: activities.length,
           totalTime: Math.round(totalTime),
           avgPace: avgPaceNum ? formatPace(avgPaceNum) : "-",
           topGenre,
+          calories: Math.round(totalCalories),
+          fastestPace: fastestPaceVal ? formatPace(fastestPaceVal) : "-",
+          longestRun: parseFloat(longestRunDist.toFixed(1))
         };
 
         setCardData(stats);
@@ -172,23 +200,23 @@ const Cards = () => {
             
             {/* Header */}
             <div>
-              <h1 className="text-white font-display text-5xl md:text-7xl font-black mb-6 uppercase tracking-tight leading-none">
+              <h1 className="text-white font-bangers text-5xl md:text-7xl mb-6 uppercase tracking-wide leading-none">
                 YOUR <span className="bg-gradient-to-r from-[#CCFF00] to-[#00F0FF] bg-clip-text text-transparent">WRAPPED</span> CARD
               </h1>
-              <p className="text-gray-400 text-lg md:text-xl font-bold uppercase tracking-wider mb-4">
+              <p className="text-gray-400 text-lg md:text-xl font-fredoka font-bold uppercase tracking-wider mb-4">
                 Spotify Wrapped Style • Powered by Your Strava Data
               </p>
-              <p className="text-gray-500 text-base leading-relaxed max-w-xl">
+              <p className="text-gray-500 text-base leading-relaxed max-w-xl font-fredoka">
                 Share your running story with the world. This card captures your unique runner persona, total stats, and top achievements in a format ready for Instagram Stories or Twitter.
               </p>
             </div>
 
             {/* Pro Tips (Info Section) */}
             <div className="bg-white/5 backdrop-blur-lg border border-white/10 p-8 shadow-2xl rounded-3xl w-full">
-              <h2 className="text-white font-display text-xl font-black mb-4 uppercase flex items-center gap-2">
+              <h2 className="text-white font-bangers text-2xl mb-4 uppercase flex items-center gap-2 tracking-wide">
                 <span className="text-[#CCFF00]">💡</span> PRO TIPS
               </h2>
-              <ul className="space-y-3 text-gray-300 text-sm">
+              <ul className="space-y-3 text-gray-300 text-sm font-fredoka">
                 <li className="flex items-start gap-3">
                   <span className="text-[#CCFF00] font-bold">→</span>
                   <span><strong className="text-white">Download</strong> to save high-res PNG</span>
@@ -208,13 +236,13 @@ const Cards = () => {
             <div className="flex flex-wrap gap-4 pt-4">
               <a 
                 href="/dashboard" 
-                className="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 text-white font-bold uppercase tracking-wide px-8 py-4 border border-white/20 backdrop-blur-sm transition-all rounded-full text-sm"
+                className="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 text-white font-bangers tracking-widest px-8 py-4 border border-white/20 backdrop-blur-sm transition-all rounded-full text-lg"
               >
                 VIEW FULL STORY
               </a>
               <a 
                 href="/roast" 
-                className="inline-flex items-center justify-center bg-[#FF0066]/10 hover:bg-[#FF0066]/20 text-[#FF0066] font-bold uppercase tracking-wide px-8 py-4 border border-[#FF0066]/50 backdrop-blur-sm transition-all rounded-full text-sm"
+                className="inline-flex items-center justify-center bg-[#FF0066]/10 hover:bg-[#FF0066]/20 text-[#FF0066] font-bangers tracking-widest px-8 py-4 border border-[#FF0066]/50 backdrop-blur-sm transition-all rounded-full text-lg"
               >
                 GET ROASTED 🔥
               </a>
@@ -225,62 +253,106 @@ const Cards = () => {
           <div className="flex-1 flex flex-col items-center gap-8 order-1 lg:order-2 w-full max-w-sm lg:max-w-[320px]">
             
             {/* The Card */}
-            <div ref={cardRef} className="relative w-full aspect-[9/16] bg-black rounded-[32px] overflow-hidden shadow-2xl group hover:scale-[1.02] transition-transform duration-500">
-              {/* Background - Neon Abstract */}
-              <div className="absolute inset-0 bg-black">
-                {/* Pink/Red Gradient Mesh */}
-                <div className="absolute top-[-20%] left-[-20%] w-[140%] h-[80%] bg-gradient-to-br from-[#FF0066] via-[#FF0000] to-transparent opacity-80 blur-3xl transform rotate-12" />
-                <div className="absolute top-[10%] right-[-20%] w-[100%] h-[60%] bg-gradient-to-bl from-[#FF0066] via-[#FF4D00] to-transparent opacity-60 blur-3xl" />
+            <div ref={cardRef} className="relative w-full aspect-[9/16] bg-[#3a86ff] rounded-[32px] overflow-hidden border-[5px] border-black shadow-[15px_15px_0_#000000] flex flex-col p-5 group hover:scale-[1.02] transition-transform duration-300">
+              
+              {/* Background Pattern */}
+              <div className="absolute inset-0 opacity-10 pointer-events-none" 
+                   style={{ backgroundImage: 'radial-gradient(circle, #000 2px, transparent 2.5px)', backgroundSize: '20px 20px' }}>
               </div>
 
-              {/* Content Container */}
-              <div className="relative z-10 h-full flex flex-col p-8">
+              {/* Header */}
+              <div className="relative z-10 flex justify-between items-start mb-2">
+                <div className="bg-black text-[#CCFF00] px-3 py-1 rounded-full border-2 border-black transform -rotate-2 shadow-[4px_4px_0_rgba(0,0,0,0.2)]">
+                  <span className="font-bangers tracking-wider text-lg">#2025</span>
+                </div>
+                <div className="flex flex-col items-end">
+                   <div className="text-black font-black tracking-tighter text-xl uppercase flex items-center gap-[2px] italic">
+                    STR<span className="text-[#CCFF00] drop-shadow-[2px_2px_0_#000]">▲</span>V<span className="text-[#CCFF00] drop-shadow-[2px_2px_0_#000]">▲</span>
+                  </div>
+                  <div className="text-black font-black tracking-tighter text-xl uppercase flex items-center gap-[2px] italic -mt-2">
+                    WR<span className="text-[#CCFF00] drop-shadow-[2px_2px_0_#000]">▲</span>PPED
+                  </div>
+                </div>
+              </div>
+
+              {/* Main Content */}
+              <div className="relative z-10 flex-1 flex flex-col items-center text-center mt-1">
                 
-                {/* Top Section: Profile Pic */}
-                <div className="flex-1 flex items-center justify-center">
-                  <div className="relative w-48 h-48 shadow-2xl transform -rotate-2">
+                {/* Profile Image */}
+                <div className="relative mb-4">
+                  <div className="w-32 h-32 rounded-full border-[5px] border-black overflow-hidden bg-white relative z-10">
                     {cardData.profilePhoto ? (
-                      <img src={cardData.profilePhoto} alt={cardData.name} className="w-full h-full object-cover shadow-lg" />
+                      <img src={cardData.profilePhoto} alt={cardData.name} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-zinc-800 text-4xl font-bold text-white">
+                      <div className="w-full h-full flex items-center justify-center bg-black text-5xl font-bangers text-[#CCFF00]">
                         {cardData.name.charAt(0)}
                       </div>
                     )}
                   </div>
+                  {/* Decorative Elements behind profile */}
+                  <div className="absolute top-0 -right-4 text-4xl animate-bounce delay-700">✨</div>
+                  <div className="absolute bottom-0 -left-4 text-4xl animate-bounce">⚡</div>
                 </div>
 
-                {/* Bottom Section: Stats */}
-                <div className="mt-auto space-y-8">
-                  
-                  {/* Two Columns */}
-                  <div className="grid grid-cols-2 gap-8">
-                    <div className="space-y-2">
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-white/60">Runner Type</h3>
-                      <p className="text-lg font-bold leading-tight text-white">{cardData.topGenre}</p>
-                      <p className="text-sm text-white/50">{cardData.totalRuns} total runs</p>
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-white/60">Avg Pace</h3>
-                      <p className="text-lg font-bold leading-tight text-white">{cardData.avgPace} /km</p>
-                      <p className="text-sm text-white/50">{Math.floor(cardData.totalTime / 60)}h {cardData.totalTime % 60}m time</p>
-                    </div>
-                  </div>
+                {/* Name & Title */}
+                <h2 className="font-bangers text-3xl text-white drop-shadow-[3px_3px_0_#000] uppercase tracking-wide mb-1 transform -rotate-1">
+                  @{cardData.username}
+                </h2>
+                <div className="bg-white border-2 border-black px-4 py-0.5 rounded-full inline-block transform rotate-1 mb-6 shadow-[3px_3px_0_#000]">
+                  <p className="font-fredoka font-bold text-black uppercase tracking-wider text-xs">
+                    {cardData.topGenre}
+                  </p>
+                </div>
 
-                  {/* Big Number */}
-                  <div>
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-white/60 mb-1">Total Distance</h3>
-                    <div className="text-6xl font-black tracking-tighter leading-none text-white">
+                {/* Main Stat: Distance */}
+                <div className="w-full bg-black rounded-[20px] p-4 border-[3px] border-white/20 relative overflow-hidden mb-4">
+                  <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#CCFF00] via-[#00F0FF] to-[#CCFF00]"></div>
+                  <p className="text-[#CCFF00] font-fredoka font-bold uppercase tracking-widest text-xs mb-1">Total Distance</p>
+                  <div className="flex items-baseline justify-center gap-2">
+                    <span className="text-white font-bangers text-6xl tracking-wide leading-none">
                       {Math.round(cardData.totalDistance).toLocaleString()}
-                      <span className="text-2xl ml-2 font-bold text-[#FF0066]">km</span>
-                    </div>
-                  </div>
-
-                  {/* Branding Footer */}
-                  <div className="pt-4 border-t border-white/10 flex justify-between items-center">
-                    <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/40">Strava Wrapped</span>
-                    <span className="text-[10px] font-bold text-[#FF0066]">2025</span>
+                    </span>
+                    <span className="text-white/50 font-bangers text-2xl">KM</span>
                   </div>
                 </div>
+
+                {/* Stats Grid */}
+                <div className="grid grid-cols-3 gap-2 w-full">
+                  {/* Calories */}
+                  <div className="bg-[#8338ec] rounded-[16px] p-2 border-[3px] border-black shadow-[3px_3px_0_#000] flex flex-col items-center justify-center transform hover:-translate-y-1 transition-transform">
+                    <span className="text-xl mb-1">🔥</span>
+                    <span className="text-white font-bangers text-lg leading-none">
+                      {(cardData.calories / 1000).toFixed(1)}k
+                    </span>
+                    <span className="text-white/80 font-fredoka text-[9px] uppercase font-bold">Cals</span>
+                  </div>
+
+                  {/* Fastest Run */}
+                  <div className="bg-[#ff006e] rounded-[16px] p-2 border-[3px] border-black shadow-[3px_3px_0_#000] flex flex-col items-center justify-center transform hover:-translate-y-1 transition-transform delay-75">
+                    <span className="text-xl mb-1">🚀</span>
+                    <span className="text-white font-bangers text-lg leading-none">
+                      {cardData.fastestPace}
+                    </span>
+                    <span className="text-white/80 font-fredoka text-[9px] uppercase font-bold">/km</span>
+                  </div>
+
+                  {/* Longest Run */}
+                  <div className="bg-[#ffbe0b] rounded-[16px] p-2 border-[3px] border-black shadow-[3px_3px_0_#000] flex flex-col items-center justify-center transform hover:-translate-y-1 transition-transform delay-150">
+                    <span className="text-xl mb-1">🏆</span>
+                    <span className="text-black font-bangers text-lg leading-none">
+                      {cardData.longestRun}
+                    </span>
+                    <span className="text-black/80 font-fredoka text-[9px] uppercase font-bold">km</span>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Footer Bar */}
+              <div className="mt-4 border-t-4 border-black pt-2 flex justify-center">
+                 <p className="font-fredoka font-bold text-black text-[10px] uppercase tracking-[0.3em]">
+                   Your Year In Run
+                 </p>
               </div>
             </div>
 
@@ -288,13 +360,13 @@ const Cards = () => {
             <div className="flex gap-4 w-full">
               <Button
                 onClick={handleDownload}
-                className="flex-1 bg-[#CCFF00] hover:bg-[#b3e600] text-black font-black uppercase tracking-wide py-6 rounded-full shadow-lg hover:shadow-[#CCFF00]/20 transition-all flex items-center justify-center gap-2 text-base"
+                className="flex-1 bg-[#CCFF00] hover:bg-[#b3e600] text-black font-bangers uppercase tracking-widest py-6 rounded-full shadow-lg hover:shadow-[#CCFF00]/20 transition-all flex items-center justify-center gap-2 text-xl"
               >
                 <Download className="w-5 h-5" /> DOWNLOAD
               </Button>
               <Button
                 onClick={handleShare}
-                className="flex-1 bg-[#FF0066] hover:bg-[#e6005c] text-white font-black uppercase tracking-wide py-6 rounded-full shadow-lg hover:shadow-[#FF0066]/20 transition-all flex items-center justify-center gap-2 text-base"
+                className="flex-1 bg-[#FF0066] hover:bg-[#e6005c] text-white font-bangers uppercase tracking-widest py-6 rounded-full shadow-lg hover:shadow-[#FF0066]/20 transition-all flex items-center justify-center gap-2 text-xl"
               >
                 <Share2 className="w-5 h-5" /> SHARE
               </Button>
