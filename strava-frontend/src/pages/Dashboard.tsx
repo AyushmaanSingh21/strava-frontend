@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Trophy, Zap, Mountain, Activity, Clock, Ruler, Flame, Award, TrendingUp, MapPin, Target, Calendar, Star, Sparkles, Rocket, Sunrise, Gauge, Lock, CheckCircle2, Swords, Dna, Heart, Crown, Clapperboard } from "lucide-react";
+import { Trophy, Zap, Mountain, Activity, Clock, Ruler, Flame, Award, TrendingUp, MapPin, Target, Calendar, Star, Sparkles, Rocket, Sunrise, Gauge, Lock, CheckCircle2, Swords, Dna, Heart, Crown, Clapperboard, Globe, Medal } from "lucide-react";
 import { getAthleteProfile, getActivities } from "@/services/stravaAPI";
 import RunMapViz from "@/components/RunMapViz";
 import Navigation from "@/components/Navigation";
@@ -12,6 +12,7 @@ import {
   getAveragePace,
   findPersonalRecords,
 } from "@/utils/dataProcessor";
+import { assignCar } from "@/utils/carPersonality";
 
 const ScrollReveal = ({ children, className = "", delay = 0 }: { children: React.ReactNode, className?: string, delay?: number }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -50,6 +51,25 @@ const Dashboard = () => {
   const [lastSynced, setLastSynced] = useState<string>("");
   const [currentAct, setCurrentAct] = useState(1);
 
+  const carPersonality = useMemo(() => {
+    if (!activities.length) return null;
+    
+    const pace = getAveragePace(activities) || 10;
+    const totalDist = calculateTotalDistance(activities);
+    
+    // Calculate weeks
+    const dates = activities.map((a: any) => new Date(a.start_date));
+    if (dates.length === 0) return null;
+    const minDate = new Date(Math.min(...dates.map((d: any) => d.getTime())));
+    const maxDate = new Date(Math.max(...dates.map((d: any) => d.getTime())));
+    const diffTime = Math.abs(maxDate.getTime() - minDate.getTime());
+    const diffWeeks = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 7))); 
+    
+    const weeklyDist = totalDist / diffWeeks;
+    
+    return assignCar(pace, weeklyDist);
+  }, [activities]);
+
   // Refs for scrolling to acts
   const act1Ref = useRef<HTMLDivElement>(null);
   const act2Ref = useRef<HTMLDivElement>(null);
@@ -57,7 +77,6 @@ const Dashboard = () => {
   const act4Ref = useRef<HTMLDivElement>(null);
   const act5Ref = useRef<HTMLDivElement>(null);
   const act6Ref = useRef<HTMLDivElement>(null);
-  const act7Ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -91,7 +110,7 @@ const Dashboard = () => {
   // Track scroll position to update current act
   useEffect(() => {
     const handleScroll = () => {
-      const refs = [act1Ref, act2Ref, act3Ref, act4Ref, act5Ref, act6Ref, act7Ref];
+      const refs = [act1Ref, act2Ref, act3Ref, act4Ref, act5Ref, act6Ref];
       const scrollPosition = window.scrollY + window.innerHeight / 3;
 
       for (let i = refs.length - 1; i >= 0; i--) {
@@ -113,7 +132,7 @@ const Dashboard = () => {
   }, []);
 
   const scrollToAct = (actNumber: number) => {
-    const refs = [act1Ref, act2Ref, act3Ref, act4Ref, act5Ref, act6Ref, act7Ref];
+    const refs = [act1Ref, act2Ref, act3Ref, act4Ref, act5Ref, act6Ref];
     refs[actNumber - 1]?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     setCurrentAct(actNumber);
   };
@@ -141,9 +160,8 @@ const Dashboard = () => {
     { num: 2, title: "The Journey", color: "from-orange-500 to-red-500", emoji: "🛤️" },
     { num: 3, title: "The Turning Points", color: "from-yellow-500 to-lime-500", emoji: "⭐" },
     { num: 4, title: "The Data", color: "from-teal-500 to-blue-600", emoji: "📊" },
-    { num: 5, title: "What's Next", color: "from-violet-600 to-cyan-500", emoji: "🔮" },
-    { num: 6, title: "The Challenges", color: "from-red-600 to-orange-500", emoji: "🎯" },
-    { num: 7, title: "The Finale", color: "from-pink-500 to-purple-600", emoji: "🎉" },
+    { num: 5, title: "Hall of Fame", color: "from-violet-600 to-cyan-500", emoji: "🏆" },
+    { num: 6, title: "The Finale", color: "from-pink-500 to-purple-600", emoji: "🎉" },
   ];
 
   // =============== DATA ANALYSIS FUNCTIONS ===============
@@ -910,6 +928,151 @@ const Dashboard = () => {
     };
   };
 
+  // ACT 5: Badges (Hall of Fame)
+  const getBadges = () => {
+    if (activities.length === 0) return [];
+
+    const totalDistanceKm = activities.reduce((acc, curr) => acc + (curr.distance || 0), 0) / 1000;
+    const totalRuns = activities.length;
+    const longestRunKm = Math.max(...activities.map(a => (a.distance || 0))) / 1000;
+
+    // Calculate streaks
+    const sortedDates = [...activities]
+        .map(a => new Date(a.start_date_local).toISOString().split('T')[0])
+        .sort()
+        .filter((date, i, self) => self.indexOf(date) === i); // Unique dates
+
+    let maxStreak = 0;
+    let currentStreak = 0;
+    let prevDate = null;
+
+    for (const dateStr of sortedDates) {
+        const date = new Date(dateStr);
+        if (prevDate) {
+            const diffTime = Math.abs(date.getTime() - prevDate.getTime());
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+            if (diffDays === 1) {
+                currentStreak++;
+            } else {
+                currentStreak = 1;
+            }
+        } else {
+            currentStreak = 1;
+        }
+        if (currentStreak > maxStreak) maxStreak = currentStreak;
+        prevDate = date;
+    }
+
+    return [
+        // Distance Milestones
+        { 
+            id: 'dist_25', 
+            title: '25 KM CLUB', 
+            desc: 'Total Distance', 
+            icon: <MapPin />, 
+            borderColor: 'bg-cyan-500',
+            bgColor: 'bg-cyan-400',
+            unlocked: totalDistanceKm >= 25,
+            current: totalDistanceKm,
+            required: 25
+        },
+        { 
+            id: 'dist_50', 
+            title: 'HALF CENTURY', 
+            desc: '50km Total', 
+            icon: <Globe />, 
+            borderColor: 'bg-blue-600',
+            bgColor: 'bg-blue-500',
+            unlocked: totalDistanceKm >= 50,
+            current: totalDistanceKm,
+            required: 50
+        },
+        { 
+            id: 'dist_100', 
+            title: 'CENTURION', 
+            desc: '100km Total', 
+            icon: <Rocket />, 
+            borderColor: 'bg-purple-600',
+            bgColor: 'bg-purple-500',
+            unlocked: totalDistanceKm >= 100,
+            current: totalDistanceKm,
+            required: 100
+        },
+        
+        // Streaks
+        { 
+            id: 'streak_5', 
+            title: 'ON FIRE', 
+            desc: '5 Day Streak', 
+            icon: <Flame />, 
+            borderColor: 'bg-orange-500',
+            bgColor: 'bg-orange-400',
+            unlocked: maxStreak >= 5,
+            current: maxStreak,
+            required: 5
+        },
+        { 
+            id: 'streak_10', 
+            title: 'UNSTOPPABLE', 
+            desc: '10 Day Streak', 
+            icon: <Zap />, 
+            borderColor: 'bg-yellow-500',
+            bgColor: 'bg-yellow-400',
+            unlocked: maxStreak >= 10,
+            current: maxStreak,
+            required: 10
+        },
+
+        // Single Run
+        { 
+            id: 'single_5k', 
+            title: '5K FINISHER', 
+            desc: 'Single Run', 
+            icon: <Trophy />, 
+            borderColor: 'bg-emerald-600',
+            bgColor: 'bg-emerald-500',
+            unlocked: longestRunKm >= 5,
+            current: longestRunKm,
+            required: 5
+        },
+        { 
+            id: 'single_10k', 
+            title: '10K WARRIOR', 
+            desc: 'Single Run', 
+            icon: <Crown />, 
+            borderColor: 'bg-indigo-600',
+            bgColor: 'bg-indigo-500',
+            unlocked: longestRunKm >= 10,
+            current: longestRunKm,
+            required: 10
+        },
+
+        // Total Runs
+        { 
+            id: 'runs_25', 
+            title: 'REGULAR', 
+            desc: '25 Total Runs', 
+            icon: <Star />, 
+            borderColor: 'bg-violet-600',
+            bgColor: 'bg-violet-500',
+            unlocked: totalRuns >= 25,
+            current: totalRuns,
+            required: 25
+        },
+        { 
+            id: 'runs_50', 
+            title: 'VETERAN', 
+            desc: '50 Total Runs', 
+            icon: <Medal />, 
+            borderColor: 'bg-rose-600',
+            bgColor: 'bg-rose-500',
+            unlocked: totalRuns >= 50,
+            current: totalRuns,
+            required: 50
+        }
+    ];
+  };
+
   // ACT 7: Finale Stats
   const getFinaleStats = () => {
     if (activities.length === 0) return null;
@@ -1544,126 +1707,47 @@ const Dashboard = () => {
                 </div>
 
                 {getWildStats() && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    
-                    {/* SLIDE 1: SONGS */}
-                    <Card className="bg-[#1db954] border-4 border-black rounded-[30px] p-6 relative overflow-hidden group hover:rotate-1 transition-transform duration-300">
-                      <div className="absolute top-4 right-4 text-4xl">🎵</div>
-                      <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-black rounded-full opacity-20 animate-spin-slow"></div>
-                      <p className="text-black font-bangers text-2xl mb-4">If Runs Were Songs...</p>
-                      <h3 className="text-white font-bangers text-7xl mb-2">{getWildStats()?.songs.count} Runs</h3>
-                      <p className="text-black font-fredoka font-bold text-xl">= An Entire Album</p>
-                      <div className="mt-6 bg-black/20 rounded-xl p-4">
-                        <p className="text-white font-fredoka text-lg">Avg Length: {getWildStats()?.songs.avgTime}</p>
-                        <p className="text-white font-fredoka text-lg">That's {getWildStats()?.songs.albumCount} EPs of movement 🎵</p>
+                  <div className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
+
+                    {/* SLIDE: ELEVATION */}
+                    <Card className="bg-[#7209b7] border-4 border-black rounded-[30px] p-8 group hover:-rotate-1 transition-transform duration-300 relative overflow-hidden w-full md:w-[450px] min-h-[400px] flex flex-col justify-between shadow-[8px_8px_0_rgba(0,0,0,1)]">
+                      <div className="absolute top-4 right-4 text-5xl">🧗</div>
+                      <div>
+                        <p className="text-white/80 font-bangers text-3xl mb-4">Elevation = Heights</p>
+                        <h3 className="text-white font-bangers text-8xl mb-2">{getWildStats()?.elevation.meters}m</h3>
+                        <p className="text-white font-fredoka text-2xl mb-6">That's like climbing...</p>
+                      </div>
+                      
+                      <div className="flex items-end justify-center gap-4 mb-6">
+                        <div className="w-10 h-24 bg-white/30 rounded-t-lg"></div>
+                        <div className="w-10 h-40 bg-white/50 rounded-t-lg"></div>
+                        <div className="w-10 h-16 bg-white/30 rounded-t-lg"></div>
+                      </div>
+                      
+                      <div>
+                        <p className="text-yellow-300 font-fredoka font-bold text-center text-xl">🗼 Qutub Minar {getWildStats()?.elevation.qutub} times</p>
+                        <p className="text-white/60 font-fredoka text-center text-lg mt-2">(Or {getWildStats()?.elevation.floors} floors of stairs)</p>
                       </div>
                     </Card>
 
-                    {/* SLIDE 2: FOOD */}
-                    <Card className="bg-[#ff9f1c] border-4 border-black rounded-[30px] p-6 group hover:-rotate-1 transition-transform duration-300 relative overflow-hidden">
-                      <div className="absolute top-4 right-4 text-4xl">🍕</div>
-                      <p className="text-black font-bangers text-2xl mb-4">Calories = Food</p>
-                      <h3 className="text-white font-bangers text-6xl mb-2">{getWildStats()?.food.calories.toLocaleString()} Cal</h3>
-                      <div className="space-y-3 mt-6">
-                        <div className="flex items-center gap-3 bg-white/20 p-2 rounded-lg">
-                          <span className="text-3xl">🥟</span>
-                          <span className="font-fredoka font-bold text-black text-lg">{getWildStats()?.food.samosas} Samosas</span>
-                        </div>
-                        <div className="flex items-center gap-3 bg-white/20 p-2 rounded-lg">
-                          <span className="text-3xl">🥘</span>
-                          <span className="font-fredoka font-bold text-black text-lg">{getWildStats()?.food.butterChicken} Butter Chickens</span>
-                        </div>
-                        <div className="flex items-center gap-3 bg-white/20 p-2 rounded-lg">
-                          <span className="text-3xl">☕</span>
-                          <span className="font-fredoka font-bold text-black text-lg">{getWildStats()?.food.chai} Cups of Chai</span>
+                    {/* SLIDE: BODY */}
+                    <Card className="bg-[#ef233c] border-4 border-black rounded-[30px] p-8 group hover:scale-105 transition-transform duration-300 relative overflow-hidden w-full md:w-[450px] min-h-[400px] flex flex-col justify-between shadow-[8px_8px_0_rgba(0,0,0,1)]">
+                      <div className="absolute top-4 right-4 text-5xl">❤️</div>
+                      <div>
+                        <p className="text-white/80 font-bangers text-3xl mb-4">Your Body's Work</p>
+                        <div className="flex justify-center my-8">
+                          <div className="text-[120px] animate-pulse drop-shadow-lg">❤️</div>
                         </div>
                       </div>
-                    </Card>
-
-                    {/* SLIDE 3: PLACES */}
-                    <Card className="bg-[#4361ee] border-4 border-black rounded-[30px] p-6 group hover:scale-105 transition-transform duration-300 relative overflow-hidden">
-                      <div className="absolute top-4 right-4 text-4xl">🗺️</div>
-                      <p className="text-white/80 font-bangers text-2xl mb-4">Distance = Places</p>
-                      <h3 className="text-white font-bangers text-7xl mb-2">{getWildStats()?.places.distance} km</h3>
-                      <p className="text-white font-fredoka text-xl mb-6">Could get you from:</p>
-                      <div className="bg-white text-black p-4 rounded-xl transform -rotate-2">
-                        <p className="font-bold font-fredoka text-center text-lg">📍 Chandigarh ➡️ Panchkula</p>
-                        <p className="font-bangers text-5xl text-center mt-2">{getWildStats()?.places.chandigarhTrips} Times 🤯</p>
-                      </div>
-                    </Card>
-
-                    {/* SLIDE 4: TIME */}
-                    <Card className="bg-[#f72585] border-4 border-black rounded-[30px] p-6 group hover:rotate-1 transition-transform duration-300 relative overflow-hidden">
-                      <div className="absolute top-4 right-4 text-4xl">⏳</div>
-                      <p className="text-white/80 font-bangers text-2xl mb-4">Time = Life</p>
-                      <h3 className="text-white font-bangers text-6xl mb-2">{getWildStats()?.time.minutes} Mins</h3>
-                      <div className="mt-6 space-y-2">
-                        <p className="text-white font-fredoka text-lg">= Watching Sholay {getWildStats()?.time.sholay} times 🎬</p>
-                        <p className="text-white font-fredoka text-lg">= {getWildStats()?.time.office} episodes of The Office 📺</p>
-                        <p className="text-yellow-300 font-bangers text-2xl mt-4">= {getWildStats()?.time.seconds.toLocaleString()} SECONDS OF GRIT</p>
-                      </div>
-                    </Card>
-
-                    {/* SLIDE 5: ELEVATION */}
-                    <Card className="bg-[#7209b7] border-4 border-black rounded-[30px] p-6 group hover:-rotate-1 transition-transform duration-300 relative overflow-hidden">
-                      <div className="absolute top-4 right-4 text-4xl">🧗</div>
-                      <p className="text-white/80 font-bangers text-2xl mb-4">Elevation = Heights</p>
-                      <h3 className="text-white font-bangers text-7xl mb-2">{getWildStats()?.elevation.meters}m</h3>
-                      <p className="text-white font-fredoka text-xl mb-6">That's like climbing...</p>
-                      <div className="flex items-end justify-center gap-4 mb-4">
-                        <div className="w-8 h-20 bg-white/30 rounded-t-lg"></div>
-                        <div className="w-8 h-32 bg-white/50 rounded-t-lg"></div>
-                        <div className="w-8 h-12 bg-white/30 rounded-t-lg"></div>
-                      </div>
-                      <p className="text-yellow-300 font-fredoka font-bold text-center text-lg">🗼 Qutub Minar {getWildStats()?.elevation.qutub} times</p>
-                      <p className="text-white/60 font-fredoka text-center text-base">(Or {getWildStats()?.elevation.floors} floors of stairs)</p>
-                    </Card>
-
-                    {/* SLIDE 6: BODY */}
-                    <Card className="bg-[#ef233c] border-4 border-black rounded-[30px] p-6 group hover:scale-105 transition-transform duration-300 relative overflow-hidden">
-                      <div className="absolute top-4 right-4 text-4xl">❤️</div>
-                      <p className="text-white/80 font-bangers text-2xl mb-4">Your Body's Work</p>
-                      <div className="flex justify-center my-6">
-                        <div className="text-9xl animate-pulse">❤️</div>
-                      </div>
-                      <p className="text-white font-fredoka text-center text-lg">Your heart beat approx...</p>
-                      <h3 className="text-white font-bangers text-5xl text-center mb-4">~{getWildStats()?.body.beats.toLocaleString()} times</h3>
-                      <div className="bg-black/20 rounded-xl p-3 text-center">
-                        <p className="text-white font-fredoka text-lg">And your legs took</p>
-                        <p className="text-yellow-300 font-bangers text-3xl">~{getWildStats()?.body.steps.toLocaleString()} Steps</p>
-                      </div>
-                    </Card>
-
-                    {/* SLIDE 7: SOLO */}
-                    <Card className="bg-[#2b2d42] border-4 border-white rounded-[30px] p-6 group hover:rotate-1 transition-transform duration-300 relative overflow-hidden">
-                      <div className="absolute top-4 right-4 text-4xl">🐺</div>
-                      <p className="text-white/60 font-bangers text-2xl mb-4">The Solo Warrior</p>
-                      <div className="flex justify-center mb-6">
-                        <span className="text-9xl">🐺</span>
-                      </div>
-                      <h3 className="text-white font-bangers text-8xl text-center mb-2">{getWildStats()?.solo.percent}%</h3>
-                      <p className="text-white font-fredoka text-center text-2xl mb-4">of runs: ALONE</p>
-                      <p className="text-gray-400 font-fredoka text-center text-base">You didn't need a squad.<br/>You just WENT.</p>
-                    </Card>
-
-                    {/* SLIDE 8: WEATHER */}
-                    <Card className="bg-[#00b4d8] border-4 border-black rounded-[30px] p-6 group hover:-rotate-1 transition-transform duration-300 relative overflow-hidden">
-                      <div className="absolute top-4 right-4 text-4xl">🌦️</div>
-                      <p className="text-black font-bangers text-2xl mb-4">Weather vs You</p>
-                      <div className="grid grid-cols-2 gap-4 mb-6">
-                        <div className="bg-white/20 rounded-xl p-3 text-center">
-                          <span className="text-5xl">☀️</span>
-                          <p className="font-bangers text-white text-2xl mt-2">{getWildStats()?.weather.hottest}</p>
-                          <p className="text-sm font-bold text-black/60">Hottest Run</p>
-                        </div>
-                        <div className="bg-white/20 rounded-xl p-3 text-center">
-                          <span className="text-5xl">⛈️</span>
-                          <p className="font-bangers text-white text-2xl mt-2">{getWildStats()?.weather.rainiest}</p>
-                          <p className="text-sm font-bold text-black/60">Rainiest</p>
+                      
+                      <div>
+                        <p className="text-white font-fredoka text-center text-xl mb-2">Your heart beat approx...</p>
+                        <h3 className="text-white font-bangers text-6xl text-center mb-6">~{getWildStats()?.body.beats.toLocaleString()} times</h3>
+                        <div className="bg-black/20 rounded-2xl p-4 text-center backdrop-blur-sm">
+                          <p className="text-white font-fredoka text-lg">And your legs took</p>
+                          <p className="text-yellow-300 font-bangers text-4xl mt-1">~{getWildStats()?.body.steps.toLocaleString()} Steps</p>
                         </div>
                       </div>
-                      <p className="text-white font-fredoka text-center font-bold text-lg">You didn't check the weather.</p>
-                      <p className="text-black font-bangers text-center text-2xl mt-2">THE WEATHER CHECKED YOU.</p>
                     </Card>
 
                   </div>
@@ -1671,21 +1755,23 @@ const Dashboard = () => {
               </div>
             </section>
 
-            {/* ===================== ACT 5: WHAT'S NEXT ===================== */}
+            {/* ===================== ACT 5: HALL OF FAME (BADGES) ===================== */}
             <section ref={act5Ref} className="relative min-h-screen overflow-hidden bg-[#0f172a] flex items-center">
               {/* Space background */}
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/40 via-[#0f172a] to-[#0f172a]" />
               
               {/* Stars */}
               {[...Array(30)].map((_, i) => (
-                <div
+                <div 
                   key={i}
-                  className="absolute w-1 h-1 bg-white rounded-full animate-twinkle"
+                  className="absolute bg-white rounded-full animate-pulse"
                   style={{
                     top: `${Math.random() * 100}%`,
                     left: `${Math.random() * 100}%`,
-                    animationDelay: `${Math.random() * 5}s`,
-                    opacity: Math.random()
+                    width: `${Math.random() * 3 + 1}px`,
+                    height: `${Math.random() * 3 + 1}px`,
+                    animationDelay: `${Math.random() * 2}s`,
+                    opacity: Math.random() * 0.7 + 0.3
                   }}
                 />
               ))}
@@ -1693,226 +1779,76 @@ const Dashboard = () => {
               <div className="w-full px-4 md:px-8 lg:px-12 max-w-[2000px] mx-auto relative z-10 py-20">
                 <div className="text-center mb-12">
                   <p className="text-cyan-400 font-bangers tracking-widest text-2xl mb-4">ACT 5</p>
-                  <h1 className="text-6xl md:text-8xl font-bangers text-white mb-6 tracking-wide drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]">
-                    WHAT'S NEXT
+                  <h1 className="text-6xl md:text-8xl font-bangers text-white mb-6 tracking-wide drop-shadow-[0_0_15px_rgba(34,211,238,0.6)]">
+                    HALL OF FAME
                   </h1>
+                  <p className="text-white/60 font-fredoka text-xl max-w-2xl mx-auto">
+                    Every drop of sweat, every kilometer, every streak. It all adds up to this.
+                  </p>
                 </div>
 
-                {getFutureStats() && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    
-                    {/* SLIDE 1: TRAJECTORY */}
-                    <Card className="bg-[#4361ee] border-4 border-white rounded-[32px] p-8 relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
-                      <div className="absolute top-4 right-4 text-4xl">🚀</div>
-                      <div className="absolute top-0 right-0 p-4 opacity-20">
-                        <Rocket className="w-32 h-32 text-white" />
-                      </div>
-                      <p className="text-white/80 font-fredoka font-bold text-xl mb-6">Your Trajectory</p>
-                      <p className="text-white font-fredoka text-lg mb-2">If you keep this pace...</p>
-                      <div className="space-y-4 mt-4">
-                        <div className="bg-black/20 rounded-xl p-4 backdrop-blur-sm">
-                          <p className="text-cyan-300 font-bangers text-2xl">By June 2026</p>
-                          <p className="text-white font-bangers text-5xl">{getFutureStats()?.trajectory.june2026} km total</p>
-                        </div>
-                        <div className="bg-black/20 rounded-xl p-4 backdrop-blur-sm">
-                          <p className="text-cyan-300 font-bangers text-2xl">By 2027</p>
-                          <p className="text-white font-bangers text-5xl">{getFutureStats()?.trajectory.year2027} km total</p>
-                        </div>
-                      </div>
-                    </Card>
-
-                    {/* SLIDE 2: NEXT MILESTONE */}
-                    <Card className="bg-[#7209b7] border-4 border-white rounded-[32px] p-8 relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
-                      <div className="absolute top-4 right-4 text-4xl">🎯</div>
-                      <p className="text-white/80 font-fredoka font-bold text-xl mb-6">Next Milestone Loading...</p>
-                      <h3 className="text-white font-bangers text-7xl mb-4">{getFutureStats()?.milestone.target} KM CLUB</h3>
-                      
-                      <div className="w-full h-8 bg-black/30 rounded-full mb-2 overflow-hidden border-2 border-white/20">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-12 gap-x-6">
+                  {getBadges().map((badge) => (
+                    <div 
+                      key={badge.id} 
+                      className={`flex flex-col items-center group ${badge.unlocked ? '' : 'opacity-60 grayscale'}`}
+                    >
+                      {/* Badge Container */}
+                      <div className="relative w-32 h-32 md:w-40 md:h-40 mb-4 drop-shadow-2xl transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3">
+                        
+                        {/* Outer Border (Thick) */}
                         <div 
-                          className="h-full bg-gradient-to-r from-cyan-400 to-blue-500 transition-all duration-1000"
-                          style={{ width: `${getFutureStats()?.milestone.progress}%` }}
-                        />
-                      </div>
-                      <p className="text-right text-cyan-300 font-bangers text-2xl mb-6">{getFutureStats()?.milestone.progress}%</p>
-                      
-                      <p className="text-white font-fredoka text-xl">Only <span className="text-cyan-300 font-bold">{getFutureStats()?.milestone.remaining} km</span> away</p>
-                      <p className="text-white/60 font-fredoka text-lg">That's literally {getFutureStats()?.milestone.runsToGo} more runs at your average</p>
-                    </Card>
-
-                    {/* SLIDE 3: MORNING CHALLENGE */}
-                    <Card className="bg-[#f72585] border-4 border-white rounded-[32px] p-8 relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
-                      <div className="absolute top-4 right-4 text-4xl">🌅</div>
-                      <p className="text-white/80 font-fredoka font-bold text-xl mb-6">The Morning Challenge</p>
-                      <div className="flex justify-center mb-6">
-                        <Sunrise className="w-24 h-24 text-yellow-300" />
-                      </div>
-                      <p className="text-white font-bangers text-4xl mb-4 text-center">"{getFutureStats()?.morning.text}"</p>
-                      {!getFutureStats()?.morning.hasRunMorning && (
-                        <>
-                          <p className="text-white font-fredoka text-center mb-2 text-lg">What if you tried sunrise?</p>
-                          <p className="text-white font-fredoka text-center text-lg">What if you became...</p>
-                          <p className="text-yellow-300 font-bangers text-5xl text-center mt-2">THE MORNING ASSASSIN? 🌅</p>
-                        </>
-                      )}
-                    </Card>
-
-                    {/* SLIDE 4: THE DREAM */}
-                    <Card className="bg-[#4cc9f0] border-4 border-white rounded-[32px] p-8 relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
-                      <div className="absolute top-4 right-4 text-4xl">💭</div>
-                      <p className="text-black/60 font-fredoka font-bold text-xl mb-6">The {getFutureStats()?.dream.target}K Dream</p>
-                      <div className="flex items-center justify-between mb-8">
-                        <div className="text-center">
-                          <p className="text-black/60 font-bangers text-2xl">Longest</p>
-                          <p className="text-black font-bangers text-5xl">{getFutureStats()?.dream.currentLongest}km</p>
+                          className={`absolute inset-0 ${badge.unlocked ? badge.borderColor : 'bg-gray-700'}`}
+                          style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
+                        ></div>
+                        
+                        {/* Inner Background (Lighter) */}
+                        <div 
+                          className={`absolute inset-[8px] md:inset-[10px] ${badge.unlocked ? badge.bgColor : 'bg-gray-800'} flex items-center justify-center`}
+                          style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
+                        >
+                          {/* Icon */}
+                          <div className={`text-5xl md:text-6xl transform transition-transform duration-300 ${badge.unlocked ? 'text-white drop-shadow-md group-hover:scale-110' : 'text-gray-600'}`}>
+                            {badge.icon}
+                          </div>
                         </div>
-                        <Target className="w-12 h-12 text-black animate-pulse" />
-                        <div className="text-center">
-                          <p className="text-black/60 font-bangers text-2xl">Goal</p>
-                          <p className="text-black font-bangers text-5xl">{getFutureStats()?.dream.target}km</p>
-                        </div>
-                      </div>
-                      <p className="text-black font-fredoka text-center text-2xl font-bold">That's just {getFutureStats()?.dream.multiplier}x your best</p>
-                      <p className="text-black/60 font-fredoka text-center mt-2 text-lg">You're CLOSER than you think.</p>
-                    </Card>
 
-                    {/* SLIDE 5: SPEED EVOLUTION */}
-                    <Card className="bg-[#ff9e00] border-4 border-white rounded-[32px] p-8 relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300 md:col-span-2 lg:col-span-1">
-                      <div className="absolute top-4 right-4 text-4xl">🐆</div>
-                      <p className="text-black/60 font-fredoka font-bold text-xl mb-6">Speed Evolution</p>
-                      <div className="relative h-32 mb-4 flex items-center justify-center">
-                        <Gauge className="w-32 h-32 text-black" />
-                        <div className="absolute bottom-0 text-center">
-                          <p className="text-black font-bangers text-5xl">{getFutureStats()?.speed.current}</p>
-                          <p className="text-black/60 font-fredoka text-lg">Current Pace</p>
-                        </div>
+                        {/* Gloss/Shine Effect */}
+                        {badge.unlocked && (
+                          <div 
+                            className="absolute inset-0 bg-gradient-to-tr from-white/20 via-transparent to-transparent pointer-events-none"
+                            style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
+                          ></div>
+                        )}
                       </div>
-                      <div className="bg-black/10 rounded-xl p-4 text-center">
-                        <p className="text-black font-fredoka mb-1 text-lg">Next Goal: <span className="font-bangers text-3xl">{getFutureStats()?.speed.target}</span></p>
-                        <p className="text-black/60 font-fredoka text-lg">You've already hit {getFutureStats()?.speed.best} once.</p>
-                        <p className="text-black font-bangers text-2xl mt-2">You KNOW you can do it.</p>
+
+                      {/* Text Below Badge */}
+                      <div className="text-center z-10">
+                        <h3 className={`font-bangers text-2xl tracking-wide mb-1 drop-shadow-md ${badge.unlocked ? 'text-white' : 'text-gray-500'}`}>
+                          {badge.title}
+                        </h3>
+                        <p className="font-fredoka text-xs font-bold uppercase tracking-widest text-white/40">
+                          {badge.desc}
+                        </p>
+
+                        {/* Progress Bar (if locked) */}
+                        {!badge.unlocked && (
+                          <div className="w-20 h-1.5 bg-gray-800 rounded-full overflow-hidden mt-3 mx-auto border border-white/10">
+                            <div 
+                              className="h-full bg-white/30" 
+                              style={{ width: `${Math.min(100, (badge.current / badge.required) * 100)}%` }}
+                            ></div>
+                          </div>
+                        )}
                       </div>
-                    </Card>
-
-                  </div>
-                )}
-              </div>
-            </section>
-
-            {/* ===================== ACT 6: THE CHALLENGES ===================== */}
-            <section ref={act6Ref} className="relative min-h-screen overflow-hidden bg-[#1a1a1a] flex items-center">
-              {/* Arcade background */}
-              <div className="absolute inset-0 opacity-20" style={{
-                  backgroundImage: 'linear-gradient(45deg, #333 25%, transparent 25%, transparent 75%, #333 75%, #333), linear-gradient(45deg, #333 25%, transparent 25%, transparent 75%, #333 75%, #333)',
-                  backgroundSize: '60px 60px',
-                  backgroundPosition: '0 0, 30px 30px'
-              }}></div>
-              
-              <div className="w-full px-4 md:px-8 lg:px-12 max-w-[2000px] mx-auto relative z-10 py-20">
-                <div className="text-center mb-12">
-                  <p className="text-[#39ff14] font-bangers tracking-widest text-2xl mb-4">ACT 6</p>
-                  <h1 className="text-6xl md:text-8xl font-bangers text-white mb-6 tracking-wide drop-shadow-[0_0_10px_rgba(57,255,20,0.8)]">
-                    ACHIEVEMENTS
-                  </h1>
+                    </div>
+                  ))}
                 </div>
-
-                {getChallengesStats() && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    
-                    {/* SLIDE 1: UNLOCKED */}
-                    <Card className="bg-[#39ff14] border-4 border-black rounded-[24px] p-6 shadow-[0_0_20px_rgba(57,255,20,0.4)] relative overflow-hidden">
-                      <div className="absolute top-4 right-4 text-4xl">🏆</div>
-                      <div className="flex items-center gap-3 mb-6">
-                        <Trophy className="w-8 h-8 text-black" />
-                        <p className="text-black font-bangers text-3xl">Unlocked</p>
-                      </div>
-                      <div className="space-y-4">
-                        {getChallengesStats()?.unlocked.map((item, idx) => (
-                          <div key={idx} className="flex items-start gap-3 bg-black/10 p-3 rounded-xl">
-                            <CheckCircle2 className="w-6 h-6 text-black shrink-0 mt-1" />
-                            <div>
-                              <p className="text-black font-bangers text-xl leading-none mb-1">{item.title}</p>
-                              <p className="text-black/70 font-fredoka text-base">{item.desc}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </Card>
-
-                    {/* SLIDE 2: LOCKED */}
-                    <Card className="bg-[#1a1a1a] border-4 border-[#ff00ff] rounded-[24px] p-6 shadow-[0_0_20px_rgba(255,0,255,0.4)] relative overflow-hidden">
-                      <div className="absolute top-4 right-4 text-4xl">🔒</div>
-                      <div className="flex items-center gap-3 mb-6">
-                        <Lock className="w-8 h-8 text-[#ff00ff]" />
-                        <p className="text-[#ff00ff] font-bangers text-3xl">Locked</p>
-                      </div>
-                      <div className="space-y-4">
-                        {getChallengesStats()?.locked.map((item, idx) => (
-                          <div key={idx} className="bg-black/40 p-3 rounded-xl border border-[#ff00ff]/30">
-                            <div className="flex justify-between items-start mb-2">
-                              <div>
-                                <p className="text-white font-bangers text-xl leading-none mb-1">{item.title}</p>
-                                <p className="text-white/50 font-fredoka text-base">{item.desc}</p>
-                              </div>
-                              <Lock className="w-4 h-4 text-[#ff00ff]/50" />
-                            </div>
-                            {item.progress && (
-                              <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-                                <div className="h-full bg-[#ff00ff]" style={{ width: `${item.progress}%` }}></div>
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </Card>
-
-                    {/* SLIDE 3: 2026 CHALLENGE */}
-                    <Card className="bg-[#00ffff] border-4 border-black rounded-[24px] p-6 shadow-[0_0_20px_rgba(0,255,255,0.4)] relative overflow-hidden">
-                      <div className="absolute top-4 right-4 text-4xl">⚔️</div>
-                      <div className="flex items-center gap-3 mb-6">
-                        <Swords className="w-8 h-8 text-black" />
-                        <p className="text-black font-bangers text-3xl">2026 Challenge</p>
-                      </div>
-                      <p className="text-black font-fredoka font-bold mb-4 text-lg">What if in 2026, you...</p>
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 border-2 border-black rounded flex items-center justify-center"></div>
-                          <p className="text-black font-bangers text-2xl">Ran a 10K</p>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 border-2 border-black rounded flex items-center justify-center"></div>
-                          <p className="text-black font-bangers text-2xl">Hit 100 total runs</p>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 border-2 border-black rounded flex items-center justify-center"></div>
-                          <p className="text-black font-bangers text-2xl">Tried ONE morning run</p>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 border-2 border-black rounded flex items-center justify-center"></div>
-                          <p className="text-black font-bangers text-2xl">Broke your pace record</p>
-                        </div>
-                      </div>
-                    </Card>
-
-                    {/* SLIDE 4: THE DARE */}
-                    <Card className="bg-[#ff0000] border-4 border-black rounded-[24px] p-6 shadow-[0_0_20px_rgba(255,0,0,0.4)] flex flex-col justify-center text-center relative overflow-hidden">
-                      <div className="absolute top-4 right-4 text-4xl">🔥</div>
-                      <Flame className="w-16 h-16 text-black mx-auto mb-4 animate-bounce" />
-                      <h3 className="text-black font-bangers text-5xl mb-6">WE DARE YOU</h3>
-                      <div className="space-y-4 mb-8">
-                        <p className="text-white font-bangers text-3xl drop-shadow-md">🔥 Run 3 days in a row</p>
-                        <p className="text-white font-bangers text-3xl drop-shadow-md">🔥 Hit 5K in one run</p>
-                        <p className="text-white font-bangers text-3xl drop-shadow-md">🔥 Run before sunrise</p>
-                      </div>
-                      <p className="text-black font-fredoka font-bold text-2xl">Think you can?</p>
-                    </Card>
-
-                  </div>
-                )}
               </div>
             </section>
 
-            {/* ===================== ACT 7: THE FINALE ===================== */}
-            <section ref={act7Ref} className="relative min-h-screen overflow-hidden bg-black flex items-center">
+            {/* ===================== ACT 6: THE FINALE ===================== */}
+            <section ref={act6Ref} className="relative min-h-screen overflow-hidden bg-black flex items-center">
               {/* Gold/Celebration background */}
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-yellow-600/20 via-black to-black" />
               
@@ -1922,7 +1858,7 @@ const Dashboard = () => {
 
               <div className="w-full px-4 md:px-8 lg:px-12 max-w-[2000px] mx-auto relative z-10 py-20">
                 <div className="text-center mb-12">
-                  <p className="text-[#ffd700] font-bangers tracking-widest text-2xl mb-4">ACT 7</p>
+                  <p className="text-[#ffd700] font-bangers tracking-widest text-2xl mb-4">ACT 6</p>
                   <h1 className="text-6xl md:text-8xl font-bangers text-white mb-6 tracking-wide drop-shadow-[0_0_20px_rgba(255,215,0,0.6)]">
                     THE FINALE
                   </h1>
@@ -2074,6 +2010,47 @@ const Dashboard = () => {
                 )}
               </div>
             </section>
+
+            {/* CAR PERSONALITY REVEAL */}
+            {carPersonality && (
+              <section className="min-h-screen flex items-center justify-center py-20 relative overflow-hidden bg-black">
+                <div className="container mx-auto px-4 relative z-10">
+                  <div className="max-w-4xl mx-auto text-center">
+                    <h2 className="font-bangers text-6xl md:text-8xl text-white mb-12 drop-shadow-[0_0_25px_rgba(255,255,255,0.3)]">
+                      YOUR RUNNING SOUL
+                    </h2>
+                    
+                    <Card className={`bg-gray-900 border-8 ${carPersonality.color.replace('bg-', 'border-')} rounded-[40px] p-8 md:p-12 overflow-hidden relative group transform transition-all duration-500 hover:scale-[1.02]`}>
+                      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
+                      
+                      {/* Car Image */}
+                      <div className="relative z-10 mb-8 transform transition-transform duration-700 group-hover:scale-105 group-hover:rotate-1">
+                        <div className={`absolute inset-0 ${carPersonality.color} blur-[100px] opacity-30 rounded-full`}></div>
+                        <img 
+                          src={carPersonality.image} 
+                          alt={carPersonality.name}
+                          className="w-full max-w-2xl mx-auto drop-shadow-2xl object-contain h-64 md:h-96"
+                          onError={(e) => {
+                            e.currentTarget.src = `https://placehold.co/800x500/1a1a1a/ffffff/png?text=${carPersonality.name.replace(/ /g, '+')}`;
+                          }}
+                        />
+                      </div>
+
+                      {/* Text */}
+                      <div className="relative z-10">
+                        <p className="font-fredoka text-xl text-white/60 uppercase tracking-widest mb-4">BASED ON YOUR STATS, YOU ARE A</p>
+                        <h3 className={`font-bangers text-5xl md:text-7xl mb-6 text-white drop-shadow-lg`}>
+                          {carPersonality.name}
+                        </h3>
+                        <p className="font-fredoka text-2xl md:text-3xl text-white/90 leading-relaxed max-w-2xl mx-auto italic">
+                          "{carPersonality.desc}"
+                        </p>
+                      </div>
+                    </Card>
+                  </div>
+                </div>
+              </section>
+            )}
 
             {/* Last synced */}
             <div className="py-8 text-center text-gray-500 text-sm bg-black">
