@@ -70,6 +70,22 @@ const Dashboard = () => {
     return assignCar(pace, weeklyDist);
   }, [activities]);
 
+  const firstRun = useMemo(() => {
+    if (!activities || activities.length === 0) return null;
+    const runs = activities.filter((a: any) => a.type === 'Run');
+    if (runs.length === 0) return null;
+    // Sort by date ascending (oldest first)
+    return [...runs].sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime())[0];
+  }, [activities]);
+
+  const topLongestRuns = useMemo(() => {
+    if (!activities || activities.length === 0) return [];
+    return [...activities]
+      .filter(a => a.type === 'Run')
+      .sort((a, b) => (b.distance || 0) - (a.distance || 0))
+      .slice(0, 3);
+  }, [activities]);
+
   // Refs for scrolling to acts
   const act1Ref = useRef<HTMLDivElement>(null);
   const act2Ref = useRef<HTMLDivElement>(null);
@@ -1458,6 +1474,76 @@ const Dashboard = () => {
                     </Card>
                   </ScrollReveal>
 
+                  {/* === PART 5.5: FIRST RUN === */}
+                  {firstRun && (
+                    <ScrollReveal className="flex flex-col items-center w-full gap-12 mt-24">
+                      <div className="text-center relative z-10">
+                        <p className="text-white/60 font-fredoka text-xl md:text-2xl mb-2 uppercase tracking-widest">
+                          Where it all began
+                        </p>
+                        <h2 className="text-5xl md:text-7xl font-bangers text-white drop-shadow-lg mb-6">
+                          THE FIRST STEP
+                        </h2>
+                      </div>
+
+                      <Card className="bg-[#0f172a] border-4 border-[#00b4d8] rounded-[40px] p-6 md:p-8 max-w-5xl w-full mx-4 relative overflow-hidden group shadow-[0_0_50px_rgba(0,180,216,0.2)]">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                          
+                          {/* Map Section - Blueish Dark Glowy Theme */}
+                          <div className="relative aspect-square w-full rounded-3xl overflow-hidden border-2 border-[#00b4d8]/50 shadow-[0_0_30px_rgba(0,180,216,0.3)] bg-[#020617] group-hover:shadow-[0_0_50px_rgba(0,180,216,0.5)] transition-all duration-500">
+                            {firstRun.map?.summary_polyline && (
+                               <div className="absolute inset-0 opacity-90 mix-blend-screen filter contrast-125 brightness-110">
+                                  <RunMapViz activity={firstRun} />
+                               </div>
+                            )}
+                            {/* Glow overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#00b4d8]/30 via-transparent to-[#00b4d8]/10 pointer-events-none"></div>
+                            <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg border border-[#00b4d8]/30">
+                              <p className="text-[#00b4d8] font-fredoka text-xs font-bold tracking-wider">FIRST RUN MAP</p>
+                            </div>
+                          </div>
+
+                          {/* Stats Section */}
+                          <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-6">
+                            
+                            {/* Date Badge */}
+                            <div className="bg-[#00b4d8] text-black px-6 py-2 rounded-full font-bangers text-xl tracking-wider shadow-[0_0_15px_rgba(0,180,216,0.6)] transform -rotate-2 hover:rotate-0 transition-transform">
+                              {new Date(firstRun.start_date).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}
+                            </div>
+
+                            {/* Title */}
+                            <div>
+                              <h3 className="text-white font-bangers text-4xl md:text-5xl leading-tight drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">
+                                {firstRun.name}
+                              </h3>
+                              <p className="text-[#00b4d8] font-fredoka text-lg italic mt-2 opacity-80">
+                                "The journey of a thousand miles begins with a single step."
+                              </p>
+                            </div>
+
+                            {/* Stats Grid */}
+                            <div className="grid grid-cols-2 gap-6 w-full bg-white/5 p-6 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+                              <div>
+                                <p className="text-white/50 font-fredoka text-xs uppercase tracking-widest mb-1">Distance</p>
+                                <p className="text-white font-bangers text-4xl">{(firstRun.distance / 1000).toFixed(2)} <span className="text-lg text-white/50">km</span></p>
+                              </div>
+                              <div>
+                                <p className="text-white/50 font-fredoka text-xs uppercase tracking-widest mb-1">Time</p>
+                                <p className="text-white font-bangers text-4xl">{(firstRun.moving_time / 60).toFixed(0)} <span className="text-lg text-white/50">min</span></p>
+                              </div>
+                            </div>
+
+                            <div className="pt-4 border-t border-white/10 w-full">
+                              <p className="text-white/60 font-fredoka text-sm">
+                                You didn't know it then, but you were starting something <span className="text-[#00b4d8] font-bold">LEGENDARY</span>.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </Card>
+                    </ScrollReveal>
+                  )}
+
                 </div>
               </div>
             </section>
@@ -1594,7 +1680,7 @@ const Dashboard = () => {
               </div>
             </section>
 
-            {/* ===================== ACT 3: THE TURNING POINTS ===================== */}
+            {/* ===================== ACT 3: YOUR GREATEST RUNS ===================== */}
             <section ref={act3Ref} className="relative min-h-screen overflow-hidden bg-[#4c1d95] flex items-center">
               {/* Background pattern */}
               <div className="absolute inset-0 opacity-20" style={{
@@ -1606,84 +1692,68 @@ const Dashboard = () => {
                 <div className="text-center mb-12">
                   <p className="text-yellow-300 font-bangers tracking-widest text-2xl mb-4">ACT 3</p>
                   <h1 className="text-6xl md:text-8xl font-bangers text-yellow-400 mb-6 tracking-wide drop-shadow-[6px_6px_0_rgba(0,0,0,0.5)]">
-                    TURNING POINTS
+                    YOUR GREATEST RUNS
                   </h1>
                 </div>
 
-                {getTurningPoints() && (
-                  <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                {topLongestRuns.length > 0 && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     
-                    {/* SLIDE 1: THE START */}
-                    <Card className="bg-white border-4 border-black rounded-[24px] p-6 flex flex-col justify-between shadow-[8px_8px_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0_rgba(0,0,0,1)] transition-all duration-200 min-h-[300px] relative overflow-hidden">
-                      <div className="absolute top-4 right-4 text-4xl">🏁</div>
-                      <div>
-                        <p className="text-black/60 font-fredoka font-bold mb-4">The Start</p>
-                        <p className="text-black font-fredoka text-lg mb-2">Your first run was simply called...</p>
-                        <h3 className="text-[#4c1d95] font-bangers text-4xl mb-2 leading-tight">
-                          "{getTurningPoints()?.firstRun.name}"
-                        </h3>
-                        <p className="text-black/40 font-fredoka text-sm">{getTurningPoints()?.firstRun.date}</p>
-                      </div>
-                      <p className="text-black font-fredoka font-bold mt-4">{getTurningPoints()?.firstRun.quote}</p>
-                    </Card>
-
-                    {/* SLIDE 2: BREAKING POINT */}
-                    <Card className="bg-[#ff006e] border-4 border-black rounded-[24px] p-6 flex flex-col justify-between shadow-[8px_8px_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0_rgba(0,0,0,1)] transition-all duration-200 min-h-[300px] relative overflow-hidden">
-                      <div className="absolute top-4 right-4 text-4xl">🥵</div>
-                      <div>
-                        <p className="text-white/80 font-fredoka font-bold mb-4">Breaking Point</p>
-                        <h3 className="text-white font-bangers text-4xl mb-2 leading-tight">
-                          "{getTurningPoints()?.breakingPoint.name}"
-                        </h3>
-                        <p className="text-white/90 font-fredoka text-xl mb-2">{getTurningPoints()?.breakingPoint.distance} in peak heat</p>
-                        <p className="text-white/60 font-fredoka text-sm">{getTurningPoints()?.breakingPoint.date}</p>
-                      </div>
-                      <p className="text-white font-bangers text-3xl mt-4 tracking-wide">{getTurningPoints()?.breakingPoint.quote}</p>
-                    </Card>
-
-                    {/* SLIDE 3: SOCIAL MOMENT */}
-                    <Card className="bg-[#3a86ff] border-4 border-black rounded-[24px] p-6 flex flex-col justify-between shadow-[8px_8px_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0_rgba(0,0,0,1)] transition-all duration-200 min-h-[300px] relative overflow-hidden">
-                      <div className="absolute top-4 right-4 text-4xl">🤝</div>
-                      <div>
-                        <p className="text-white/80 font-fredoka font-bold mb-4">Social Peak</p>
-                        <h3 className="text-white font-bangers text-4xl mb-2 leading-tight">
-                          "{getTurningPoints()?.socialMoment.name}"
-                        </h3>
-                        <div className="flex items-center gap-2 my-4">
-                          <span className="text-yellow-400 text-4xl">👍</span>
-                          <span className="text-white font-bangers text-6xl">{getTurningPoints()?.socialMoment.kudos}</span>
+                    {topLongestRuns.map((run, index) => (
+                      <Card 
+                        key={run.id}
+                        className={`
+                          ${index === 0 ? 'bg-[#ff006e]' : index === 1 ? 'bg-[#3a86ff]' : 'bg-[#fb5607]'} 
+                          border-4 border-black rounded-[24px] p-8 flex flex-col justify-between 
+                          shadow-[12px_12px_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[6px_6px_0_rgba(0,0,0,1)] 
+                          transition-all duration-200 min-h-[400px] relative overflow-hidden group
+                        `}
+                      >
+                        {/* Rank Badge */}
+                        <div className="absolute -right-12 top-8 bg-black text-white py-2 w-48 text-center rotate-45 font-bangers text-2xl border-y-2 border-white z-10">
+                          #{index + 1} LONGEST
                         </div>
-                        <p className="text-white/90 font-fredoka">They saw you. They noticed.</p>
-                      </div>
-                      <p className="text-white font-fredoka font-bold mt-4">{getTurningPoints()?.socialMoment.quote}</p>
-                    </Card>
 
-                    {/* SLIDE 4: FASTEST MOMENT */}
-                    <Card className="bg-[#fb5607] border-4 border-black rounded-[24px] p-6 flex flex-col justify-between shadow-[8px_8px_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0_rgba(0,0,0,1)] transition-all duration-200 min-h-[300px] relative overflow-hidden">
-                      <div className="absolute top-4 right-4 text-4xl">⚡</div>
-                      <div>
-                        <p className="text-white/80 font-fredoka font-bold mb-4">Speed Unlocked</p>
-                        <p className="text-white/60 font-fredoka text-sm mb-2">{getTurningPoints()?.fastestMoment.date}</p>
-                        <h3 className="text-yellow-300 font-bangers text-6xl mb-2 leading-tight drop-shadow-md">
-                          {formatPace(getTurningPoints()?.fastestMoment.paceRaw)}
-                        </h3>
-                        <p className="text-white font-fredoka text-xl">For one beautiful moment...</p>
-                      </div>
-                      <p className="text-white font-bangers text-3xl mt-4 tracking-wide">{getTurningPoints()?.fastestMoment.quote}</p>
-                    </Card>
+                        {/* Icon */}
+                        <div className="text-6xl mb-6 transform group-hover:scale-110 transition-transform duration-300">
+                          {index === 0 ? '👑' : index === 1 ? '🥈' : '🥉'}
+                        </div>
 
-                    {/* SLIDE 5: CREATIVE PEAK */}
-                    <Card className="bg-[#ffbe0b] border-4 border-black rounded-[24px] p-6 flex flex-col justify-between shadow-[8px_8px_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0_rgba(0,0,0,1)] transition-all duration-200 min-h-[300px] relative overflow-hidden">
-                      <div className="absolute top-4 right-4 text-4xl">🎨</div>
-                      <div>
-                        <p className="text-black/60 font-fredoka font-bold mb-4">Creative Peak</p>
-                        <h3 className="text-black font-bangers text-4xl mb-4 leading-tight">
-                          "{getTurningPoints()?.creativePeak.name}"
-                        </h3>
-                        <p className="text-black font-fredoka text-xl">Who names their run this? YOU.</p>
-                      </div>
-                      <p className="text-[#4c1d95] font-bangers text-3xl mt-4 tracking-wide">{getTurningPoints()?.creativePeak.quote}</p>
-                    </Card>
+                        <div>
+                          <p className="text-white/80 font-fredoka font-bold mb-2 uppercase tracking-widest">
+                            {new Date(run.start_date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}
+                          </p>
+                          <h3 className="text-white font-bangers text-4xl md:text-5xl mb-4 leading-tight drop-shadow-md line-clamp-3">
+                            "{run.name}"
+                          </h3>
+                          
+                          <div className="bg-black/20 rounded-xl p-4 backdrop-blur-sm border border-white/10">
+                            <p className="text-white font-bangers text-6xl mb-1">
+                              {(run.distance / 1000).toFixed(1)} <span className="text-2xl opacity-70">km</span>
+                            </p>
+                            <div className="flex justify-between items-end border-t border-white/20 pt-2 mt-2">
+                              <div>
+                                <p className="text-white/60 text-xs font-fredoka uppercase">Time</p>
+                                <p className="text-white font-bold font-fredoka">{(run.moving_time / 60).toFixed(0)} min</p>
+                              </div>
+                              <div>
+                                <p className="text-white/60 text-xs font-fredoka uppercase text-right">Pace</p>
+                                <p className="text-white font-bold font-fredoka">
+                                  {Math.floor((run.moving_time / 60) / (run.distance / 1000))}:
+                                  {Math.round(((run.moving_time / 60) / (run.distance / 1000) % 1) * 60).toString().padStart(2, '0')} /km
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <p className="text-white font-fredoka font-bold text-xl mt-6 italic opacity-90">
+                          {index === 0 ? "The absolute limit. You went further than ever before." : 
+                           index === 1 ? "So close to the top. A massive effort." : 
+                           "A run to remember. Pure endurance."}
+                        </p>
+                      </Card>
+                    ))}
 
                   </div>
                 )}
@@ -1848,169 +1918,112 @@ const Dashboard = () => {
             </section>
 
             {/* ===================== ACT 6: THE FINALE ===================== */}
-            <section ref={act6Ref} className="relative min-h-screen overflow-hidden bg-black flex items-center">
+            <section ref={act6Ref} className="relative min-h-screen bg-black flex flex-col items-center py-20">
               {/* Gold/Celebration background */}
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-yellow-600/20 via-black to-black" />
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-yellow-600/20 via-black to-black pointer-events-none" />
               
               {/* Spotlights */}
-              <div className="absolute top-0 left-1/4 w-32 h-full bg-white/5 skew-x-12 blur-3xl"></div>
-              <div className="absolute top-0 right-1/4 w-32 h-full bg-white/5 -skew-x-12 blur-3xl"></div>
+              <div className="absolute top-0 left-1/4 w-32 h-full bg-white/5 skew-x-12 blur-3xl pointer-events-none"></div>
+              <div className="absolute top-0 right-1/4 w-32 h-full bg-white/5 -skew-x-12 blur-3xl pointer-events-none"></div>
 
-              <div className="w-full px-4 md:px-8 lg:px-12 max-w-[2000px] mx-auto relative z-10 py-20">
-                <div className="text-center mb-12">
+              <div className="w-full px-4 md:px-8 lg:px-12 max-w-4xl mx-auto relative z-10">
+                
+                {/* HEADER SECTION */}
+                <div className="text-center mb-24">
                   <p className="text-[#ffd700] font-bangers tracking-widest text-2xl mb-4">ACT 6</p>
-                  <h1 className="text-6xl md:text-8xl font-bangers text-white mb-6 tracking-wide drop-shadow-[0_0_20px_rgba(255,215,0,0.6)]">
+                  <h1 className="text-6xl md:text-8xl font-bangers text-white mb-12 tracking-wide drop-shadow-[0_0_20px_rgba(255,215,0,0.6)]">
                     THE FINALE
                   </h1>
+                  
+                  {/* New Intro Text */}
+                  <div className="space-y-4 animate-pulse">
+                    <p className="text-white/80 font-fredoka text-2xl md:text-3xl">Not just kilometers.</p>
+                    <p className="text-white/80 font-fredoka text-2xl md:text-3xl">Not just calories.</p>
+                    <p className="text-[#ffd700] font-bangers text-5xl md:text-7xl py-4 drop-shadow-lg">
+                      {getFinaleStats()?.numbers.runs} MOMENTS
+                    </p>
+                    <p className="text-white font-fredoka font-bold text-2xl md:text-3xl">You chose yourself.</p>
+                    <p className="text-white font-fredoka font-bold text-2xl md:text-3xl">You said YES.</p>
+                  </div>
                 </div>
 
                 {getFinaleStats() && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="flex flex-col gap-24 pb-20">
                     
-                    {/* SLIDE 1: GREATEST HITS */}
-                    <Card className="bg-[#1a1a1a] border-4 border-[#ffd700] rounded-[24px] p-6 shadow-[0_0_30px_rgba(255,215,0,0.2)] md:col-span-2 lg:col-span-1 row-span-2">
-                      <div className="flex items-center gap-3 mb-6 border-b border-white/10 pb-4">
-                        <Clapperboard className="w-8 h-8 text-[#ffd700]" />
-                        <p className="text-[#ffd700] font-bangers text-3xl">THE GREATEST HITS</p>
-                      </div>
-                      <div className="space-y-4">
-                        {getFinaleStats()?.top5.map((hit, idx) => (
-                          <div key={idx} className="flex items-center gap-4 group hover:bg-white/5 p-2 rounded-xl transition-colors">
-                            <div className={`w-12 h-12 ${hit.color} rounded-full flex items-center justify-center text-2xl shadow-lg group-hover:scale-110 transition-transform`}>
-                              {hit.icon}
-                            </div>
-                            <div className="flex-1">
-                              <p className="text-white font-bangers text-xl leading-none mb-1">{hit.title}</p>
-                              <p className="text-white/60 font-fredoka text-sm">{hit.subtitle}</p>
-                            </div>
-                            <div className="text-right">
-                              <p className="text-[#ffd700] font-bangers text-lg">{hit.value}</p>
-                            </div>
+                    {/* SLIDE 3: THE NUMBERS (Now First) */}
+                    <ScrollReveal>
+                      <Card className="bg-white text-black border-8 border-black rounded-[40px] p-8 md:p-12 flex flex-col justify-center items-center text-center transform hover:scale-105 transition-transform duration-500 shadow-[0_0_50px_rgba(255,255,255,0.2)]">
+                        <p className="font-bangers text-9xl leading-none mb-4">{getFinaleStats()?.numbers.runs}</p>
+                        <p className="font-fredoka font-black text-3xl mb-12 tracking-widest">RUNS COMPLETED</p>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+                          <div className="p-4 bg-gray-100 rounded-2xl">
+                            <p className="font-bangers text-4xl md:text-5xl">{getFinaleStats()?.numbers.distance}</p>
+                            <p className="font-fredoka text-sm font-bold text-gray-500 uppercase mt-2">Kilometers</p>
                           </div>
-                        ))}
-                      </div>
-                    </Card>
-
-                    {/* SLIDE 2: DNA */}
-                    <Card className="bg-black border-4 border-white rounded-[24px] p-6 relative overflow-hidden">
-                      <div className="absolute right-0 top-0 w-32 h-32 bg-blue-500/20 blur-3xl rounded-full"></div>
-                      <div className="flex items-center gap-3 mb-6">
-                        <Dna className="w-8 h-8 text-blue-400" />
-                        <p className="text-white font-bangers text-3xl">Your Running DNA</p>
-                      </div>
-                      <div className="space-y-4">
-                        <div className="bg-white/10 rounded-xl p-3">
-                          <div className="flex justify-between mb-1">
-                            <span className="text-white font-fredoka">Night Owl 🌙</span>
-                            <span className="text-blue-400 font-bangers">{getFinaleStats()?.dna.nightOwl}%</span>
+                          <div className="p-4 bg-gray-100 rounded-2xl">
+                            <p className="font-bangers text-4xl md:text-5xl">{getFinaleStats()?.numbers.minutes}</p>
+                            <p className="font-fredoka text-sm font-bold text-gray-500 uppercase mt-2">Minutes</p>
                           </div>
-                          <div className="w-full h-2 bg-black rounded-full overflow-hidden">
-                            <div className="h-full bg-blue-400" style={{ width: `${getFinaleStats()?.dna.nightOwl}%` }}></div>
+                          <div className="p-4 bg-gray-100 rounded-2xl">
+                            <p className="font-bangers text-4xl md:text-5xl">{getFinaleStats()?.numbers.elevation}</p>
+                            <p className="font-fredoka text-sm font-bold text-gray-500 uppercase mt-2">Meters Climbed</p>
                           </div>
                         </div>
-                        <div className="bg-white/10 rounded-xl p-3">
-                          <div className="flex justify-between mb-1">
-                            <span className="text-white font-fredoka">Weekend Runner 📅</span>
-                            <span className="text-green-400 font-bangers">{getFinaleStats()?.dna.weekend}%</span>
-                          </div>
-                          <div className="w-full h-2 bg-black rounded-full overflow-hidden">
-                            <div className="h-full bg-green-400" style={{ width: `${getFinaleStats()?.dna.weekend}%` }}></div>
-                          </div>
-                        </div>
-                        <div className="bg-white/10 rounded-xl p-3">
-                          <div className="flex justify-between mb-1">
-                            <span className="text-white font-fredoka">Solo Warrior 🐺</span>
-                            <span className="text-red-400 font-bangers">{getFinaleStats()?.dna.solo}%</span>
-                          </div>
-                          <div className="w-full h-2 bg-black rounded-full overflow-hidden">
-                            <div className="h-full bg-red-400" style={{ width: `${getFinaleStats()?.dna.solo}%` }}></div>
-                          </div>
-                        </div>
-                        <p className="text-center text-white font-bangers text-2xl mt-4">100% UNSTOPPABLE 💪</p>
-                      </div>
-                    </Card>
-
-                    {/* SLIDE 3: THE NUMBERS */}
-                    <Card className="bg-white text-black border-4 border-black rounded-[24px] p-6 flex flex-col justify-center items-center text-center">
-                      <p className="font-bangers text-8xl leading-none mb-2">{getFinaleStats()?.numbers.runs}</p>
-                      <p className="font-fredoka font-bold text-xl mb-6">RUNS</p>
-                      
-                      <div className="grid grid-cols-2 gap-4 w-full">
-                        <div>
-                          <p className="font-bangers text-3xl">{getFinaleStats()?.numbers.distance}</p>
-                          <p className="font-fredoka text-sm">KILOMETERS</p>
-                        </div>
-                        <div>
-                          <p className="font-bangers text-3xl">{getFinaleStats()?.numbers.minutes}</p>
-                          <p className="font-fredoka text-sm">MINUTES</p>
-                        </div>
-                        <div>
-                          <p className="font-bangers text-3xl">{getFinaleStats()?.numbers.elevation}</p>
-                          <p className="font-fredoka text-sm">METERS CLIMBED</p>
-                        </div>
-                        <div>
-                          <p className="font-bangers text-3xl">0</p>
-                          <p className="font-fredoka text-sm">REGRETS</p>
-                        </div>
-                      </div>
-                    </Card>
-
-                    {/* SLIDE 4: WHAT IT GAVE YOU */}
-                    <Card className="bg-[#ff006e] border-4 border-white rounded-[24px] p-6 text-center flex flex-col justify-center">
-                      <Heart className="w-16 h-16 text-white mx-auto mb-4 animate-pulse" />
-                      <p className="text-white/80 font-fredoka text-lg mb-2">Not just kilometers.</p>
-                      <p className="text-white/80 font-fredoka text-lg mb-6">Not just calories.</p>
-                      <p className="text-white font-bangers text-4xl mb-2">{getFinaleStats()?.numbers.runs} MOMENTS</p>
-                      <p className="text-white font-fredoka font-bold">You chose yourself.</p>
-                      <p className="text-white font-fredoka font-bold">You said YES.</p>
-                    </Card>
+                      </Card>
+                    </ScrollReveal>
 
                     {/* SLIDE 5: CITY */}
-                    <Card className="bg-[#2b2d42] border-4 border-white rounded-[24px] p-0 relative overflow-hidden min-h-[300px] group">
-                      {/* Map Background Placeholder */}
-                      {!loading && activities.length > 0 && activities[0]?.map?.summary_polyline && (
-                        <div className="absolute inset-0 opacity-50 group-hover:opacity-70 transition-opacity">
-                           <RunMapViz activity={activities[0]} />
+                    <ScrollReveal>
+                      <Card className="bg-[#2b2d42] border-8 border-white rounded-[40px] p-0 relative overflow-hidden min-h-[500px] group shadow-2xl">
+                        {/* Map Background Placeholder */}
+                        {!loading && activities.length > 0 && activities[0]?.map?.summary_polyline && (
+                          <div className="absolute inset-0 opacity-60 group-hover:opacity-80 transition-opacity duration-700">
+                             <RunMapViz activity={activities[0]} />
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
+                        <div className="absolute bottom-0 left-0 right-0 p-12">
+                          <div className="flex items-center gap-4 mb-4">
+                            <MapPin className="w-12 h-12 text-[#ffd700]" />
+                            <p className="text-white font-bangers text-4xl md:text-5xl">Sahibzada Ajit Singh Nagar</p>
+                          </div>
+                          <p className="text-white/80 font-fredoka text-2xl">Felt your footsteps.</p>
+                          <p className="text-white font-bold font-fredoka text-3xl mt-2">You LEFT YOUR MARK.</p>
                         </div>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-                      <div className="absolute bottom-0 left-0 right-0 p-6">
-                        <div className="flex items-center gap-2 mb-2">
-                          <MapPin className="text-[#ffd700]" />
-                          <p className="text-white font-bangers text-2xl">Sahibzada Ajit Singh Nagar</p>
-                        </div>
-                        <p className="text-white/80 font-fredoka">Felt your footsteps.</p>
-                        <p className="text-white font-bold font-fredoka mt-2">You LEFT YOUR MARK.</p>
-                      </div>
-                    </Card>
+                      </Card>
+                    </ScrollReveal>
 
                     {/* SLIDE 6: CLUB */}
-                    <Card className="bg-[#8338ec] border-4 border-white rounded-[24px] p-6 text-center flex flex-col justify-center">
-                      <Crown className="w-16 h-16 text-[#ffd700] mx-auto mb-4" />
-                      <p className="text-white font-bangers text-3xl mb-4">'Bhai log 💪'</p>
-                      <p className="text-white/90 font-fredoka mb-2">They saw you grind.</p>
-                      <p className="text-white/90 font-fredoka mb-6">They witnessed the journey.</p>
-                      <div className="bg-white/20 rounded-xl p-4">
-                        <p className="text-white font-fredoka text-sm">You're not just a member.</p>
-                        <p className="text-[#ffd700] font-bangers text-2xl mt-1">YOU'RE FAMILY.</p>
-                      </div>
-                    </Card>
+                    <ScrollReveal>
+                      <Card className="bg-[#8338ec] border-8 border-white rounded-[40px] p-12 text-center flex flex-col justify-center shadow-[0_0_40px_rgba(131,56,236,0.4)]">
+                        <Crown className="w-24 h-24 text-[#ffd700] mx-auto mb-8 drop-shadow-lg" />
+                        <p className="text-white font-bangers text-5xl md:text-6xl mb-6">'Bhai log 💪'</p>
+                        <p className="text-white/90 font-fredoka text-2xl mb-2">They saw you grind.</p>
+                        <p className="text-white/90 font-fredoka text-2xl mb-10">They witnessed the journey.</p>
+                        <div className="bg-white/20 rounded-3xl p-8 backdrop-blur-sm">
+                          <p className="text-white font-fredoka text-xl">You're not just a member.</p>
+                          <p className="text-[#ffd700] font-bangers text-4xl md:text-5xl mt-2">YOU'RE FAMILY.</p>
+                        </div>
+                      </Card>
+                    </ScrollReveal>
 
                     {/* SLIDE 7: FINAL MESSAGE */}
-                    <Card className="bg-black border-4 border-[#ffd700] rounded-[24px] p-8 text-center flex flex-col justify-center md:col-span-2 lg:col-span-3 min-h-[300px]">
-                      <p className="text-white/60 font-bangers text-3xl mb-4">2025 WAS JUST THE BEGINNING</p>
-                      <h2 className="text-white font-bangers text-8xl mb-8 drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">
-                        2026?
-                      </h2>
-                      <p className="text-[#ffd700] font-bangers text-5xl mb-8">THAT'S YOUR YEAR.</p>
-                      <p className="text-white font-fredoka text-xl tracking-widest">SEE YOU ON THE ROAD, CHAMPION.</p>
-                    </Card>
+                    <ScrollReveal>
+                      <div className="text-center py-20">
+                        <p className="text-white/60 font-bangers text-4xl mb-6">2025 WAS JUST THE BEGINNING</p>
+                        <h2 className="text-white font-bangers text-9xl mb-8 drop-shadow-[0_0_30px_rgba(255,255,255,0.5)]">
+                          2026?
+                        </h2>
+                        <p className="text-[#ffd700] font-bangers text-6xl md:text-7xl mb-12 animate-bounce">THAT'S YOUR YEAR.</p>
+                        <p className="text-white font-fredoka text-2xl tracking-[0.2em] uppercase border-t border-white/20 pt-12 inline-block">SEE YOU ON THE ROAD, CHAMPION.</p>
+                      </div>
+                    </ScrollReveal>
 
                   </div>
                 )}
               </div>
             </section>
-
             {/* CAR PERSONALITY REVEAL */}
             {carPersonality && (
               <section className="min-h-screen flex items-center justify-center py-20 relative overflow-hidden bg-black">
