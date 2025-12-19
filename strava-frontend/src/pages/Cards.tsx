@@ -19,21 +19,50 @@ const Cards = () => {
     name: string;
     username: string;
     profilePhoto?: string;
+    originalProfilePhoto?: string;
     totalDistance: number;
     totalRuns: number;
     totalTime: number;
+    totalMinutes: number;
     avgPace: string;
     topGenre: string;
     calories: number;
     fastestPace: string;
     longestRun: number;
   } | null>(null);
+  
+  // State to manage which image source to display
+  const [displayImage, setDisplayImage] = useState<string | undefined>(undefined);
 
   // Helper function to get proxied image URL
   const getProxiedImageUrl = (url: string): string => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
     return `${backendUrl}/api/proxy/image?url=${encodeURIComponent(url)}`;
   };
+
+  // Effect to attempt upgrading to proxy image for better download quality
+  useEffect(() => {
+    if (!cardData?.originalProfilePhoto) return;
+
+    const originalUrl = cardData.originalProfilePhoto;
+    const proxyUrl = getProxiedImageUrl(originalUrl);
+
+    // Initially set to original to ensure immediate display
+    setDisplayImage(originalUrl);
+
+    // Try to load the proxy version in the background
+    const img = new Image();
+    img.src = proxyUrl;
+    img.onload = () => {
+      // If proxy loads successfully, switch to it (enables CORS-free download)
+      setDisplayImage(proxyUrl);
+    };
+    img.onerror = () => {
+      // If proxy fails (backend down), we just stay with the original
+      // This prevents the broken image UI, though console might still show a network error
+      console.warn("Backend proxy unreachable, using original profile image");
+    };
+  }, [cardData?.originalProfilePhoto]);
 
   useEffect(() => {
     const load = async () => {
@@ -47,6 +76,10 @@ const Cards = () => {
         const totalDistance = calculateTotalDistance(activities);
         const totalTime = calculateTotalTime(activities);
         const avgPaceNum = getAveragePace(activities);
+
+        // Calculate total minutes directly
+        const totalTimeSeconds = activities.reduce((acc: number, curr: any) => acc + (curr.moving_time || 0), 0);
+        const totalMinutes = Math.round(totalTimeSeconds / 60);
 
         // Calculate additional stats
         // Calories
@@ -83,16 +116,19 @@ const Cards = () => {
         else if (eveningRuns > activities.length * 0.4) topGenre = "Evening Warrior";
 
         // Get proxied profile photo URL
-        const photoUrl = profile.profile_medium || profile.profile;
-        const profilePhotoUrl = photoUrl ? getProxiedImageUrl(photoUrl) : undefined;
-
+        // Prefer high-res profile image, fallback to medium
+        const photoUrl = profile.profile || profile.profile_medium;
+        // We don't set the proxy URL immediately anymore, we let the effect handle the upgrade
+        
         const stats = {
           name: `${profile.firstname ?? ""} ${profile.lastname ?? ""}`.trim() || "Runner",
           username: profile.username || profile.firstname || "athlete",
-          profilePhoto: profilePhotoUrl,
+          profilePhoto: photoUrl, // Default to original
+          originalProfilePhoto: photoUrl,
           totalDistance: Math.round(totalDistance),
           totalRuns: activities.length,
           totalTime: Math.round(totalTime),
+          totalMinutes,
           avgPace: avgPaceNum ? formatPace(avgPaceNum) : "-",
           topGenre,
           calories: Math.round(totalCalories),
@@ -281,8 +317,13 @@ const Cards = () => {
                 {/* Profile Image */}
                 <div className="relative mb-4">
                   <div className="w-32 h-32 rounded-full border-[5px] border-black overflow-hidden bg-white relative z-10">
-                    {cardData.profilePhoto ? (
-                      <img src={cardData.profilePhoto} alt={cardData.name} className="w-full h-full object-cover" />
+                    {displayImage ? (
+                      <img 
+                        src={displayImage} 
+                        alt={cardData.name} 
+                        className="w-full h-full object-cover" 
+                        crossOrigin={displayImage.includes('/api/proxy') ? "anonymous" : undefined}
+                      />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-black text-5xl font-bangers text-[#CCFF00]">
                         {cardData.name.charAt(0)}
@@ -304,45 +345,58 @@ const Cards = () => {
                   </p>
                 </div>
 
-                {/* Main Stat: Distance */}
-                <div className="w-full bg-black rounded-[20px] p-4 border-[3px] border-white/20 relative overflow-hidden mb-4">
-                  <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#CCFF00] via-[#00F0FF] to-[#CCFF00]"></div>
-                  <p className="text-[#CCFF00] font-fredoka font-bold uppercase tracking-widest text-xs mb-1">Total Distance</p>
-                  <div className="flex items-baseline justify-center gap-2">
-                    <span className="text-white font-bangers text-6xl tracking-wide leading-none">
-                      {Math.round(cardData.totalDistance).toLocaleString()}
+                {/* Row 1: Runs & Distance */}
+                <div className="grid grid-cols-2 gap-3 w-full mb-3">
+                  {/* Total Runs */}
+                  <div className="bg-[#8338ec] rounded-[16px] p-3 border-[3px] border-black shadow-[3px_3px_0_#000] flex flex-col items-center justify-center transform hover:-translate-y-1 transition-transform">
+                    <span className="text-xl mb-1">👟</span>
+                    <span className="text-white font-bangers text-3xl leading-none">
+                      {cardData.totalRuns}
                     </span>
-                    <span className="text-white/50 font-bangers text-2xl">KM</span>
+                    <span className="text-white/80 font-fredoka text-[10px] uppercase font-bold">Total Runs</span>
+                  </div>
+
+                  {/* Total Distance */}
+                  <div className="bg-black rounded-[16px] p-3 border-[3px] border-white/20 shadow-[3px_3px_0_#000] flex flex-col items-center justify-center transform hover:-translate-y-1 transition-transform relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#CCFF00] via-[#00F0FF] to-[#CCFF00]"></div>
+                    <span className="text-xl mb-1">📏</span>
+                    <div className="flex items-baseline gap-1">
+                        <span className="text-white font-bangers text-3xl leading-none">
+                        {Math.round(cardData.totalDistance).toLocaleString()}
+                        </span>
+                        <span className="text-[#CCFF00] font-bangers text-sm">KM</span>
+                    </div>
+                    <span className="text-white/60 font-fredoka text-[10px] uppercase font-bold">Distance</span>
                   </div>
                 </div>
 
-                {/* Stats Grid */}
+                {/* Row 2: Calories, Mins, Regrets */}
                 <div className="grid grid-cols-3 gap-2 w-full">
                   {/* Calories */}
-                  <div className="bg-[#8338ec] rounded-[16px] p-2 border-[3px] border-black shadow-[3px_3px_0_#000] flex flex-col items-center justify-center transform hover:-translate-y-1 transition-transform">
-                    <span className="text-xl mb-1">🔥</span>
-                    <span className="text-white font-bangers text-lg leading-none">
+                  <div className="bg-[#ffbe0b] rounded-[16px] p-2 border-[3px] border-black shadow-[3px_3px_0_#000] flex flex-col items-center justify-center transform hover:-translate-y-1 transition-transform">
+                    <span className="text-lg mb-1">🔥</span>
+                    <span className="text-black font-bangers text-xl leading-none">
                       {(cardData.calories / 1000).toFixed(1)}k
                     </span>
-                    <span className="text-white/80 font-fredoka text-[9px] uppercase font-bold">Cals</span>
+                    <span className="text-black/80 font-fredoka text-[8px] uppercase font-bold">Cals</span>
                   </div>
 
-                  {/* Fastest Run */}
+                  {/* Total Minutes */}
                   <div className="bg-[#ff006e] rounded-[16px] p-2 border-[3px] border-black shadow-[3px_3px_0_#000] flex flex-col items-center justify-center transform hover:-translate-y-1 transition-transform delay-75">
-                    <span className="text-xl mb-1">🚀</span>
-                    <span className="text-white font-bangers text-lg leading-none">
-                      {cardData.fastestPace}
+                    <span className="text-lg mb-1">⏱️</span>
+                    <span className="text-white font-bangers text-xl leading-none">
+                      {cardData.totalMinutes.toLocaleString()}
                     </span>
-                    <span className="text-white/80 font-fredoka text-[9px] uppercase font-bold">/km</span>
+                    <span className="text-white/80 font-fredoka text-[8px] uppercase font-bold">Mins</span>
                   </div>
 
-                  {/* Longest Run */}
-                  <div className="bg-[#ffbe0b] rounded-[16px] p-2 border-[3px] border-black shadow-[3px_3px_0_#000] flex flex-col items-center justify-center transform hover:-translate-y-1 transition-transform delay-150">
-                    <span className="text-xl mb-1">🏆</span>
-                    <span className="text-black font-bangers text-lg leading-none">
-                      {cardData.longestRun}
+                  {/* 0 Regrets */}
+                  <div className="bg-[#3a86ff] rounded-[16px] p-2 border-[3px] border-black shadow-[3px_3px_0_#000] flex flex-col items-center justify-center transform hover:-translate-y-1 transition-transform delay-150">
+                    <span className="text-lg mb-1">😎</span>
+                    <span className="text-white font-bangers text-xl leading-none">
+                      0
                     </span>
-                    <span className="text-black/80 font-fredoka text-[9px] uppercase font-bold">km</span>
+                    <span className="text-white/80 font-fredoka text-[8px] uppercase font-bold">Regrets</span>
                   </div>
                 </div>
 

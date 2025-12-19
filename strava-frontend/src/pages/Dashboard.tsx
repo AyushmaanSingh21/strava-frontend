@@ -12,7 +12,7 @@ import {
   getAveragePace,
   findPersonalRecords,
 } from "@/utils/dataProcessor";
-import { assignCar } from "@/utils/carPersonality";
+import { assignAnimal } from "@/utils/animalPersonality";
 
 const ScrollReveal = ({ children, className = "", delay = 0 }: { children: React.ReactNode, className?: string, delay?: number }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -51,7 +51,7 @@ const Dashboard = () => {
   const [lastSynced, setLastSynced] = useState<string>("");
   const [currentAct, setCurrentAct] = useState(1);
 
-  const carPersonality = useMemo(() => {
+  const animalPersonality = useMemo(() => {
     if (!activities.length) return null;
     
     const pace = getAveragePace(activities) || 10;
@@ -67,7 +67,7 @@ const Dashboard = () => {
     
     const weeklyDist = totalDist / diffWeeks;
     
-    return assignCar(pace, weeklyDist);
+    return assignAnimal(pace, weeklyDist);
   }, [activities]);
 
   const firstRun = useMemo(() => {
@@ -2008,6 +2008,45 @@ const Dashboard = () => {
                       </Card>
                     </ScrollReveal>
 
+                    {/* ANIMAL PERSONALITY REVEAL */}
+                    {animalPersonality && (
+                      <ScrollReveal>
+                        <div className="max-w-4xl mx-auto text-center">
+                          <h2 className="font-bangers text-6xl md:text-8xl text-white mb-12 drop-shadow-[0_0_25px_rgba(255,255,255,0.3)]">
+                            YOUR RUNNING SOUL
+                          </h2>
+                          
+                          <Card className={`bg-gray-900 border-8 ${animalPersonality.color.replace('bg-', 'border-')} rounded-[40px] p-8 md:p-12 overflow-hidden relative group transform transition-all duration-500 hover:scale-[1.02]`}>
+                            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
+                            
+                            {/* Animal Image */}
+                            <div className="relative z-10 mb-8 transform transition-transform duration-700 group-hover:scale-105 group-hover:rotate-1">
+                              <div className={`absolute inset-0 ${animalPersonality.color} blur-[100px] opacity-30 rounded-full`}></div>
+                              <img 
+                                src={animalPersonality.image} 
+                                alt={animalPersonality.animal}
+                                className="w-full max-w-2xl mx-auto drop-shadow-2xl object-contain h-64 md:h-96"
+                                onError={(e) => {
+                                  e.currentTarget.src = `https://placehold.co/800x500/1a1a1a/ffffff/png?text=${animalPersonality.animal.replace(/ /g, '+')}`;
+                                }}
+                              />
+                            </div>
+
+                            {/* Text */}
+                            <div className="relative z-10">
+                              <p className="font-fredoka text-xl text-white/60 uppercase tracking-widest mb-4">BASED ON YOUR STATS, YOU ARE</p>
+                              <h3 className={`font-bangers text-5xl md:text-7xl mb-6 text-white drop-shadow-lg leading-tight`}>
+                                {animalPersonality.name}
+                              </h3>
+                              <p className="font-fredoka text-2xl md:text-3xl text-white/90 leading-relaxed max-w-2xl mx-auto italic">
+                                "{animalPersonality.desc}"
+                              </p>
+                            </div>
+                          </Card>
+                        </div>
+                      </ScrollReveal>
+                    )}
+
                     {/* SLIDE 7: FINAL MESSAGE */}
                     <ScrollReveal>
                       <div className="text-center py-20">
@@ -2024,47 +2063,6 @@ const Dashboard = () => {
                 )}
               </div>
             </section>
-            {/* CAR PERSONALITY REVEAL */}
-            {carPersonality && (
-              <section className="min-h-screen flex items-center justify-center py-20 relative overflow-hidden bg-black">
-                <div className="container mx-auto px-4 relative z-10">
-                  <div className="max-w-4xl mx-auto text-center">
-                    <h2 className="font-bangers text-6xl md:text-8xl text-white mb-12 drop-shadow-[0_0_25px_rgba(255,255,255,0.3)]">
-                      YOUR RUNNING SOUL
-                    </h2>
-                    
-                    <Card className={`bg-gray-900 border-8 ${carPersonality.color.replace('bg-', 'border-')} rounded-[40px] p-8 md:p-12 overflow-hidden relative group transform transition-all duration-500 hover:scale-[1.02]`}>
-                      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
-                      
-                      {/* Car Image */}
-                      <div className="relative z-10 mb-8 transform transition-transform duration-700 group-hover:scale-105 group-hover:rotate-1">
-                        <div className={`absolute inset-0 ${carPersonality.color} blur-[100px] opacity-30 rounded-full`}></div>
-                        <img 
-                          src={carPersonality.image} 
-                          alt={carPersonality.name}
-                          className="w-full max-w-2xl mx-auto drop-shadow-2xl object-contain h-64 md:h-96"
-                          onError={(e) => {
-                            e.currentTarget.src = `https://placehold.co/800x500/1a1a1a/ffffff/png?text=${carPersonality.name.replace(/ /g, '+')}`;
-                          }}
-                        />
-                      </div>
-
-                      {/* Text */}
-                      <div className="relative z-10">
-                        <p className="font-fredoka text-xl text-white/60 uppercase tracking-widest mb-4">BASED ON YOUR STATS, YOU ARE A</p>
-                        <h3 className={`font-bangers text-5xl md:text-7xl mb-6 text-white drop-shadow-lg`}>
-                          {carPersonality.name}
-                        </h3>
-                        <p className="font-fredoka text-2xl md:text-3xl text-white/90 leading-relaxed max-w-2xl mx-auto italic">
-                          "{carPersonality.desc}"
-                        </p>
-                      </div>
-                    </Card>
-                  </div>
-                </div>
-              </section>
-            )}
-
             {/* Last synced */}
             <div className="py-8 text-center text-gray-500 text-sm bg-black">
               {error ? (
