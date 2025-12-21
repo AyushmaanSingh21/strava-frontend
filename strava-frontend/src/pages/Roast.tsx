@@ -30,6 +30,26 @@ const Roast = () => {
     "Preparing roast... 🔥",
   ];
 
+  // Check for stored roast on mount
+  useEffect(() => {
+    const storedRoast = localStorage.getItem("strava_roast_data");
+    if (storedRoast) {
+      try {
+        const parsed = JSON.parse(storedRoast);
+        if (parsed.roastText && parsed.athlete) {
+          setRoastText(parsed.roastText);
+          setRawStats(parsed.rawStats);
+          setAnalysisStats(parsed.analysisStats);
+          setAthlete(parsed.athlete);
+          setPageState("roast");
+        }
+      } catch (e) {
+        console.error("Failed to parse stored roast", e);
+        localStorage.removeItem("strava_roast_data");
+      }
+    }
+  }, []);
+
   useEffect(() => {
     if (pageState !== "analyzing") return;
     let messageIndex = 0;
@@ -63,10 +83,6 @@ const Roast = () => {
         const roastContent = result.roast || "No roast generated";
         const statsData = result.stats || null;
         
-        setRoastText(roastContent);
-        setRawStats(statsData);
-        setAthlete(result.athlete);
-        
         // Build simple stats list for display
         const s = result.stats || {};
         const statsList = [
@@ -76,7 +92,19 @@ const Roast = () => {
           s.totalDistance ? { label: "Total distance", value: `${s.totalDistance} km` } : null,
           s.consistencyScore ? { label: "Consistency score", value: `${s.consistencyScore}/10` } : null,
         ].filter(Boolean) as Array<{ label: string; value: string; comment?: string }>;
+
+        setRoastText(roastContent);
+        setRawStats(statsData);
+        setAthlete(result.athlete);
         setAnalysisStats(statsList);
+        
+        // Save to localStorage
+        localStorage.setItem("strava_roast_data", JSON.stringify({
+          roastText: roastContent,
+          rawStats: statsData,
+          analysisStats: statsList,
+          athlete: result.athlete
+        }));
         
         clearInterval(progressInterval);
         clearInterval(messageInterval);

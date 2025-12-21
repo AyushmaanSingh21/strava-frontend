@@ -1179,9 +1179,9 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black w-full">
+    <div className="min-h-screen bg-black w-full overflow-x-hidden">
       {/* SIDE SCROLL INDICATOR */}
-      <div className="fixed right-6 md:right-10 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-6 py-6 px-3 bg-black/80 backdrop-blur-md rounded-full border-2 border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+      <div className="fixed right-6 md:right-10 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-6 py-6 px-3 bg-black/80 backdrop-blur-md rounded-full border-2 border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.5)] hidden md:flex">
         {[1, 2, 3, 4, 5, 6, 7].map((act) => (
           <button
             key={act}
@@ -1429,30 +1429,67 @@ const Dashboard = () => {
                       </div>
                     </div>
 
-                    {/* MANHATTAN CARD */}
-                    <Card className="bg-[#001d3d] border-4 border-[#3a86ff] rounded-[40px] p-6 md:p-10 max-w-3xl w-full mx-4 transform hover:scale-105 transition-all duration-300 shadow-[0_0_30px_rgba(58,134,255,0.4)] relative overflow-hidden group">
-                      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/city-rain.png')] opacity-20 mix-blend-overlay"></div>
-                      <div className="absolute -right-12 -bottom-12 text-9xl opacity-20 rotate-12 group-hover:rotate-0 transition-transform duration-500">🏙️</div>
+                    {/* DYNAMIC DISTANCE CARD */}
+                    {(() => {
+                      const longestRun = getJourneyStats()?.longestRunDistance || 0;
+                      const isMarathon = longestRun >= 15;
                       
-                      <div className="flex flex-col md:flex-row items-center gap-6 md:gap-12 relative z-10">
-                        <div className="text-7xl md:text-9xl animate-pulse drop-shadow-md">🗽</div>
-                        <div className="text-center md:text-left flex-1">
-                          <div className="bg-white/10 inline-block px-4 py-1 rounded-full mb-3 border border-[#3a86ff]/50 backdrop-blur-sm">
-                            <p className="text-[#3a86ff] font-fredoka text-sm md:text-base font-bold uppercase tracking-wider">
-                              Urban Legend
-                            </p>
+                      const comparison = isMarathon ? {
+                        name: "Marathon",
+                        dist: 42.2,
+                        icon: "🏅",
+                        bg: "bg-[#ffd60a]",
+                        border: "border-[#003566]",
+                        text: "Marathon Master",
+                        desc: "You're basically an Olympian. Athens is calling! 🇬🇷",
+                        accent: "text-[#003566]",
+                        shadow: "shadow-[0_0_30px_rgba(255,214,10,0.6)]",
+                        subBg: "bg-[#003566]/10",
+                        subBorder: "border-[#003566]/50",
+                        subText: "text-[#003566]"
+                      } : {
+                        name: "Golden Gate Bridge",
+                        dist: 2.7,
+                        icon: "🌉",
+                        bg: "bg-[#c1121f]",
+                        border: "border-[#fdf0d5]",
+                        text: "Bridge Conqueror",
+                        desc: "That's a lot of suspension cables! San Francisco would be proud. 🌁",
+                        accent: "text-[#fdf0d5]",
+                        shadow: "shadow-[0_0_30px_rgba(193,18,31,0.6)]",
+                        subBg: "bg-[#fdf0d5]/10",
+                        subBorder: "border-[#fdf0d5]/50",
+                        subText: "text-[#fdf0d5]"
+                      };
+
+                      return (
+                        <Card className={`${comparison.bg} border-4 ${comparison.border} rounded-[40px] p-6 md:p-10 max-w-3xl w-full mx-4 transform hover:scale-105 transition-all duration-300 ${comparison.shadow} relative overflow-hidden group`}>
+                          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/city-rain.png')] opacity-20 mix-blend-overlay"></div>
+                          <div className="absolute -right-12 -bottom-12 text-9xl opacity-20 rotate-12 group-hover:rotate-0 transition-transform duration-500">
+                            {isMarathon ? '🏃' : '🌁'}
                           </div>
-                          <h3 className="text-white font-bangers text-3xl md:text-5xl leading-tight mb-2 drop-shadow-md">
-                            That's like running <span className="text-[#3a86ff] drop-shadow-[0_0_10px_rgba(58,134,255,0.5)]">
-                              {((getJourneyStats()?.longestRunDistance || 0) / 21.6).toFixed(1)}
-                            </span> times the length of Manhattan!
-                          </h3>
-                          <p className="text-white/90 font-fredoka text-lg">
-                            From the Battery to Inwood. You basically own the city now. 🚕
-                          </p>
-                        </div>
-                      </div>
-                    </Card>
+                          
+                          <div className="flex flex-col md:flex-row items-center gap-6 md:gap-12 relative z-10">
+                            <div className="text-7xl md:text-9xl animate-pulse drop-shadow-md">{comparison.icon}</div>
+                            <div className="text-center md:text-left flex-1">
+                              <div className={`${comparison.subBg} inline-block px-4 py-1 rounded-full mb-3 border ${comparison.subBorder} backdrop-blur-sm`}>
+                                <p className={`${comparison.subText} font-fredoka text-sm md:text-base font-bold uppercase tracking-wider`}>
+                                  {comparison.text}
+                                </p>
+                              </div>
+                              <h3 className="text-white font-bangers text-3xl md:text-5xl leading-tight mb-2 drop-shadow-md">
+                                That's like running <span className={`${comparison.accent} drop-shadow-md`}>
+                                  {(longestRun / comparison.dist).toFixed(1)}
+                                </span> times the length of the {comparison.name}!
+                              </h3>
+                              <p className="text-white/90 font-fredoka text-lg">
+                                {comparison.desc}
+                              </p>
+                            </div>
+                          </div>
+                        </Card>
+                      );
+                    })()}
                   </ScrollReveal>
 
                   {/* === PART 5: FASTEST RUN === */}
@@ -1631,7 +1668,7 @@ const Dashboard = () => {
                         </div>
                       </div>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
                         {(() => {
                           const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
                           const runDates = new Set(activities.map(a => new Date(a.start_date_local).toISOString().split('T')[0]));
@@ -1651,15 +1688,15 @@ const Dashboard = () => {
                             const hasRuns = runCount > 0;
                             
                             return (
-                              <div key={month} className={`bg-white/5 rounded-xl p-4 border ${hasRuns ? 'border-[#ccff00]/30' : 'border-white/5'} hover:border-[#ccff00] transition-colors duration-300 group`}>
-                                <div className="flex justify-between items-center mb-3">
-                                  <span className={`font-bangers text-2xl ${hasRuns ? 'text-[#ccff00]' : 'text-white/30'}`}>{month}</span>
-                                  <div className="bg-black/40 px-2 py-0.5 rounded text-xs font-fredoka text-white/60">
-                                    {runCount} Runs
+                              <div key={month} className={`bg-white/5 rounded-xl p-2 md:p-4 border ${hasRuns ? 'border-[#ccff00]/30' : 'border-white/5'} hover:border-[#ccff00] transition-colors duration-300 group`}>
+                                <div className="flex justify-between items-center mb-2 md:mb-3">
+                                  <span className={`font-bangers text-lg md:text-2xl ${hasRuns ? 'text-[#ccff00]' : 'text-white/30'}`}>{month}</span>
+                                  <div className="bg-black/40 px-1.5 py-0.5 rounded text-[10px] md:text-xs font-fredoka text-white/60">
+                                    {runCount}
                                   </div>
                                 </div>
                                 
-                                <div className="grid grid-cols-7 gap-1">
+                                <div className="grid grid-cols-7 gap-0.5 md:gap-1">
                                   {[...Array(daysInMonth)].map((_, dIdx) => {
                                     const day = dIdx + 1;
                                     const dateStr = `${currentYear}-${String(mIdx + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -1668,7 +1705,7 @@ const Dashboard = () => {
                                     return (
                                       <div 
                                         key={day} 
-                                        className={`aspect-square rounded-sm transition-all duration-300 ${
+                                        className={`aspect-square rounded-[1px] md:rounded-sm transition-all duration-300 ${
                                           isRunDay 
                                             ? 'bg-[#ccff00] shadow-[0_0_5px_#ccff00] scale-110' 
                                             : 'bg-white/5 group-hover:bg-white/10'

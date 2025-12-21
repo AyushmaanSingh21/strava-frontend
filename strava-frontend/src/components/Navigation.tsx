@@ -48,42 +48,43 @@ const Navigation = () => {
         
         <button 
           onClick={() => navigate('/')}
-          className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bangers uppercase tracking-wide transition-all border-2 ${isActive('/') ? 'bg-[#CCFF00] text-black border-black shadow-[2px_2px_0_#000]' : 'bg-transparent text-white border-transparent hover:bg-white/10'}`}
+          className={`flex items-center gap-2 px-3 sm:px-5 py-2 rounded-full text-sm font-bangers uppercase tracking-wide transition-all border-2 ${isActive('/') ? 'bg-[#CCFF00] text-black border-black shadow-[2px_2px_0_#000]' : 'bg-transparent text-white border-transparent hover:bg-white/10'}`}
         >
           <Home className="w-4 h-4" strokeWidth={2.5} />
-          <span>Home</span>
+          <span className="hidden sm:inline">Home</span>
         </button>
 
         <button 
           onClick={() => navigate('/dashboard')}
-          className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bangers uppercase tracking-wide transition-all border-2 ${isActive('/dashboard') ? 'bg-[#00F0FF] text-black border-black shadow-[2px_2px_0_#000]' : 'bg-transparent text-white border-transparent hover:bg-white/10'}`}
+          className={`flex items-center gap-2 px-3 sm:px-5 py-2 rounded-full text-sm font-bangers uppercase tracking-wide transition-all border-2 ${isActive('/dashboard') ? 'bg-[#00F0FF] text-black border-black shadow-[2px_2px_0_#000]' : 'bg-transparent text-white border-transparent hover:bg-white/10'}`}
         >
           <LayoutDashboard className="w-4 h-4" strokeWidth={2.5} />
-          <span>Dashboard</span>
+          <span className="hidden sm:inline">Wrap</span>
         </button>
 
         <button 
           onClick={() => navigate('/cards')}
-          className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bangers uppercase tracking-wide transition-all border-2 ${isActive('/cards') ? 'bg-[#FF0066] text-white border-black shadow-[2px_2px_0_#000]' : 'bg-transparent text-white border-transparent hover:bg-white/10'}`}
+          className={`flex items-center gap-2 px-3 sm:px-5 py-2 rounded-full text-sm font-bangers uppercase tracking-wide transition-all border-2 ${isActive('/cards') ? 'bg-[#FF0066] text-white border-black shadow-[2px_2px_0_#000]' : 'bg-transparent text-white border-transparent hover:bg-white/10'}`}
         >
           <CreditCard className="w-4 h-4" strokeWidth={2.5} />
-          <span>Cards</span>
+          <span className="hidden sm:inline">Cards</span>
         </button>
 
         <button 
           onClick={() => navigate('/roast')}
-          className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bangers uppercase tracking-wide transition-all border-2 ${isActive('/roast') ? 'bg-white text-black border-black shadow-[2px_2px_0_#000]' : 'bg-transparent text-white border-transparent hover:bg-white/10'}`}
+          className={`flex items-center gap-2 px-3 sm:px-5 py-2 rounded-full text-sm font-bangers uppercase tracking-wide transition-all border-2 ${isActive('/roast') ? 'bg-white text-black border-black shadow-[2px_2px_0_#000]' : 'bg-transparent text-white border-transparent hover:bg-white/10'}`}
         >
           <Flame className="w-4 h-4" strokeWidth={2.5} />
-          <span>Roast</span>
+          <span className="hidden sm:inline">Roast</span>
         </button>
 
         {!userProfile && (
           <Button 
             onClick={initiateStravaLogin}
-            className="ml-2 bg-[#FC4C02] hover:bg-[#E34402] text-white font-bangers uppercase tracking-wider border-[3px] border-black shadow-[4px_4px_0_#000] hover:translate-y-1 hover:shadow-none transition-all rounded-full px-6 py-2 h-auto text-sm"
+            className="ml-2 bg-[#FC4C02] hover:bg-[#E34402] text-white font-bangers uppercase tracking-wider border-[3px] border-black shadow-[4px_4px_0_#000] hover:translate-y-1 hover:shadow-none transition-all rounded-full px-4 sm:px-6 py-2 h-auto text-sm"
           >
-            Connect Strava
+            <span className="hidden sm:inline">Connect Strava</span>
+            <span className="sm:hidden">Connect</span>
           </Button>
         )}
       </div>
