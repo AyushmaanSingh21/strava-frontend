@@ -6,40 +6,39 @@ const Features = () => {
       title: "STORY MODE",
       description: "Your running journey told in 7 acts. Inspired by Spotify Wrapped. Discover your runner persona, territory, signature moves, and get personalized predictions.",
       icon: Sparkles,
-      color: "#CCFF00",
-      gradient: "from-purple-600 to-pink-600",
+      borderColor: "border-[#8338ec]", // Purple
+      iconColor: "text-[#8338ec]",
       number: "01"
     },
     {
       title: "GENERATE YOUR CARD",
       description: "Create stunning Spotify Wrapped-style cards with your stats. Colorful, bold, and perfect for sharing. Download and flex on social media.",
       icon: CreditCard,
-      color: "#00F0FF",
-      gradient: "from-cyan-500 to-blue-600",
+      borderColor: "border-[#3a86ff]", // Blue
+      iconColor: "text-[#3a86ff]",
       number: "02"
     },
     {
       title: "GET ROASTED 🔥",
-      description: "AI analyzes your training patterns and serves brutally honest feedback. Funny, constructive, and savage. Premium feature that'll make you laugh and motivate you to improve.",
+      description: "AI analyzes your training patterns and serves brutally honest feedback. Funny, constructive, and savage. A feature that'll make you laugh and motivate you to improve.",
       icon: Flame,
-      color: "#FF0066",
-      gradient: "from-pink-600 to-red-600",
-      number: "03",
-      premium: true
+      borderColor: "border-[#ff006e]", // Pink
+      iconColor: "text-[#ff006e]",
+      number: "03"
     }
   ];
   
   return (
-    <section id="features" className="py-24 bg-black relative overflow-hidden">
+    <section id="features" className="py-24 bg-black relative overflow-hidden border-b-[5px] border-white/20">
       {/* Background gradient animation */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-black to-pink-900/20"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(#ffffff33_1px,transparent_1px)] [background-size:16px_16px] opacity-10"></div>
       
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-white font-display text-6xl md:text-8xl font-black mb-4 uppercase tracking-tight">
-            THREE POWERFUL FEATURES
+          <h2 className="text-white font-bangers text-6xl md:text-8xl mb-4 uppercase tracking-wide drop-shadow-[4px_4px_0_#000]">
+            THREE POWERFUL <span className="text-[#CCFF00]">FEATURES</span>
           </h2>
-          <p className="text-gray-400 text-lg md:text-xl font-bold uppercase tracking-wider">
+          <p className="text-gray-400 text-xl md:text-2xl font-fredoka font-bold uppercase tracking-wider">
             Everything you need to level up your running game
           </p>
         </div>
@@ -50,33 +49,30 @@ const Features = () => {
             return (
               <div 
                 key={index}
-                className="bg-black border-4 border-white p-8 relative hover:scale-105 transition-all duration-300 group shadow-[8px_8px_0px_0px_rgba(255,255,255,0.1)] hover:shadow-[12px_12px_0px_0px_rgba(204,255,0,0.3)] rounded-3xl"
+                className={`bg-black ${feature.borderColor} border-[4px] p-8 relative hover:scale-105 transition-all duration-300 group shadow-[8px_8px_0px_0px_#ffffff33] hover:shadow-[12px_12px_0px_0px_#ffffff55] rounded-[32px] flex flex-col`}
               >
-                {/* Gradient background on hover */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-3xl`}></div>
+                {/* Background Pattern */}
+                <div className="absolute inset-0 opacity-20 pointer-events-none" 
+                     style={{ backgroundImage: 'radial-gradient(circle, #fff 2px, transparent 2.5px)', backgroundSize: '20px 20px' }}>
+                </div>
                 
                 {/* Corner Number */}
-                <div className="absolute top-4 right-4 text-gray-600 font-mono text-xl font-bold">
+                <div className="absolute top-6 right-6 text-white/20 font-bangers text-4xl">
                   {feature.number}
                 </div>
                 
                 {/* Icon */}
-                <div className="mb-6 relative z-10">
-                  <Icon className="w-16 h-16" style={{ color: feature.color }} strokeWidth={2} />
+                <div className={`mb-6 relative z-10 bg-black w-16 h-16 rounded-2xl flex items-center justify-center border-[3px] ${feature.borderColor} shadow-[4px_4px_0_rgba(255,255,255,0.2)] transform -rotate-3 group-hover:rotate-3 transition-transform`}>
+                  <Icon className={`w-8 h-8 ${feature.iconColor}`} strokeWidth={2.5} />
                 </div>
                 
                 {/* Title */}
-                <h3 className="text-white font-display text-2xl font-black mb-4 flex items-center gap-3 uppercase relative z-10">
+                <h3 className="text-white font-bangers text-3xl mb-4 uppercase relative z-10 tracking-wide">
                   {feature.title}
-                  {feature.premium && (
-                    <span className="text-xs bg-[#FF0066] text-white px-3 py-1 font-bold uppercase border-2 border-white">
-                      PREMIUM
-                    </span>
-                  )}
                 </h3>
                 
                 {/* Description */}
-                <p className="text-gray-300 font-body text-base leading-relaxed relative z-10">
+                <p className="text-white/80 font-fredoka text-lg leading-relaxed relative z-10 font-medium">
                   {feature.description}
                 </p>
               </div>
@@ -84,7 +80,7 @@ const Features = () => {
           })}
         </div>
         
-        <p className="text-center text-gray-500 font-bold text-sm mt-16 max-w-2xl mx-auto uppercase tracking-wider">
+        <p className="text-center text-gray-500 font-bangers text-xl mt-16 max-w-2xl mx-auto uppercase tracking-widest">
           Built for athletes who want more than just numbers
         </p>
       </div>

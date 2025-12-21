@@ -8,60 +8,59 @@ import {
 const FAQ = () => {
   const faqs = [
     {
-      question: "WILL THIS ROAST HURT MY FEELINGS?",
-      answer: "Yes ❤️ But it's constructive. Think tough coach, not internet troll. We keep it real but never cruel."
+      question: "WILL THIS HURT MY FEELINGS?",
+      answer: "Yes. Next question."
     },
     {
-      question: "IS MY DATA SAFE?",
-      answer: "Absolutely. We only access your public Strava data via official API. No shady business. Your stats stay yours."
+      question: "IS IT REALLY FREE?",
+      answer: "We literally just told you it's $0. Are you a runner or a goldfish?"
     },
     {
-      question: "WHY ISN'T THE ROAST FEATURE FREE?",
-      answer: "AI costs money. Server costs money. Keeping this project alive costs money. We're not a charity, but we're fair."
+      question: "WHY ARE YOU SO MEAN?",
+      answer: "We're not mean, we're honest. Your pace chart is mean. We just point at it."
     },
     {
-      question: "CAN I CANCEL PREMIUM ANYTIME?",
-      answer: "Yep. One click. No guilt trip emails. No 'are you sure?' loops. Clean break."
+      question: "CAN I SHARE THIS ON TINDER?",
+      answer: "You can, but 'I run 5ks in 45 minutes' might not be the flex you think it is."
     },
     {
       question: "DO I NEED STRAVA?",
-      answer: "Yes. We pull data from Strava's API. No Strava account = nothing to analyze = sad times."
+      answer: "Yes. We can't roast your imaginary runs. We need real data to make fun of."
     },
     {
-      question: "WHAT ACTIVITIES DO YOU SUPPORT?",
-      answer: "Everything Strava tracks. Running, cycling, swimming, hiking. If you logged it, we'll analyze it."
-    },
-    {
-      question: "HOW ACCURATE ARE THE ROASTS?",
-      answer: "Scary accurate. AI looks at pace consistency, elevation choices, rest days (or lack thereof). It knows."
+      question: "WHAT IF I'M ACTUALLY FAST?",
+      answer: "Then we'll make fun of you for trying too hard. You can't win."
     }
   ];
   
   return (
-    <section className="py-24 bg-gradient-to-br from-black via-gray-900 to-black relative">
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-900/10 via-pink-900/10 to-blue-900/10"></div>
+    <section className="py-24 bg-black border-b-[5px] border-white/20 relative">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-20" 
+           style={{ backgroundImage: 'radial-gradient(#333 2px, transparent 2px)', backgroundSize: '30px 30px' }}>
+      </div>
       
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-white font-display text-6xl md:text-8xl font-black mb-4 uppercase tracking-tight">
-            QUESTIONS?
+          <h2 className="text-white font-bangers text-6xl md:text-8xl mb-4 uppercase tracking-wide drop-shadow-[4px_4px_0_#000]">
+            DUMB <span className="text-[#FF0066] drop-shadow-[4px_4px_0_#000]">QUESTIONS</span>
           </h2>
-          <p className="text-gray-400 text-lg md:text-xl font-bold uppercase tracking-wider">
-            We got answers
+          <p className="text-gray-400 text-xl md:text-2xl font-fredoka font-bold uppercase tracking-wider">
+            Things people actually ask us
           </p>
         </div>
         
-        <Accordion type="single" collapsible className="max-w-4xl mx-auto">
+        <Accordion type="single" collapsible className="max-w-4xl mx-auto space-y-4">
           {faqs.map((faq, index) => (
             <AccordionItem 
               key={index} 
               value={`item-${index}`}
-              className="border-b-2 border-gray-800 hover:border-[#CCFF00] transition-all duration-200 px-4"
+              className="bg-black border-[3px] border-white rounded-2xl px-6 shadow-[4px_4px_0_#333] data-[state=open]:bg-[#CCFF00] data-[state=open]:border-[#CCFF00] data-[state=open]:shadow-[4px_4px_0_#fff] transition-all duration-200"
             >
-              <AccordionTrigger className="text-white font-display text-lg md:text-xl font-bold py-6 hover:no-underline hover:text-[#CCFF00] uppercase">
+              <AccordionTrigger className="text-white data-[state=open]:text-black font-bangers text-xl md:text-2xl tracking-wide py-6 hover:no-underline uppercase">
                 {faq.question}
               </AccordionTrigger>
-              <AccordionContent className="text-gray-400 font-body text-base md:text-lg pb-6 leading-relaxed">
+              <AccordionContent className="text-gray-300 data-[state=open]:text-black font-fredoka text-lg pb-6 leading-relaxed font-medium">
                 {faq.answer}
               </AccordionContent>
             </AccordionItem>

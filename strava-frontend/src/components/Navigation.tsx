@@ -23,8 +23,8 @@ const Navigation = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const Logo = () => (
-    <span className="text-white font-black tracking-wider text-lg uppercase flex items-center gap-[1px]">
-      STR<span className="text-[#CCFF00]">▲</span>V<span className="text-[#CCFF00]">▲</span>WR<span className="text-[#CCFF00]">▲</span>PPED
+    <span className="text-white font-bangers tracking-wider text-2xl uppercase flex items-center gap-[1px] drop-shadow-[2px_2px_0_#000]">
+      STR<span className="text-[#CCFF00]">▲</span>V<span className="text-[#CCFF00]">▲</span> RO<span className="text-[#CCFF00]">▲</span>ST
     </span>
   );
 
@@ -32,49 +32,49 @@ const Navigation = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center pt-6 px-6 pointer-events-none">
       
       {/* Left: Logo (Absolute) */}
-      <div className="absolute left-8 top-8 pointer-events-auto hidden md:flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+      <div className="absolute left-8 top-8 pointer-events-auto hidden md:flex items-center gap-2 cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate('/')}>
         <Logo />
       </div>
 
       {/* Center: Pill Navigation */}
-      <div className="pointer-events-auto bg-black/60 backdrop-blur-xl border border-white/10 rounded-full p-1.5 shadow-2xl shadow-purple-500/10 flex items-center gap-1">
+      <div className="pointer-events-auto bg-black border-[3px] border-white rounded-full p-2 shadow-[4px_4px_0_#000] flex items-center gap-2">
         
         <button 
           onClick={() => navigate('/')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${isActive('/') ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+          className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bangers uppercase tracking-wide transition-all border-2 ${isActive('/') ? 'bg-[#CCFF00] text-black border-black shadow-[2px_2px_0_#000]' : 'bg-transparent text-white border-transparent hover:bg-white/10'}`}
         >
-          <Home className="w-4 h-4" />
+          <Home className="w-4 h-4" strokeWidth={2.5} />
           <span>Home</span>
         </button>
 
         <button 
           onClick={() => navigate('/dashboard')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${isActive('/dashboard') ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+          className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bangers uppercase tracking-wide transition-all border-2 ${isActive('/dashboard') ? 'bg-[#00F0FF] text-black border-black shadow-[2px_2px_0_#000]' : 'bg-transparent text-white border-transparent hover:bg-white/10'}`}
         >
-          <LayoutDashboard className="w-4 h-4" />
+          <LayoutDashboard className="w-4 h-4" strokeWidth={2.5} />
           <span>Dashboard</span>
         </button>
 
         <button 
           onClick={() => navigate('/cards')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${isActive('/cards') ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+          className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bangers uppercase tracking-wide transition-all border-2 ${isActive('/cards') ? 'bg-[#FF0066] text-white border-black shadow-[2px_2px_0_#000]' : 'bg-transparent text-white border-transparent hover:bg-white/10'}`}
         >
-          <CreditCard className="w-4 h-4" />
-          <span>Card</span>
+          <CreditCard className="w-4 h-4" strokeWidth={2.5} />
+          <span>Cards</span>
         </button>
 
         <button 
           onClick={() => navigate('/roast')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${isActive('/roast') ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+          className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bangers uppercase tracking-wide transition-all border-2 ${isActive('/roast') ? 'bg-white text-black border-black shadow-[2px_2px_0_#000]' : 'bg-transparent text-white border-transparent hover:bg-white/10'}`}
         >
-          <Flame className="w-4 h-4" />
+          <Flame className="w-4 h-4" strokeWidth={2.5} />
           <span>Roast</span>
         </button>
 
         {!userProfile && (
           <Button 
             onClick={initiateStravaLogin}
-            className="ml-2 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white rounded-full px-6 py-2 h-auto text-sm font-medium shadow-lg shadow-purple-500/25 border border-purple-400/20"
+            className="ml-2 bg-[#FC4C02] hover:bg-[#E34402] text-white font-bangers uppercase tracking-wider border-[3px] border-black shadow-[4px_4px_0_#000] hover:translate-y-1 hover:shadow-none transition-all rounded-full px-6 py-2 h-auto text-sm"
           >
             Connect Strava
           </Button>
@@ -84,19 +84,19 @@ const Navigation = () => {
       {/* Right: User Profile (Absolute) */}
       <div className="absolute right-8 top-8 pointer-events-auto hidden md:flex items-center gap-4">
         {userProfile ? (
-          <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-full border border-white/10 backdrop-blur-md">
+          <div className="flex items-center gap-3 bg-black border-[3px] border-white px-4 py-2 rounded-full shadow-[4px_4px_0_#000]">
             <img 
               src={userProfile.profile} 
               alt={userProfile.firstname} 
-              className="w-8 h-8 rounded-full border-2 border-[#CCFF00]"
+              className="w-8 h-8 rounded-full border-2 border-white"
             />
             <div className="flex flex-col">
-              <span className="text-white text-sm font-bold leading-none">{userProfile.firstname} {userProfile.lastname}</span>
-              <span className="text-gray-400 text-[10px] uppercase tracking-wider">Athlete</span>
+              <span className="text-white font-bangers uppercase tracking-wide leading-none">{userProfile.firstname} {userProfile.lastname}</span>
+              <span className="text-[#CCFF00] text-[10px] font-fredoka font-bold uppercase tracking-wider">Athlete</span>
             </div>
           </div>
         ) : (
-          <div className="flex items-center gap-2 text-gray-400">
+          <div className="flex items-center gap-2 text-gray-400 font-bangers uppercase tracking-wide">
             <User className="w-5 h-5" />
             <span className="text-sm">Guest</span>
           </div>

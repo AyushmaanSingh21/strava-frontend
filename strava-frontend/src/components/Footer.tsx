@@ -2,32 +2,36 @@ import { Github, Twitter, Instagram } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-black border-t border-white/10 py-16 relative overflow-hidden">
-      {/* Background Glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-[#CCFF00]/50 to-transparent"></div>
+    <footer className="bg-black border-t-[5px] border-white py-16 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-20" 
+           style={{ backgroundImage: 'radial-gradient(#333 2px, transparent 2px)', backgroundSize: '20px 20px' }}>
+      </div>
       
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-12">
-          <h3 className="text-white font-display text-4xl font-black mb-3 uppercase tracking-tight flex items-center justify-center gap-1">
-            STR<span className="text-[#CCFF00]">▲</span>V<span className="text-[#CCFF00]">▲</span>WR<span className="text-[#CCFF00]">▲</span>PPED
+          <h3 className="text-white font-bangers text-5xl md:text-6xl mb-3 uppercase tracking-wide flex items-center justify-center gap-1 drop-shadow-[4px_4px_0_#000]">
+            STR<span className="text-[#CCFF00]">▲</span>V<span className="text-[#CCFF00]">▲</span> RO<span className="text-[#CCFF00]">▲</span>ST
           </h3>
-          <p className="text-gray-400 font-bold text-sm uppercase tracking-wider">Your stats, elevated</p>
+          <p className="text-gray-400 font-fredoka font-bold text-lg uppercase tracking-wider">
+            Making you regret your run since 2024
+          </p>
         </div>
         
-        <div className="flex flex-wrap justify-center gap-8 mb-12 text-sm">
-          <a href="#features" className="text-gray-400 hover:text-[#CCFF00] transition-colors font-bold uppercase tracking-wide">
+        <div className="flex flex-wrap justify-center gap-8 mb-12 text-lg">
+          <a href="#features" className="text-white hover:text-[#CCFF00] transition-colors font-bangers uppercase tracking-wide hover:underline decoration-2 underline-offset-4">
             Features
           </a>
-          <a href="#pricing" className="text-gray-400 hover:text-[#CCFF00] transition-colors font-bold uppercase tracking-wide">
+          <a href="#pricing" className="text-white hover:text-[#CCFF00] transition-colors font-bangers uppercase tracking-wide hover:underline decoration-2 underline-offset-4">
             Pricing
           </a>
-          <a href="#" className="text-gray-400 hover:text-[#CCFF00] transition-colors font-bold uppercase tracking-wide">
+          <a href="#" className="text-white hover:text-[#CCFF00] transition-colors font-bangers uppercase tracking-wide hover:underline decoration-2 underline-offset-4">
             Privacy
           </a>
-          <a href="#" className="text-gray-400 hover:text-[#CCFF00] transition-colors font-bold uppercase tracking-wide">
+          <a href="#" className="text-white hover:text-[#CCFF00] transition-colors font-bangers uppercase tracking-wide hover:underline decoration-2 underline-offset-4">
             Terms
           </a>
-          <a href="#" className="text-gray-400 hover:text-[#CCFF00] transition-colors font-bold uppercase tracking-wide">
+          <a href="#" className="text-white hover:text-[#CCFF00] transition-colors font-bangers uppercase tracking-wide hover:underline decoration-2 underline-offset-4">
             Contact
           </a>
         </div>
@@ -35,33 +39,30 @@ const Footer = () => {
         <div className="flex justify-center gap-6 mb-12">
           <a 
             href="#" 
-            className="w-12 h-12 rounded-full bg-white/5 border border-white/10 hover:border-[#CCFF00] hover:bg-[#CCFF00] flex items-center justify-center transition-all duration-300 group"
+            className="w-12 h-12 bg-black border-[3px] border-white hover:bg-[#CCFF00] hover:border-black flex items-center justify-center transition-all duration-300 group shadow-[4px_4px_0_#fff] hover:shadow-[4px_4px_0_#000] hover:-translate-y-1"
             aria-label="Twitter"
           >
-            <Twitter className="w-5 h-5 text-white group-hover:text-black transition-colors" />
+            <Twitter className="w-6 h-6 text-white group-hover:text-black transition-colors" strokeWidth={2.5} />
           </a>
           <a 
             href="#" 
-            className="w-12 h-12 rounded-full bg-white/5 border border-white/10 hover:border-[#CCFF00] hover:bg-[#CCFF00] flex items-center justify-center transition-all duration-300 group"
+            className="w-12 h-12 bg-black border-[3px] border-white hover:bg-[#FF0066] hover:border-black flex items-center justify-center transition-all duration-300 group shadow-[4px_4px_0_#fff] hover:shadow-[4px_4px_0_#000] hover:-translate-y-1"
             aria-label="Instagram"
           >
-            <Instagram className="w-5 h-5 text-white group-hover:text-black transition-colors" />
+            <Instagram className="w-6 h-6 text-white group-hover:text-black transition-colors" strokeWidth={2.5} />
           </a>
           <a 
             href="#" 
-            className="w-12 h-12 rounded-full bg-white/5 border border-white/10 hover:border-[#CCFF00] hover:bg-[#CCFF00] flex items-center justify-center transition-all duration-300 group"
-            aria-label="GitHub"
+            className="w-12 h-12 bg-black border-[3px] border-white hover:bg-[#00F0FF] hover:border-black flex items-center justify-center transition-all duration-300 group shadow-[4px_4px_0_#fff] hover:shadow-[4px_4px_0_#000] hover:-translate-y-1"
+            aria-label="Github"
           >
-            <Github className="w-5 h-5 text-white group-hover:text-black transition-colors" />
+            <Github className="w-6 h-6 text-white group-hover:text-black transition-colors" strokeWidth={2.5} />
           </a>
         </div>
         
-        <div className="text-center text-gray-500 font-body text-xs space-y-2">
-          <p className="font-bold uppercase tracking-wider">
-            © 2024 StravaWrapped. Built for athletes who demand more.
-          </p>
-          <p className="text-gray-600 text-[10px]">
-            Not affiliated with Strava, Inc.
+        <div className="text-center border-t-[3px] border-white/20 pt-8">
+          <p className="text-gray-500 font-fredoka font-bold text-sm uppercase tracking-wider">
+            © {new Date().getFullYear()} Strava Roast. Not affiliated with Strava (obviously).
           </p>
         </div>
       </div>

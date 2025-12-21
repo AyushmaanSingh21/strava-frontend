@@ -206,7 +206,10 @@ const Cards = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-white text-2xl font-bold">Loading your wrapped...</div>
+        <div className="text-center">
+          <div className="text-6xl animate-spin mb-6">🃏</div>
+          <p className="text-white font-bangers text-3xl tracking-widest animate-pulse">DEALING YOUR STATS...</p>
+        </div>
       </div>
     );
   }
@@ -228,65 +231,20 @@ const Cards = () => {
       <Navigation />
 
       {/* Main Content */}
-      <div className="pt-20 pb-16 px-4 relative z-10">
-        <div className="container mx-auto max-w-7xl h-full flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-24">
-          
-          {/* LEFT COLUMN: Content & Instructions */}
-          <div className="flex-1 flex flex-col items-start text-left space-y-8 order-2 lg:order-1 max-w-2xl">
-            
-            {/* Header */}
-            <div>
-              <h1 className="text-white font-bangers text-5xl md:text-7xl mb-6 uppercase tracking-wide leading-none">
-                YOUR <span className="bg-gradient-to-r from-[#CCFF00] to-[#00F0FF] bg-clip-text text-transparent">WRAPPED</span> CARD
-              </h1>
-              <p className="text-gray-400 text-lg md:text-xl font-fredoka font-bold uppercase tracking-wider mb-4">
-                Spotify Wrapped Style • Powered by Your Strava Data
-              </p>
-              <p className="text-gray-500 text-base leading-relaxed max-w-xl font-fredoka">
-                Share your running story with the world. This card captures your unique runner persona, total stats, and top achievements in a format ready for Instagram Stories or Twitter.
-              </p>
-            </div>
+      <div className="pt-20 pb-16 px-4 relative z-10 min-h-[calc(100vh-80px)] flex flex-col items-center justify-center">
+        
+        {/* Header - Simplified & Centered */}
+        <div className="text-center mb-12 max-w-2xl">
+          <h1 className="text-white font-bangers text-5xl md:text-7xl mb-4 uppercase tracking-wide leading-none">
+            YOUR <span className="bg-gradient-to-r from-[#CCFF00] to-[#00F0FF] bg-clip-text text-transparent">WRAPPED</span> CARD
+          </h1>
+          <p className="text-gray-400 text-lg font-fredoka">
+            Ready to share your 2025 story?
+          </p>
+        </div>
 
-            {/* Pro Tips (Info Section) */}
-            <div className="bg-white/5 backdrop-blur-lg border border-white/10 p-8 shadow-2xl rounded-3xl w-full">
-              <h2 className="text-white font-bangers text-2xl mb-4 uppercase flex items-center gap-2 tracking-wide">
-                <span className="text-[#CCFF00]">💡</span> PRO TIPS
-              </h2>
-              <ul className="space-y-3 text-gray-300 text-sm font-fredoka">
-                <li className="flex items-start gap-3">
-                  <span className="text-[#CCFF00] font-bold">→</span>
-                  <span><strong className="text-white">Download</strong> to save high-res PNG</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-[#CCFF00] font-bold">→</span>
-                  <span><strong className="text-white">Share</strong> directly to social apps</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-[#CCFF00] font-bold">→</span>
-                  <span><strong className="text-white">Runner Type</strong> based on activity time</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Navigation Links (CTA) */}
-            <div className="flex flex-wrap gap-4 pt-4">
-              <a 
-                href="/dashboard" 
-                className="inline-flex items-center justify-center bg-white/10 hover:bg-white/20 text-white font-bangers tracking-widest px-8 py-4 border border-white/20 backdrop-blur-sm transition-all rounded-full text-lg"
-              >
-                VIEW FULL STORY
-              </a>
-              <a 
-                href="/roast" 
-                className="inline-flex items-center justify-center bg-[#FF0066]/10 hover:bg-[#FF0066]/20 text-[#FF0066] font-bangers tracking-widest px-8 py-4 border border-[#FF0066]/50 backdrop-blur-sm transition-all rounded-full text-lg"
-              >
-                GET ROASTED 🔥
-              </a>
-            </div>
-          </div>
-
-          {/* RIGHT COLUMN: Card & Actions */}
-          <div className="flex-1 flex flex-col items-center gap-8 order-1 lg:order-2 w-full max-w-sm lg:max-w-[320px]">
+        {/* Card Container */}
+        <div className="flex flex-col items-center gap-8 w-full max-w-sm">
             
             {/* The Card */}
             <div ref={cardRef} className="relative w-full aspect-[9/16] bg-[#3a86ff] rounded-[32px] overflow-hidden border-[5px] border-black shadow-[15px_15px_0_#000000] flex flex-col p-5 group hover:scale-[1.02] transition-transform duration-300">
@@ -339,9 +297,9 @@ const Cards = () => {
                 <h2 className="font-bangers text-3xl text-white drop-shadow-[3px_3px_0_#000] uppercase tracking-wide mb-1 transform -rotate-1">
                   @{cardData.username}
                 </h2>
-                <div className="bg-white border-2 border-black px-4 py-0.5 rounded-full inline-block transform rotate-1 mb-6 shadow-[3px_3px_0_#000]">
-                  <p className="font-fredoka font-bold text-black uppercase tracking-wider text-xs">
-                    {cardData.topGenre}
+                <div className="flex flex-col items-center mb-6">
+                  <p className="font-bangers text-[#CCFF00] text-xl tracking-widest drop-shadow-[2px_2px_0_#000] transform -rotate-2">
+                    YOU THE BESH! 💅
                   </p>
                 </div>
 
@@ -402,12 +360,6 @@ const Cards = () => {
 
               </div>
 
-              {/* Footer Bar */}
-              <div className="mt-4 border-t-4 border-black pt-2 flex justify-center">
-                 <p className="font-fredoka font-bold text-black text-[10px] uppercase tracking-[0.3em]">
-                   Your Year In Run
-                 </p>
-              </div>
             </div>
 
             {/* Action Buttons */}
@@ -426,7 +378,12 @@ const Cards = () => {
               </Button>
             </div>
 
-          </div>
+            {/* Navigation Links - Minimal */}
+            <div className="flex gap-6 pt-4">
+              <a href="/dashboard" className="text-white/60 hover:text-white font-bangers tracking-widest transition-colors">
+                ← BACK TO DASHBOARD
+              </a>
+            </div>
         </div>
       </div>
     </div>

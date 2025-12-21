@@ -1151,10 +1151,10 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
+      <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-white mx-auto mb-4"></div>
-          <p className="text-white text-xl font-bold">Loading your story...</p>
+          <div className="text-6xl animate-bounce mb-6">🏃</div>
+          <p className="text-white font-bangers text-3xl tracking-widest animate-pulse">LOADING YOUR WRAP...</p>
         </div>
       </div>
     );
@@ -1221,19 +1221,40 @@ const Dashboard = () => {
                   
                   {/* === PART 1: DISTANCE === */}
                   <ScrollReveal className="flex flex-col items-center w-full gap-12">
+                    
+                    {/* INTRODUCTION */}
+                    <div className="text-center relative z-10 max-w-5xl mx-auto flex flex-col gap-16 py-12">
+                      <h2 className="text-white font-fredoka text-4xl md:text-6xl leading-tight drop-shadow-2xl">
+                        Hey <span className="text-[#39ff14] font-bangers tracking-wider italic transform -skew-x-6 inline-block drop-shadow-[0_0_20px_rgba(57,255,20,0.6)]">{userName}</span>,
+                        <span className="block mt-4 text-3xl md:text-5xl text-white/90">let’s see how your 2025 ran.</span>
+                      </h2>
+                      
+                      <div className="flex flex-col gap-8">
+                        <p className="text-white font-bangers text-4xl md:text-6xl tracking-widest drop-shadow-lg hover:scale-105 transition-transform duration-300">
+                          EVERY MILE.
+                        </p>
+                        <p className="text-white font-bangers text-4xl md:text-6xl tracking-widest drop-shadow-lg hover:scale-105 transition-transform duration-300">
+                          EVERY CHOICE.
+                        </p>
+                        <p className="text-[#39ff14] font-bangers text-5xl md:text-7xl tracking-widest drop-shadow-[0_0_25px_rgba(57,255,20,0.5)] hover:scale-105 transition-transform duration-300">
+                          EVERY TIME YOU SHOWED UP.
+                        </p>
+                      </div>
+                    </div>
+
                     {/* MAIN STAT: DISTANCE */}
                     <div className="text-center relative z-10">
-                      <p className="text-white/90 font-fredoka text-2xl md:text-4xl mb-2">
-                        This year, <span className="text-[#39ff14] font-bangers tracking-wider">{userName}</span> ran
+                      <p className="text-white font-fredoka text-3xl md:text-5xl mb-12 font-bold drop-shadow-2xl">
+                        You covered more ground than you think.
                       </p>
-                      <div className="flex flex-col items-center">
+                      <ScrollReveal delay={600} className="flex flex-col items-center">
                         <h1 className="text-[100px] md:text-[220px] leading-none font-bangers text-white drop-shadow-[0_0_40px_rgba(255,255,255,0.4)]">
                           {getJourneyStats()?.numbers?.distance || "0"}
                         </h1>
                         <p className="text-5xl md:text-8xl font-bangers text-[#39ff14] tracking-widest drop-shadow-lg -mt-4 md:-mt-8 relative z-20">
                           KILOMETERS
                         </p>
-                      </div>
+                      </ScrollReveal>
                     </div>
 
                     {/* GREAT WALL CARD */}
@@ -1564,33 +1585,29 @@ const Dashboard = () => {
                 {getJourneyStats() && (
                   <div className="flex flex-col gap-12">
                     
-                    <div className="flex flex-col md:flex-row justify-center gap-6">
-                      {/* SLIDE 1: BIGGEST DAY */}
-                      <Card className="bg-[#3a86ff] border-4 border-black rounded-[24px] p-6 flex flex-col justify-center items-center text-center shadow-[8px_8px_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0_rgba(0,0,0,1)] transition-all duration-200 min-h-[280px] w-full md:w-1/2 max-w-md relative overflow-hidden">
-                        <div className="absolute top-4 right-4 text-4xl">🏔️</div>
-                        <div className="bg-black/20 px-3 py-1 rounded-full mb-4">
-                          <p className="text-white font-fredoka text-sm font-bold tracking-wider uppercase">Core Memory Unlocked</p>
-                        </div>
-                        <p className="text-white/90 font-fredoka text-2xl font-bold mb-2">Your Longest Run Till Now</p>
-                        <h2 className="text-white font-bangers text-6xl mb-2 leading-none">
-                          {getJourneyStats()?.biggestDay.date.split(',')[0]}
-                        </h2>
-                        <div className="bg-black/20 rounded-xl p-4 w-full backdrop-blur-sm mt-4">
-                          <p className="text-white font-bangers text-5xl mb-1">{getJourneyStats()?.biggestDay.distance}</p>
-                          <p className="text-white font-fredoka text-lg">You were UNSTOPPABLE.</p>
-                        </div>
-                      </Card>
-
+                    <div className="flex flex-col items-center justify-center gap-6">
                       {/* SLIDE 2: CONSISTENT MONTH */}
-                      <Card className="bg-[#8338ec] border-4 border-black rounded-[24px] p-6 flex flex-col justify-center items-center text-center shadow-[8px_8px_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0_rgba(0,0,0,1)] transition-all duration-200 min-h-[280px] w-full md:w-1/2 max-w-md relative overflow-hidden">
-                        <div className="absolute top-4 right-4 text-4xl">📅</div>
-                        <p className="text-white/80 font-fredoka font-bold text-xl mb-6">Your Biggest Month</p>
-                        <h2 className="text-[#ccff00] font-bangers text-6xl mb-2 drop-shadow-md">
+                      <Card className="bg-[#8338ec] border-4 border-black rounded-[24px] p-8 flex flex-col justify-center items-center text-center shadow-[8px_8px_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0_rgba(0,0,0,1)] transition-all duration-200 min-h-[320px] w-full max-w-2xl relative overflow-hidden group">
+                        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
+                        <div className="absolute top-4 right-4 text-5xl group-hover:scale-110 transition-transform duration-300">📅</div>
+                        
+                        <div className="bg-black/20 px-4 py-1.5 rounded-full mb-6 backdrop-blur-sm">
+                          <p className="text-white font-fredoka text-sm md:text-base font-bold tracking-wider uppercase">
+                            Peak Performance
+                          </p>
+                        </div>
+                        
+                        <p className="text-white/90 font-fredoka text-2xl md:text-3xl font-bold mb-4">Your Biggest Month</p>
+                        
+                        <h2 className="text-[#ccff00] font-bangers text-7xl md:text-8xl mb-4 drop-shadow-[0_4px_0_rgba(0,0,0,0.3)]">
                           {getJourneyStats()?.consistentMonth.name}
                         </h2>
-                        <p className="text-white font-fredoka text-xl">
-                          {getJourneyStats()?.consistentMonth.count} Runs
-                        </p>
+                        
+                        <div className="bg-black/20 rounded-2xl p-4 px-8 backdrop-blur-sm border border-white/10">
+                          <p className="text-white font-bangers text-4xl md:text-5xl">
+                            {getJourneyStats()?.consistentMonth.count} <span className="text-2xl md:text-3xl text-white/80">Runs</span>
+                          </p>
+                        </div>
                       </Card>
                     </div>
 
@@ -1770,9 +1787,8 @@ const Dashboard = () => {
 
               <div className="w-full px-4 md:px-8 lg:px-12 max-w-[2000px] mx-auto relative z-10 py-20">
                 <div className="text-center mb-12">
-                  <p className="text-green-400 font-bangers tracking-widest text-2xl mb-4">ACT 4</p>
                   <h1 className="text-6xl md:text-8xl font-bangers text-white mb-6 tracking-wide drop-shadow-[0_0_10px_rgba(0,255,0,0.8)]">
-                    DATA GONE WILD
+                    SCALING NEW HEIGHTS, {userName}
                   </h1>
                 </div>
 
@@ -1780,42 +1796,60 @@ const Dashboard = () => {
                   <div className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
 
                     {/* SLIDE: ELEVATION */}
-                    <Card className="bg-[#7209b7] border-4 border-black rounded-[30px] p-8 group hover:-rotate-1 transition-transform duration-300 relative overflow-hidden w-full md:w-[450px] min-h-[400px] flex flex-col justify-between shadow-[8px_8px_0_rgba(0,0,0,1)]">
-                      <div className="absolute top-4 right-4 text-5xl">🧗</div>
-                      <div>
-                        <p className="text-white/80 font-bangers text-3xl mb-4">Elevation = Heights</p>
-                        <h3 className="text-white font-bangers text-8xl mb-2">{getWildStats()?.elevation.meters}m</h3>
-                        <p className="text-white font-fredoka text-2xl mb-6">That's like climbing...</p>
+                    <Card className="bg-[#7209b7] border-4 border-black rounded-[30px] p-0 group hover:-rotate-1 transition-transform duration-300 relative overflow-hidden w-full md:w-[450px] min-h-[500px] flex flex-col shadow-[8px_8px_0_rgba(0,0,0,1)]">
+                      {/* Image Header */}
+                      <div className="h-48 w-full relative overflow-hidden border-b-4 border-black">
+                        <div className="absolute inset-0 bg-[url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Qutub_Minar_view.jpg/800px-Qutub_Minar_view.jpg')] bg-cover bg-center transform group-hover:scale-110 transition-transform duration-700"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#7209b7] to-transparent opacity-80"></div>
+                        <div className="absolute bottom-4 left-6">
+                          <p className="text-white font-bangers text-3xl drop-shadow-md">Vertical Limit</p>
+                        </div>
+                        <div className="absolute top-4 right-4 text-5xl drop-shadow-md">🧗</div>
                       </div>
-                      
-                      <div className="flex items-end justify-center gap-4 mb-6">
-                        <div className="w-10 h-24 bg-white/30 rounded-t-lg"></div>
-                        <div className="w-10 h-40 bg-white/50 rounded-t-lg"></div>
-                        <div className="w-10 h-16 bg-white/30 rounded-t-lg"></div>
-                      </div>
-                      
-                      <div>
-                        <p className="text-yellow-300 font-fredoka font-bold text-center text-xl">🗼 Qutub Minar {getWildStats()?.elevation.qutub} times</p>
-                        <p className="text-white/60 font-fredoka text-center text-lg mt-2">(Or {getWildStats()?.elevation.floors} floors of stairs)</p>
+
+                      <div className="p-8 flex-1 flex flex-col justify-between">
+                        <div>
+                          <h3 className="text-white font-bangers text-7xl mb-2 drop-shadow-md">{getWildStats()?.elevation.meters}m</h3>
+                          <p className="text-white/90 font-fredoka text-xl mb-6">Total Elevation Gain</p>
+                        </div>
+                        
+                        <div className="bg-black/20 rounded-2xl p-6 backdrop-blur-sm border border-white/10">
+                          <p className="text-white font-fredoka text-lg text-center mb-2">That's equivalent to climbing</p>
+                          <p className="text-[#ffd60a] font-bangers text-4xl text-center leading-tight">
+                            Qutub Minar <br/>
+                            <span className="text-6xl">{getWildStats()?.elevation.qutub}</span> <span className="text-2xl">times!</span>
+                          </p>
+                        </div>
                       </div>
                     </Card>
 
                     {/* SLIDE: BODY */}
-                    <Card className="bg-[#ef233c] border-4 border-black rounded-[30px] p-8 group hover:scale-105 transition-transform duration-300 relative overflow-hidden w-full md:w-[450px] min-h-[400px] flex flex-col justify-between shadow-[8px_8px_0_rgba(0,0,0,1)]">
-                      <div className="absolute top-4 right-4 text-5xl">❤️</div>
-                      <div>
-                        <p className="text-white/80 font-bangers text-3xl mb-4">Your Body's Work</p>
-                        <div className="flex justify-center my-8">
-                          <div className="text-[120px] animate-pulse drop-shadow-lg">❤️</div>
+                    <Card className="bg-[#ef233c] border-4 border-black rounded-[30px] p-0 group hover:scale-105 transition-transform duration-300 relative overflow-hidden w-full md:w-[450px] min-h-[500px] flex flex-col shadow-[8px_8px_0_rgba(0,0,0,1)]">
+                      {/* Image Header */}
+                      <div className="h-48 w-full relative overflow-hidden border-b-4 border-black">
+                        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center transform group-hover:scale-110 transition-transform duration-700"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#ef233c] to-transparent opacity-80"></div>
+                        <div className="absolute bottom-4 left-6">
+                          <p className="text-white font-bangers text-3xl drop-shadow-md">The Engine</p>
                         </div>
+                        <div className="absolute top-4 right-4 text-5xl drop-shadow-md">❤️</div>
                       </div>
-                      
-                      <div>
-                        <p className="text-white font-fredoka text-center text-xl mb-2">Your heart beat approx...</p>
-                        <h3 className="text-white font-bangers text-6xl text-center mb-6">~{getWildStats()?.body.beats.toLocaleString()} times</h3>
-                        <div className="bg-black/20 rounded-2xl p-4 text-center backdrop-blur-sm">
-                          <p className="text-white font-fredoka text-lg">And your legs took</p>
-                          <p className="text-yellow-300 font-bangers text-4xl mt-1">~{getWildStats()?.body.steps.toLocaleString()} Steps</p>
+
+                      <div className="p-8 flex-1 flex flex-col justify-between">
+                        <div className="flex justify-center mb-4">
+                          <div className="text-8xl animate-pulse drop-shadow-lg">🫀</div>
+                        </div>
+                        
+                        <div className="space-y-4">
+                          <div className="bg-black/20 rounded-2xl p-4 backdrop-blur-sm border border-white/10">
+                            <p className="text-white font-fredoka text-center text-lg">Heart Beats</p>
+                            <h3 className="text-white font-bangers text-4xl text-center">~{getWildStats()?.body.beats.toLocaleString()}</h3>
+                          </div>
+                          
+                          <div className="bg-black/20 rounded-2xl p-4 backdrop-blur-sm border border-white/10">
+                            <p className="text-white font-fredoka text-center text-lg">Steps Taken</p>
+                            <p className="text-[#ffd60a] font-bangers text-4xl text-center">~{getWildStats()?.body.steps.toLocaleString()}</p>
+                          </div>
                         </div>
                       </div>
                     </Card>
@@ -1848,7 +1882,6 @@ const Dashboard = () => {
 
               <div className="w-full px-4 md:px-8 lg:px-12 max-w-[2000px] mx-auto relative z-10 py-20">
                 <div className="text-center mb-12">
-                  <p className="text-cyan-400 font-bangers tracking-widest text-2xl mb-4">ACT 5</p>
                   <h1 className="text-6xl md:text-8xl font-bangers text-white mb-6 tracking-wide drop-shadow-[0_0_15px_rgba(34,211,238,0.6)]">
                     HALL OF FAME
                   </h1>
@@ -1930,7 +1963,6 @@ const Dashboard = () => {
                 
                 {/* HEADER SECTION */}
                 <div className="text-center mb-24">
-                  <p className="text-[#ffd700] font-bangers tracking-widest text-2xl mb-4">ACT 6</p>
                   <h1 className="text-6xl md:text-8xl font-bangers text-white mb-12 tracking-wide drop-shadow-[0_0_20px_rgba(255,215,0,0.6)]">
                     THE FINALE
                   </h1>
@@ -1952,58 +1984,148 @@ const Dashboard = () => {
                     
                     {/* SLIDE 3: THE NUMBERS (Now First) */}
                     <ScrollReveal>
-                      <Card className="bg-white text-black border-8 border-black rounded-[40px] p-8 md:p-12 flex flex-col justify-center items-center text-center transform hover:scale-105 transition-transform duration-500 shadow-[0_0_50px_rgba(255,255,255,0.2)]">
-                        <p className="font-bangers text-9xl leading-none mb-4">{getFinaleStats()?.numbers.runs}</p>
-                        <p className="font-fredoka font-black text-3xl mb-12 tracking-widest">RUNS COMPLETED</p>
+                      <Card className="bg-white text-black border-4 border-black rounded-[40px] p-8 md:p-12 flex flex-col justify-center items-center text-center transform hover:scale-105 transition-transform duration-500 shadow-[12px_12px_0_rgba(0,0,0,1)] relative overflow-hidden group">
+                        {/* Background Pattern */}
+                        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/diagonal-stripes.png')] opacity-10"></div>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
-                          <div className="p-4 bg-gray-100 rounded-2xl">
-                            <p className="font-bangers text-4xl md:text-5xl">{getFinaleStats()?.numbers.distance}</p>
-                            <p className="font-fredoka text-sm font-bold text-gray-500 uppercase mt-2">Kilometers</p>
+                        {/* Floating Elements */}
+                        <div className="absolute top-6 left-6 text-5xl animate-bounce delay-100 opacity-80">👟</div>
+                        <div className="absolute bottom-6 right-6 text-5xl animate-bounce delay-300 opacity-80">🔥</div>
+                        <div className="absolute top-1/2 right-4 text-4xl animate-pulse delay-500 opacity-60">✨</div>
+                        <div className="absolute top-1/2 left-4 text-4xl animate-pulse delay-700 opacity-60">✨</div>
+
+                        <div className="relative z-10 w-full">
+                          <p className="font-bangers text-[120px] md:text-[180px] leading-none mb-4 drop-shadow-[6px_6px_0_rgba(0,0,0,0.2)] text-black">
+                            {getFinaleStats()?.numbers.runs}
+                          </p>
+                          <div className="bg-black text-white px-8 py-3 rounded-full inline-block mb-12 transform -rotate-2 hover:rotate-0 transition-transform duration-300 shadow-lg">
+                            <p className="font-fredoka font-black text-2xl md:text-4xl tracking-widest uppercase">RUNS COMPLETED</p>
                           </div>
-                          <div className="p-4 bg-gray-100 rounded-2xl">
-                            <p className="font-bangers text-4xl md:text-5xl">{getFinaleStats()?.numbers.minutes}</p>
-                            <p className="font-fredoka text-sm font-bold text-gray-500 uppercase mt-2">Minutes</p>
-                          </div>
-                          <div className="p-4 bg-gray-100 rounded-2xl">
-                            <p className="font-bangers text-4xl md:text-5xl">{getFinaleStats()?.numbers.elevation}</p>
-                            <p className="font-fredoka text-sm font-bold text-gray-500 uppercase mt-2">Meters Climbed</p>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+                            {/* Kilometers */}
+                            <div className="p-6 bg-[#4cc9f0] rounded-3xl border-4 border-black shadow-[6px_6px_0_rgba(0,0,0,1)] hover:-translate-y-2 transition-transform duration-300">
+                              <p className="font-bangers text-5xl md:text-6xl text-white drop-shadow-[2px_2px_0_rgba(0,0,0,0.5)]">{getFinaleStats()?.numbers.distance}</p>
+                              <p className="font-fredoka text-sm font-bold text-black uppercase mt-2 bg-white/40 inline-block px-3 py-1 rounded-full">Kilometers</p>
+                            </div>
+                            
+                            {/* Minutes */}
+                            <div className="p-6 bg-[#f72585] rounded-3xl border-4 border-black shadow-[6px_6px_0_rgba(0,0,0,1)] hover:-translate-y-2 transition-transform duration-300">
+                              <p className="font-bangers text-5xl md:text-6xl text-white drop-shadow-[2px_2px_0_rgba(0,0,0,0.5)]">{getFinaleStats()?.numbers.minutes}</p>
+                              <p className="font-fredoka text-sm font-bold text-black uppercase mt-2 bg-white/40 inline-block px-3 py-1 rounded-full">Minutes</p>
+                            </div>
+                            
+                            {/* Regrets */}
+                            <div className="p-6 bg-[#fee440] rounded-3xl border-4 border-black shadow-[6px_6px_0_rgba(0,0,0,1)] hover:-translate-y-2 transition-transform duration-300">
+                              <p className="font-bangers text-5xl md:text-6xl text-black drop-shadow-[2px_2px_0_rgba(255,255,255,0.5)]">0</p>
+                              <p className="font-fredoka text-sm font-bold text-black uppercase mt-2 bg-black/10 inline-block px-3 py-1 rounded-full">Regrets</p>
+                            </div>
                           </div>
                         </div>
                       </Card>
                     </ScrollReveal>
 
-                    {/* SLIDE 5: CITY */}
+                    {/* SLIDE 5: CITY / PATH */}
                     <ScrollReveal>
-                      <Card className="bg-[#2b2d42] border-8 border-white rounded-[40px] p-0 relative overflow-hidden min-h-[500px] group shadow-2xl">
-                        {/* Map Background Placeholder */}
-                        {!loading && activities.length > 0 && activities[0]?.map?.summary_polyline && (
-                          <div className="absolute inset-0 opacity-60 group-hover:opacity-80 transition-opacity duration-700">
-                             <RunMapViz activity={activities[0]} />
+                      <div className="text-center mb-8">
+                        <h2 className="text-4xl md:text-6xl font-bangers text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">
+                          YOUR MOST EPIC RUN
+                        </h2>
+                        <p className="text-white/60 font-fredoka text-xl mt-2">
+                          The path where you pushed your limits.
+                        </p>
+                      </div>
+                      <Card className="bg-[#1a1b26] border-4 border-white rounded-[40px] p-0 relative overflow-hidden min-h-[600px] group shadow-2xl">
+                        {/* Map Background */}
+                        {topLongestRuns[0]?.map?.summary_polyline && (
+                          <div className="absolute inset-0 opacity-80 group-hover:opacity-100 transition-opacity duration-700">
+                             <RunMapViz activity={topLongestRuns[0]} />
                           </div>
                         )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
-                        <div className="absolute bottom-0 left-0 right-0 p-12">
-                          <div className="flex items-center gap-4 mb-4">
-                            <MapPin className="w-12 h-12 text-[#ffd700]" />
-                            <p className="text-white font-bangers text-4xl md:text-5xl">Sahibzada Ajit Singh Nagar</p>
+                        
+                        {/* Dark Overlay for text readability */}
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/90 pointer-events-none"></div>
+
+                        {/* Top Stats Bar */}
+                        <div className="absolute top-6 left-6 right-6 flex flex-wrap gap-3 z-10">
+                            {/* Activity Name */}
+                            <div className="bg-[#24283b]/90 backdrop-blur-md p-3 rounded-xl border border-white/10 flex-1 min-w-[150px]">
+                                <p className="text-white/50 text-[10px] font-bold uppercase tracking-wider mb-1">ACTIVITY</p>
+                                <p className="text-white font-bold text-sm md:text-base truncate">{topLongestRuns[0]?.name || "Run"}</p>
+                            </div>
+                            
+                            {/* Distance */}
+                            <div className="bg-[#24283b]/90 backdrop-blur-md p-3 rounded-xl border border-white/10">
+                                <p className="text-white/50 text-[10px] font-bold uppercase tracking-wider mb-1">DISTANCE</p>
+                                <p className="text-[#3a86ff] font-bold text-xl md:text-2xl">{(topLongestRuns[0]?.distance / 1000).toFixed(2)} <span className="text-xs md:text-sm text-white/60">km</span></p>
+                            </div>
+
+                            {/* Time */}
+                            <div className="bg-[#24283b]/90 backdrop-blur-md p-3 rounded-xl border border-white/10">
+                                <p className="text-white/50 text-[10px] font-bold uppercase tracking-wider mb-1">TIME</p>
+                                <p className="text-[#ff006e] font-bold text-xl md:text-2xl">{(topLongestRuns[0]?.moving_time / 60).toFixed(0)} <span className="text-xs md:text-sm text-white/60">min</span></p>
+                            </div>
+
+                            {/* Pace */}
+                            <div className="bg-[#24283b]/90 backdrop-blur-md p-3 rounded-xl border border-white/10">
+                                <p className="text-white/50 text-[10px] font-bold uppercase tracking-wider mb-1">AVG PACE</p>
+                                <p className="text-[#ccff00] font-bold text-xl md:text-2xl">
+                                    {(() => {
+                                        const pace = (topLongestRuns[0]?.moving_time / 60) / (topLongestRuns[0]?.distance / 1000);
+                                        const mins = Math.floor(pace);
+                                        const secs = Math.round((pace - mins) * 60);
+                                        return `${mins}:${secs.toString().padStart(2, '0')}`;
+                                    })()} <span className="text-xs md:text-sm text-white/60">/km</span>
+                                </p>
+                            </div>
+
+                             {/* Elevation */}
+                             <div className="bg-[#24283b]/90 backdrop-blur-md p-3 rounded-xl border border-white/10">
+                                <p className="text-white/50 text-[10px] font-bold uppercase tracking-wider mb-1">ELEVATION</p>
+                                <p className="text-[#00b4d8] font-bold text-xl md:text-2xl">+{topLongestRuns[0]?.total_elevation_gain} <span className="text-xs md:text-sm text-white/60">m</span></p>
+                            </div>
+                        </div>
+
+                        {/* Bottom Content */}
+                        <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 z-10">
+                          <div className="flex items-center gap-4 mb-6">
+                            <div className="bg-[#ffd700] p-3 rounded-full text-black shadow-[0_0_20px_rgba(255,215,0,0.5)]">
+                                <MapPin className="w-8 h-8" />
+                            </div>
+                            <h2 className="text-white font-bangers text-4xl md:text-6xl drop-shadow-lg tracking-wide uppercase">
+                                {getTerritory().location.split(',')[0] || "YOUR CITY"}
+                            </h2>
                           </div>
-                          <p className="text-white/80 font-fredoka text-2xl">Felt your footsteps.</p>
-                          <p className="text-white font-bold font-fredoka text-3xl mt-2">You LEFT YOUR MARK.</p>
+                          
+                          <div className="space-y-2">
+                            <p className="text-white/90 font-fredoka text-2xl md:text-3xl">Felt your footsteps.</p>
+                            <h3 className="text-white font-black font-fredoka text-3xl md:text-5xl">
+                                You LEFT YOUR MARK.
+                            </h3>
+                          </div>
                         </div>
                       </Card>
                     </ScrollReveal>
 
                     {/* SLIDE 6: CLUB */}
                     <ScrollReveal>
-                      <Card className="bg-[#8338ec] border-8 border-white rounded-[40px] p-12 text-center flex flex-col justify-center shadow-[0_0_40px_rgba(131,56,236,0.4)]">
-                        <Crown className="w-24 h-24 text-[#ffd700] mx-auto mb-8 drop-shadow-lg" />
-                        <p className="text-white font-bangers text-5xl md:text-6xl mb-6">'Bhai log 💪'</p>
-                        <p className="text-white/90 font-fredoka text-2xl mb-2">They saw you grind.</p>
-                        <p className="text-white/90 font-fredoka text-2xl mb-10">They witnessed the journey.</p>
-                        <div className="bg-white/20 rounded-3xl p-8 backdrop-blur-sm">
-                          <p className="text-white font-fredoka text-xl">You're not just a member.</p>
-                          <p className="text-[#ffd700] font-bangers text-4xl md:text-5xl mt-2">YOU'RE FAMILY.</p>
+                      <div className="text-center mb-8">
+                        <h2 className="text-4xl md:text-6xl font-bangers text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">
+                          THE FAMILY YOU FOUND
+                        </h2>
+                      </div>
+                      <Card className="bg-[#8338ec] border-4 border-white rounded-[40px] p-8 md:p-10 text-center flex flex-col justify-center shadow-[0_0_40px_rgba(131,56,236,0.4)] max-w-2xl mx-auto transform hover:scale-105 transition-transform duration-300">
+                        <Crown className="w-20 h-20 text-[#ffd700] mx-auto mb-6 drop-shadow-lg animate-bounce" />
+                        <p className="text-white font-bangers text-5xl md:text-6xl mb-6 drop-shadow-md">'BHAI LOG 💪'</p>
+                        
+                        <div className="space-y-2 mb-8">
+                          <p className="text-white/90 font-fredoka text-xl md:text-2xl">They saw you grind.</p>
+                          <p className="text-white/90 font-fredoka text-xl md:text-2xl">They witnessed the journey.</p>
+                        </div>
+
+                        <div className="bg-white/20 rounded-3xl p-6 backdrop-blur-sm border border-white/10">
+                          <p className="text-white font-fredoka text-lg md:text-xl mb-2">You're not just a member.</p>
+                          <p className="text-[#ffd700] font-bangers text-4xl md:text-5xl drop-shadow-md">YOU'RE FAMILY.</p>
                         </div>
                       </Card>
                     </ScrollReveal>
