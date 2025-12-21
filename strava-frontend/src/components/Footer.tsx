@@ -10,11 +10,18 @@ const Footer = () => {
       
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-12">
-          <h3 className="text-white font-bangers text-5xl md:text-6xl mb-3 uppercase tracking-wide flex items-center justify-center gap-1 drop-shadow-[4px_4px_0_#000]">
-            STR<span className="text-[#CCFF00]">▲</span>V<span className="text-[#CCFF00]">▲</span> RO<span className="text-[#CCFF00]">▲</span>ST
-          </h3>
+          <div className="flex flex-col items-center mb-3">
+            <h3 className="text-white font-bangers text-5xl md:text-6xl uppercase tracking-wide flex items-center justify-center gap-1 drop-shadow-[4px_4px_0_#000]">
+              RUNWR<span className="text-[#CCFF00]">▲</span>PPED
+            </h3>
+            <svg width="200" height="24" viewBox="0 0 100 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="-mt-2 md:-mt-4">
+              <path d="M5 8H42C42 8 45 3 50 3C55 3 58 8 58 8H95" stroke="#CCFF00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M50 3C47 3 45 5 45 7C45 9 48 9 50 8" stroke="#CCFF00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M50 3C53 3 55 5 55 7C55 9 52 9 50 8" stroke="#CCFF00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
           <p className="text-gray-400 font-fredoka font-bold text-lg uppercase tracking-wider">
-            Making you regret your run since 2024
+            You ran. We kept receipts.
           </p>
         </div>
         
@@ -62,7 +69,7 @@ const Footer = () => {
         
         <div className="text-center border-t-[3px] border-white/20 pt-8">
           <p className="text-gray-500 font-fredoka font-bold text-sm uppercase tracking-wider">
-            © {new Date().getFullYear()} Strava Roast. Not affiliated with Strava (obviously).
+            © {new Date().getFullYear()} RunWrapped. Not affiliated with Strava (obviously).
           </p>
         </div>
       </div>

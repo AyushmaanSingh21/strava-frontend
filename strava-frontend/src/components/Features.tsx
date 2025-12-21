@@ -1,26 +1,29 @@
-import { Sparkles, CreditCard, Flame } from "lucide-react";
+import { Sparkles, CreditCard, Flame, Check } from "lucide-react";
 
 const Features = () => {
   const features = [
     {
-      title: "STORY MODE",
-      description: "Your running journey told in 7 acts. Inspired by Spotify Wrapped. Discover your runner persona, territory, signature moves, and get personalized predictions.",
+      title: "RUN WRAPPED",
+      shortCopy: "Your running year, boiled down to what matters.",
+      items: ["Total distance", "Pace highlights", "Your running personality", "Year-in-review summary"],
       icon: Sparkles,
       borderColor: "border-[#8338ec]", // Purple
       iconColor: "text-[#8338ec]",
       number: "01"
     },
     {
-      title: "GENERATE YOUR CARD",
-      description: "Create stunning Spotify Wrapped-style cards with your stats. Colorful, bold, and perfect for sharing. Download and flex on social media.",
+      title: "WRAPPED CARD",
+      shortCopy: "One card. All the flex.",
+      items: ["One clean, shareable card", "Auto-generated", "Instagram/X ready"],
       icon: CreditCard,
       borderColor: "border-[#3a86ff]", // Blue
       iconColor: "text-[#3a86ff]",
       number: "02"
     },
     {
-      title: "GET ROASTED 🔥",
-      description: "AI analyzes your training patterns and serves brutally honest feedback. Funny, constructive, and savage. A feature that'll make you laugh and motivate you to improve.",
+      title: "THE ROAST",
+      shortCopy: "We roast your runs. Respectfully.",
+      items: ["Playful, not toxic", "Based on your data only"],
       icon: Flame,
       borderColor: "border-[#ff006e]", // Pink
       iconColor: "text-[#ff006e]",
@@ -36,7 +39,7 @@ const Features = () => {
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-white font-bangers text-6xl md:text-8xl mb-4 uppercase tracking-wide drop-shadow-[4px_4px_0_#000]">
-            THREE POWERFUL <span className="text-[#CCFF00]">FEATURES</span>
+            WHAT <span className="text-[#CCFF00]">YOU GET</span>
           </h2>
           <p className="text-gray-400 text-xl md:text-2xl font-fredoka font-bold uppercase tracking-wider">
             Everything you need to level up your running game
@@ -49,32 +52,44 @@ const Features = () => {
             return (
               <div 
                 key={index}
-                className={`bg-black ${feature.borderColor} border-[4px] p-8 relative hover:scale-105 transition-all duration-300 group shadow-[8px_8px_0px_0px_#ffffff33] hover:shadow-[12px_12px_0px_0px_#ffffff55] rounded-[32px] flex flex-col`}
+                className={`bg-black ${feature.borderColor} border-[4px] p-6 relative hover:scale-105 transition-all duration-300 group shadow-[8px_8px_0px_0px_#ffffff33] hover:shadow-[12px_12px_0px_0px_#ffffff55] rounded-[24px] flex flex-col max-w-sm mx-auto w-full`}
               >
-                {/* Background Pattern */}
-                <div className="absolute inset-0 opacity-20 pointer-events-none" 
-                     style={{ backgroundImage: 'radial-gradient(circle, #fff 2px, transparent 2.5px)', backgroundSize: '20px 20px' }}>
-                </div>
                 
                 {/* Corner Number */}
-                <div className="absolute top-6 right-6 text-white/20 font-bangers text-4xl">
+                <div className="absolute top-4 right-4 text-white/20 font-bangers text-3xl">
                   {feature.number}
                 </div>
                 
                 {/* Icon */}
-                <div className={`mb-6 relative z-10 bg-black w-16 h-16 rounded-2xl flex items-center justify-center border-[3px] ${feature.borderColor} shadow-[4px_4px_0_rgba(255,255,255,0.2)] transform -rotate-3 group-hover:rotate-3 transition-transform`}>
-                  <Icon className={`w-8 h-8 ${feature.iconColor}`} strokeWidth={2.5} />
+                <div className={`mb-4 relative z-10 bg-black w-12 h-12 rounded-xl flex items-center justify-center border-[3px] ${feature.borderColor} shadow-[3px_3px_0_rgba(255,255,255,0.2)] transform -rotate-3 group-hover:rotate-3 transition-transform`}>
+                  <Icon className={`w-6 h-6 ${feature.iconColor}`} strokeWidth={2.5} />
                 </div>
                 
                 {/* Title */}
-                <h3 className="text-white font-bangers text-3xl mb-4 uppercase relative z-10 tracking-wide">
+                <h3 className="text-white font-bangers text-2xl mb-4 uppercase relative z-10 tracking-wide">
                   {feature.title}
                 </h3>
                 
-                {/* Description */}
-                <p className="text-white/80 font-fredoka text-lg leading-relaxed relative z-10 font-medium">
-                  {feature.description}
-                </p>
+                {/* Items List */}
+                <ul className="space-y-2 mb-6 relative z-10 flex-1">
+                  {feature.items.map((item, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <div className={`mt-1 w-4 h-4 rounded-full border-2 ${feature.borderColor} flex items-center justify-center flex-shrink-0`}>
+                        <Check className={`w-2.5 h-2.5 ${feature.iconColor}`} strokeWidth={4} />
+                      </div>
+                      <span className="text-white/90 font-fredoka text-base font-medium leading-tight">
+                        {item}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Short Copy */}
+                <div className={`relative z-10 pt-4 border-t-2 ${feature.borderColor.replace('border-', 'border-opacity-30 ')}`}>
+                  <p className="text-white font-bangers text-lg uppercase tracking-wide leading-tight">
+                    "{feature.shortCopy}"
+                  </p>
+                </div>
               </div>
             );
           })}

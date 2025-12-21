@@ -23,9 +23,16 @@ const Navigation = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const Logo = () => (
-    <span className="text-white font-bangers tracking-wider text-2xl uppercase flex items-center gap-[1px] drop-shadow-[2px_2px_0_#000]">
-      STR<span className="text-[#CCFF00]">▲</span>V<span className="text-[#CCFF00]">▲</span> RO<span className="text-[#CCFF00]">▲</span>ST
-    </span>
+    <div className="flex flex-col items-center">
+      <span className="text-white font-bangers tracking-wider text-2xl uppercase flex items-center gap-[1px] drop-shadow-[2px_2px_0_#000]">
+        RUNWR<span className="text-[#CCFF00]">▲</span>PPED
+      </span>
+      <svg width="100" height="12" viewBox="0 0 100 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="-mt-1">
+        <path d="M5 8H42C42 8 45 3 50 3C55 3 58 8 58 8H95" stroke="#CCFF00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M50 3C47 3 45 5 45 7C45 9 48 9 50 8" stroke="#CCFF00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M50 3C53 3 55 5 55 7C55 9 52 9 50 8" stroke="#CCFF00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    </div>
   );
 
   return (

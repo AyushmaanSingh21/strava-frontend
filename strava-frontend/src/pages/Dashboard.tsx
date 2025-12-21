@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Trophy, Zap, Mountain, Activity, Clock, Ruler, Flame, Award, TrendingUp, MapPin, Target, Calendar, Star, Sparkles, Rocket, Sunrise, Gauge, Lock, CheckCircle2, Swords, Dna, Heart, Crown, Clapperboard, Globe, Medal } from "lucide-react";
-import { getAthleteProfile, getActivities } from "@/services/stravaAPI";
+import { Trophy, Zap, Mountain, Activity, Clock, Ruler, Flame, Award, TrendingUp, MapPin, Target, Calendar, Star, Sparkles, Rocket, Sunrise, Gauge, Lock, CheckCircle2, Swords, Dna, Heart, Crown, Clapperboard, Globe, Medal, User } from "lucide-react";
+import { getAthleteProfile, getActivities, getAthleteClubs } from "@/services/stravaAPI";
 import RunMapViz from "@/components/RunMapViz";
 import Navigation from "@/components/Navigation";
 import maskImage from "@/assets/paoel.jpg";
@@ -48,6 +48,7 @@ const Dashboard = () => {
   const [error, setError] = useState<string | null>(null);
   const [profile, setProfile] = useState<any | null>(null);
   const [activities, setActivities] = useState<any[]>([]);
+  const [clubs, setClubs] = useState<any[]>([]);
   const [lastSynced, setLastSynced] = useState<string>("");
   const [currentAct, setCurrentAct] = useState(1);
 
@@ -106,6 +107,9 @@ const Dashboard = () => {
         setProfile(prof);
         // Save profile to localStorage for DashboardNav
         localStorage.setItem("strava_profile", JSON.stringify(prof));
+
+        const userClubs = await getAthleteClubs();
+        setClubs(userClubs || []);
         
         const acts = (await getActivities(1, 200)) || [];
         if (!Array.isArray(acts) || acts.length === 0) {
@@ -2114,20 +2118,42 @@ const Dashboard = () => {
                           THE FAMILY YOU FOUND
                         </h2>
                       </div>
-                      <Card className="bg-[#8338ec] border-4 border-white rounded-[40px] p-8 md:p-10 text-center flex flex-col justify-center shadow-[0_0_40px_rgba(131,56,236,0.4)] max-w-2xl mx-auto transform hover:scale-105 transition-transform duration-300">
-                        <Crown className="w-20 h-20 text-[#ffd700] mx-auto mb-6 drop-shadow-lg animate-bounce" />
-                        <p className="text-white font-bangers text-5xl md:text-6xl mb-6 drop-shadow-md">'BHAI LOG 💪'</p>
-                        
-                        <div className="space-y-2 mb-8">
-                          <p className="text-white/90 font-fredoka text-xl md:text-2xl">They saw you grind.</p>
-                          <p className="text-white/90 font-fredoka text-xl md:text-2xl">They witnessed the journey.</p>
-                        </div>
+                      
+                      {clubs.length > 0 ? (
+                        <Card className="bg-[#8338ec] border-4 border-white rounded-[40px] p-8 md:p-10 text-center flex flex-col justify-center shadow-[0_0_40px_rgba(131,56,236,0.4)] max-w-2xl mx-auto transform hover:scale-105 transition-transform duration-300">
+                          <Crown className="w-20 h-20 text-[#ffd700] mx-auto mb-6 drop-shadow-lg animate-bounce" />
+                          <p className="text-white font-bangers text-5xl md:text-6xl mb-6 drop-shadow-md uppercase">'{clubs[0].name}'</p>
+                          
+                          <div className="space-y-2 mb-8">
+                            <p className="text-white/90 font-fredoka text-xl md:text-2xl">They saw you grind.</p>
+                            <p className="text-white/90 font-fredoka text-xl md:text-2xl">They witnessed the journey.</p>
+                          </div>
 
-                        <div className="bg-white/20 rounded-3xl p-6 backdrop-blur-sm border border-white/10">
-                          <p className="text-white font-fredoka text-lg md:text-xl mb-2">You're not just a member.</p>
-                          <p className="text-[#ffd700] font-bangers text-4xl md:text-5xl drop-shadow-md">YOU'RE FAMILY.</p>
-                        </div>
-                      </Card>
+                          <div className="bg-white/20 rounded-3xl p-6 backdrop-blur-sm border border-white/10">
+                            <p className="text-white font-fredoka text-lg md:text-xl mb-2">You're not just a member.</p>
+                            <p className="text-[#ffd700] font-bangers text-4xl md:text-5xl drop-shadow-md">YOU'RE FAMILY.</p>
+                          </div>
+                        </Card>
+                      ) : (
+                        <Card className="bg-black border-4 border-white rounded-[40px] p-8 md:p-10 text-center flex flex-col justify-center shadow-[0_0_40px_rgba(255,255,255,0.2)] max-w-2xl mx-auto transform hover:scale-105 transition-transform duration-300">
+                          <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6 border-2 border-white/20">
+                            <User className="w-10 h-10 text-white/50" />
+                          </div>
+                          <p className="text-white font-bangers text-4xl md:text-5xl mb-6 drop-shadow-md uppercase">NO FAMILY?</p>
+                          
+                          <div className="space-y-2 mb-8">
+                            <p className="text-white/90 font-fredoka text-xl md:text-2xl">Running alone is cool.</p>
+                            <p className="text-white/90 font-fredoka text-xl md:text-2xl">But running with us is better.</p>
+                          </div>
+
+                          <div className="bg-white/10 rounded-3xl p-6 backdrop-blur-sm border border-white/10">
+                            <p className="text-white font-fredoka text-lg md:text-xl mb-4">You're not part of a family yet.</p>
+                            <Button className="bg-[#CCFF00] text-black font-bangers text-2xl px-8 py-6 rounded-xl hover:bg-[#b3e600] hover:scale-105 transition-all border-2 border-black shadow-[4px_4px_0_#fff]">
+                              JOIN OURS
+                            </Button>
+                          </div>
+                        </Card>
+                      )}
                     </ScrollReveal>
 
                     {/* ANIMAL PERSONALITY REVEAL */}

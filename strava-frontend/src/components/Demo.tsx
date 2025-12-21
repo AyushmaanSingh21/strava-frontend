@@ -5,23 +5,23 @@ const Demo = () => {
     {
       icon: Link2,
       title: "CONNECT STRAVA",
-      description: "One click. That's it. We securely connect to your Strava account. We don't post anything without your permission (we're not your ex).",
+      description: "Click the button. We grab your stats faster than you grab water at an aid station. Secure, safe, and judgment-free (until the roast starts).",
       color: "bg-[#CCFF00]",
       textColor: "text-black",
       number: "01"
     },
     {
       icon: Zap,
-      title: "AI ROASTS YOU",
-      description: "Our AI judges your pace, your routes, and that one run you quit halfway. It's brutal, it's fast, and it's probably right.",
+      title: "WE ANALYZE YOUR RUN DATA",
+      description: "We look at your pace, your distance, and that 3-week break you took in November. We find the story behind your sweat.",
       color: "bg-[#00F0FF]",
       textColor: "text-black",
       number: "02"
     },
     {
       icon: Download,
-      title: "CRY & SHARE",
-      description: "Get your personalized card. Post it on Instagram. Pretend you're laughing but deep down you know you need to run faster.",
+      title: "YOU GET WRAPPED + ROASTED",
+      description: "Your year in review, served with a side of sass. One beautiful card to rule them all. Share it before you change your mind.",
       color: "bg-[#FF0066]",
       textColor: "text-white",
       number: "03"
@@ -42,7 +42,7 @@ const Demo = () => {
               HOW IT <span className="text-[#FF0066]">WORKS</span>
             </h2>
             <p className="text-gray-400 text-xl md:text-2xl font-fredoka font-bold uppercase tracking-wider">
-              Three simple steps to emotional damage
+              Takes less time than your warm-up.
             </p>
           </div>
           
@@ -80,7 +80,7 @@ const Demo = () => {
           </div>
           
           <p className="text-center text-gray-500 font-bangers text-xl mt-16 uppercase tracking-widest">
-            From zero to roasted in under 60 seconds
+            Takes less time than your warm-up.
           </p>
       </div>
     </section>

@@ -57,7 +57,7 @@ const Hero = () => {
         
         {/* Sub-headline */}
         <p className="text-gray-400 text-xl md:text-2xl max-w-2xl mx-auto mb-12 font-fredoka font-medium leading-relaxed">
-          Turn your sweat into a story. Visualize your year in running with our AI-powered dashboard.
+          Connect Strava. Get your run wrap, shareable cards, and a friendly roast — in seconds.
         </p>
         
         {/* CTA Buttons */}
@@ -71,10 +71,9 @@ const Hero = () => {
           </Button>
           <Button 
             size="lg"
-            variant="outline"
-            className="bg-transparent hover:bg-white/10 text-white font-bangers uppercase tracking-widest px-10 py-8 text-2xl rounded-full border-[3px] border-white hover:border-[#CCFF00] hover:text-[#CCFF00] transition-all duration-300 backdrop-blur-sm"
+            className="bg-[#CCFF00] text-black font-bangers text-2xl px-10 py-8 rounded-xl hover:bg-[#b3e600] hover:scale-105 transition-all border-2 border-black shadow-[4px_4px_0_#fff] uppercase tracking-widest"
           >
-            View Demo
+            Join Our Club
           </Button>
         </div>
 

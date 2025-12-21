@@ -184,7 +184,7 @@ const Roast = () => {
                       YOUR ROAST AWAITS
                     </h3>
                     <p className="text-white/60 text-xl font-fredoka max-w-xs mx-auto">
-                      Click the button on the left to unlock your personalized Strava roast.
+                      Click the button on the left to unlock your personalized RunWrapped roast.
                     </p>
                   </div>
                   

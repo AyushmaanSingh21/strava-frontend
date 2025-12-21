@@ -43,11 +43,8 @@ const FAQ = () => {
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-white font-bangers text-6xl md:text-8xl mb-4 uppercase tracking-wide drop-shadow-[4px_4px_0_#000]">
-            DUMB <span className="text-[#FF0066] drop-shadow-[4px_4px_0_#000]">QUESTIONS</span>
+            <span className="text-[#FF0066] drop-shadow-[4px_4px_0_#000]">QUESTIONS</span>
           </h2>
-          <p className="text-gray-400 text-xl md:text-2xl font-fredoka font-bold uppercase tracking-wider">
-            Things people actually ask us
-          </p>
         </div>
         
         <Accordion type="single" collapsible className="max-w-4xl mx-auto space-y-4">
@@ -55,12 +52,12 @@ const FAQ = () => {
             <AccordionItem 
               key={index} 
               value={`item-${index}`}
-              className="bg-black border-[3px] border-white rounded-2xl px-6 shadow-[4px_4px_0_#333] data-[state=open]:bg-[#CCFF00] data-[state=open]:border-[#CCFF00] data-[state=open]:shadow-[4px_4px_0_#fff] transition-all duration-200"
+              className="bg-black border-[3px] border-white rounded-2xl px-6 shadow-[4px_4px_0_#333] data-[state=open]:bg-[#CCFF00] data-[state=open]:border-[#CCFF00] data-[state=open]:shadow-[4px_4px_0_#fff] transition-all duration-200 group"
             >
-              <AccordionTrigger className="text-white data-[state=open]:text-black font-bangers text-xl md:text-2xl tracking-wide py-6 hover:no-underline uppercase">
+              <AccordionTrigger className="text-white group-data-[state=open]:text-black font-bangers text-xl md:text-2xl tracking-wide py-6 hover:no-underline uppercase">
                 {faq.question}
               </AccordionTrigger>
-              <AccordionContent className="text-gray-300 data-[state=open]:text-black font-fredoka text-lg pb-6 leading-relaxed font-medium">
+              <AccordionContent className="text-gray-300 group-data-[state=open]:text-black font-fredoka text-lg pb-6 leading-relaxed font-medium">
                 {faq.answer}
               </AccordionContent>
             </AccordionItem>

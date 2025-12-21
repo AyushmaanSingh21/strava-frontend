@@ -76,11 +76,20 @@ export const getActivityById = async (activityId) => {
   return await authGet(`/activities/${activityId}`);
 };
 
+/**
+ * Get athlete clubs
+ * GET /athlete/clubs
+ */
+export const getAthleteClubs = async () => {
+  return await authGet("/athlete/clubs");
+};
+
 export default {
   getAthleteProfile,
   getAthleteStats,
   getActivities,
   getActivityById,
+  getAthleteClubs,
 };
 
 
