@@ -1,4 +1,4 @@
-import { Github, Twitter, Instagram } from "lucide-react";
+import { Twitter, Users } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -25,51 +25,30 @@ const Footer = () => {
           </p>
         </div>
         
-        <div className="flex flex-wrap justify-center gap-8 mb-12 text-lg">
-          <a href="#features" className="text-white hover:text-[#CCFF00] transition-colors font-bangers uppercase tracking-wide hover:underline decoration-2 underline-offset-4">
-            Features
-          </a>
-          <a href="#pricing" className="text-white hover:text-[#CCFF00] transition-colors font-bangers uppercase tracking-wide hover:underline decoration-2 underline-offset-4">
-            Pricing
-          </a>
-          <a href="#" className="text-white hover:text-[#CCFF00] transition-colors font-bangers uppercase tracking-wide hover:underline decoration-2 underline-offset-4">
-            Privacy
-          </a>
-          <a href="#" className="text-white hover:text-[#CCFF00] transition-colors font-bangers uppercase tracking-wide hover:underline decoration-2 underline-offset-4">
-            Terms
-          </a>
-          <a href="#" className="text-white hover:text-[#CCFF00] transition-colors font-bangers uppercase tracking-wide hover:underline decoration-2 underline-offset-4">
-            Contact
-          </a>
-        </div>
-        
         <div className="flex justify-center gap-6 mb-12">
           <a 
-            href="#" 
+            href="https://x.com/AyuuSure" 
+            target="_blank"
+            rel="noopener noreferrer"
             className="w-12 h-12 bg-black border-[3px] border-white hover:bg-[#CCFF00] hover:border-black flex items-center justify-center transition-all duration-300 group shadow-[4px_4px_0_#fff] hover:shadow-[4px_4px_0_#000] hover:-translate-y-1"
             aria-label="Twitter"
           >
             <Twitter className="w-6 h-6 text-white group-hover:text-black transition-colors" strokeWidth={2.5} />
           </a>
           <a 
-            href="#" 
-            className="w-12 h-12 bg-black border-[3px] border-white hover:bg-[#FF0066] hover:border-black flex items-center justify-center transition-all duration-300 group shadow-[4px_4px_0_#fff] hover:shadow-[4px_4px_0_#000] hover:-translate-y-1"
-            aria-label="Instagram"
+            href="https://strava.app.link/LtgcoA7NiZb" 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-12 h-12 bg-black border-[3px] border-white hover:bg-[#FC4C02] hover:border-black flex items-center justify-center transition-all duration-300 group shadow-[4px_4px_0_#fff] hover:shadow-[4px_4px_0_#000] hover:-translate-y-1"
+            aria-label="Join Strava Club"
           >
-            <Instagram className="w-6 h-6 text-white group-hover:text-black transition-colors" strokeWidth={2.5} />
-          </a>
-          <a 
-            href="#" 
-            className="w-12 h-12 bg-black border-[3px] border-white hover:bg-[#00F0FF] hover:border-black flex items-center justify-center transition-all duration-300 group shadow-[4px_4px_0_#fff] hover:shadow-[4px_4px_0_#000] hover:-translate-y-1"
-            aria-label="Github"
-          >
-            <Github className="w-6 h-6 text-white group-hover:text-black transition-colors" strokeWidth={2.5} />
+            <Users className="w-6 h-6 text-white group-hover:text-black transition-colors" strokeWidth={2.5} />
           </a>
         </div>
         
         <div className="text-center border-t-[3px] border-white/20 pt-8">
           <p className="text-gray-500 font-fredoka font-bold text-sm uppercase tracking-wider">
-            © {new Date().getFullYear()} RunWrapped. Not affiliated with Strava (obviously).
+            © {new Date().getFullYear()} RunWrapped.me. Not affiliated with Strava (obviously).
           </p>
         </div>
       </div>

@@ -45,7 +45,7 @@ const DashboardNav = ({ currentPage, sidebarOpen, onToggleSidebar, showSidebarTo
             </button>
           )}
           <a href="/" className="bg-gradient-to-r from-[#2F71FF] to-[#FF006E] bg-clip-text text-transparent font-heading text-2xl tracking-wider font-bold">
-            STRAVAWRAPPED
+            RUNWRAPPED
           </a>
         </div>
         
