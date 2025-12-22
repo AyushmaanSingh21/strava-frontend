@@ -10,6 +10,7 @@ import {
   getAveragePace,
   findPersonalRecords 
 } from "../utils/dataProcessor";
+import { assignAnimal } from "../utils/animalPersonality";
 
 const Cards = () => {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -29,6 +30,7 @@ const Cards = () => {
     calories: number;
     fastestPace: string;
     longestRun: number;
+    animal: any;
   } | null>(null);
   
   // State to manage which image source to display
@@ -115,6 +117,18 @@ const Cards = () => {
         if (morningRuns > eveningRuns && morningRuns > activities.length * 0.4) topGenre = "Morning Runner";
         else if (eveningRuns > activities.length * 0.4) topGenre = "Evening Warrior";
 
+        // Calculate Animal Personality
+        let animal = null;
+        if (activities.length > 0) {
+            const dates = activities.map((a: any) => new Date(a.start_date));
+            const minDate = new Date(Math.min(...dates.map((d: any) => d.getTime())));
+            const maxDate = new Date(Math.max(...dates.map((d: any) => d.getTime())));
+            const diffTime = Math.abs(maxDate.getTime() - minDate.getTime());
+            const diffWeeks = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 7)));
+            const weeklyDist = totalDistance / diffWeeks;
+            animal = assignAnimal(avgPaceNum || 10, weeklyDist);
+        }
+
         // Get proxied profile photo URL
         // Prefer high-res profile image, fallback to medium
         const photoUrl = profile.profile || profile.profile_medium;
@@ -133,7 +147,8 @@ const Cards = () => {
           topGenre,
           calories: Math.round(totalCalories),
           fastestPace: fastestPaceVal ? formatPace(fastestPaceVal) : "-",
-          longestRun: parseFloat(longestRunDist.toFixed(1))
+          longestRun: parseFloat(longestRunDist.toFixed(1)),
+          animal
         };
 
         setCardData(stats);
@@ -261,10 +276,7 @@ const Cards = () => {
                 </div>
                 <div className="flex flex-col items-end">
                    <div className="text-black font-black tracking-tighter text-xl uppercase flex items-center gap-[2px] italic">
-                    STR<span className="text-[#CCFF00] drop-shadow-[2px_2px_0_#000]">▲</span>V<span className="text-[#CCFF00] drop-shadow-[2px_2px_0_#000]">▲</span>
-                  </div>
-                  <div className="text-black font-black tracking-tighter text-xl uppercase flex items-center gap-[2px] italic -mt-2">
-                    WR<span className="text-[#CCFF00] drop-shadow-[2px_2px_0_#000]">▲</span>PPED
+                    RUNWR<span className="text-[#CCFF00] drop-shadow-[2px_2px_0_#000]">▲</span>PPED.ME
                   </div>
                 </div>
               </div>
@@ -357,6 +369,25 @@ const Cards = () => {
                     <span className="text-white/80 font-fredoka text-[8px] uppercase font-bold">Regrets</span>
                   </div>
                 </div>
+
+                {/* Running Soul - Footer */}
+                {cardData.animal && (
+                  <div className="mt-4 w-full bg-white/10 rounded-2xl p-3 flex items-center gap-4 border border-white/20 backdrop-blur-sm">
+                    <div className={`w-14 h-14 rounded-full ${cardData.animal.color} flex items-center justify-center shrink-0 border-[3px] border-white shadow-md overflow-hidden relative`}>
+                       <div className={`absolute inset-0 ${cardData.animal.color} opacity-50`}></div>
+                       <img 
+                          src={cardData.animal.image} 
+                          alt={cardData.animal.animal}
+                          className="w-full h-full object-contain relative z-10 p-1.5"
+                          crossOrigin="anonymous"
+                        />
+                    </div>
+                    <div className="text-left leading-none">
+                      <p className="text-[10px] text-white/60 font-fredoka uppercase tracking-wider mb-1">Running Soul</p>
+                      <p className="text-white font-bangers text-2xl tracking-wide">{cardData.animal.name}</p>
+                    </div>
+                  </div>
+                )}
 
               </div>
 

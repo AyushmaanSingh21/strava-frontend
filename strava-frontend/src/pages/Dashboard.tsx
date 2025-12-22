@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Trophy, Zap, Mountain, Activity, Clock, Ruler, Flame, Award, TrendingUp, MapPin, Target, Calendar, Star, Sparkles, Rocket, Sunrise, Gauge, Lock, CheckCircle2, Swords, Dna, Heart, Crown, Clapperboard, Globe, Medal, User } from "lucide-react";
@@ -44,6 +45,7 @@ const ScrollReveal = ({ children, className = "", delay = 0 }: { children: React
 };
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [profile, setProfile] = useState<any | null>(null);
@@ -2196,7 +2198,7 @@ const Dashboard = () => {
                     {/* ANIMAL PERSONALITY REVEAL */}
                     {animalPersonality && (
                       <ScrollReveal>
-                        <div className="max-w-4xl mx-auto text-center">
+                        <div className="max-w-5xl mx-auto text-center">
                           <h2 className="font-bangers text-6xl md:text-8xl text-white mb-12 drop-shadow-[0_0_25px_rgba(255,255,255,0.3)]">
                             YOUR RUNNING SOUL
                           </h2>
@@ -2204,30 +2206,96 @@ const Dashboard = () => {
                           <Card className={`bg-gray-900 border-8 ${animalPersonality.color.replace('bg-', 'border-')} rounded-[40px] p-8 md:p-12 overflow-hidden relative group transform transition-all duration-500 hover:scale-[1.02]`}>
                             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
                             
-                            {/* Animal Image */}
-                            <div className="relative z-10 mb-8 transform transition-transform duration-700 group-hover:scale-105 group-hover:rotate-1">
-                              <div className={`absolute inset-0 ${animalPersonality.color} blur-[100px] opacity-30 rounded-full`}></div>
-                              <img 
-                                src={animalPersonality.image} 
-                                alt={animalPersonality.animal}
-                                className="w-full max-w-2xl mx-auto drop-shadow-2xl object-contain h-64 md:h-96"
-                                onError={(e) => {
-                                  e.currentTarget.src = `https://placehold.co/800x500/1a1a1a/ffffff/png?text=${animalPersonality.animal.replace(/ /g, '+')}`;
-                                }}
-                              />
-                            </div>
+                            <div className="grid md:grid-cols-2 gap-12 items-center relative z-10">
+                              {/* Left: Image */}
+                              <div className="relative transform transition-transform duration-700 group-hover:scale-105 group-hover:rotate-1">
+                                <div className={`absolute inset-0 ${animalPersonality.color} blur-[80px] opacity-40 rounded-full`}></div>
+                                <img 
+                                  src={animalPersonality.image} 
+                                  alt={animalPersonality.animal}
+                                  className="w-full max-w-md mx-auto drop-shadow-2xl object-contain"
+                                  onError={(e) => {
+                                    e.currentTarget.src = `https://placehold.co/800x800/1a1a1a/ffffff/png?text=${animalPersonality.animal.replace(/ /g, '+')}`;
+                                  }}
+                                />
+                              </div>
 
-                            {/* Text */}
-                            <div className="relative z-10">
-                              <p className="font-fredoka text-xl text-white/60 uppercase tracking-widest mb-4">BASED ON YOUR STATS, YOU ARE</p>
-                              <h3 className={`font-bangers text-5xl md:text-7xl mb-6 text-white drop-shadow-lg leading-tight`}>
-                                {animalPersonality.name}
-                              </h3>
-                              <p className="font-fredoka text-2xl md:text-3xl text-white/90 leading-relaxed max-w-2xl mx-auto italic">
-                                "{animalPersonality.desc}"
-                              </p>
+                              {/* Right: Stats & Info */}
+                              <div className="text-left space-y-6">
+                                <div>
+                                  <div className={`inline-block px-4 py-1 rounded-full ${animalPersonality.color} bg-opacity-20 border border-white/20 mb-4`}>
+                                    <p className={`font-fredoka font-bold uppercase tracking-widest text-sm ${animalPersonality.color.replace('bg-', 'text-')}`}>
+                                      Rare Species Detected
+                                    </p>
+                                  </div>
+                                  <h3 className="font-bangers text-5xl md:text-7xl text-white drop-shadow-lg leading-none mb-2">
+                                    {animalPersonality.name}
+                                  </h3>
+                                  <p className="font-fredoka text-xl text-white/60 italic">
+                                    "{animalPersonality.desc}"
+                                  </p>
+                                </div>
+
+                                {/* Dynamic Stats Bars */}
+                                {(() => {
+                                  const stats = {
+                                    falcon: { speed: 95, stamina: 70, spirit: 85, habitat: "High Altitude" },
+                                    cheetah: { speed: 100, stamina: 50, spirit: 80, habitat: "The Track" },
+                                    wolf: { speed: 75, stamina: 90, spirit: 95, habitat: "Endless Roads" },
+                                    dog: { speed: 60, stamina: 80, spirit: 100, habitat: "The Park" },
+                                    turtle: { speed: 40, stamina: 100, spirit: 100, habitat: "The Long Haul" }
+                                  }[animalPersonality.id] || { speed: 50, stamina: 50, spirit: 50, habitat: "Unknown" };
+
+                                  return (
+                                    <div className="space-y-4 bg-black/40 p-6 rounded-2xl border border-white/10 backdrop-blur-sm">
+                                      <div className="flex justify-between text-sm font-bangers tracking-widest text-white/80 mb-2">
+                                        <span>HABITAT: <span className="text-white">{stats.habitat}</span></span>
+                                      </div>
+                                      
+                                      {[
+                                        { label: "SPEED", val: stats.speed, col: "bg-cyan-400" },
+                                        { label: "STAMINA", val: stats.stamina, col: "bg-yellow-400" },
+                                        { label: "SPIRIT", val: stats.spirit, col: "bg-pink-500" }
+                                      ].map((s) => (
+                                        <div key={s.label} className="space-y-1">
+                                          <div className="flex justify-between text-xs font-bold text-white/60">
+                                            <span>{s.label}</span>
+                                            <span>{s.val}%</span>
+                                          </div>
+                                          <div className="h-3 bg-white/10 rounded-full overflow-hidden">
+                                            <div 
+                                              className={`h-full ${s.col} shadow-[0_0_10px_currentColor] transition-all duration-1000 ease-out`} 
+                                              style={{ width: `${s.val}%` }}
+                                            />
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  );
+                                })()}
+                              </div>
                             </div>
                           </Card>
+
+                          {/* TIER LIST / COMPETITION */}
+                          <div className="mt-12 grid grid-cols-1 md:grid-cols-5 gap-4">
+                            {[
+                              { icon: "🦅", name: "FALCON", req: "< 4:30/km", dist: "50+ km/wk", col: "text-sky-400" },
+                              { icon: "🐆", name: "CHEETAH", req: "< 5:30/km", dist: "30+ km/wk", col: "text-yellow-400" },
+                              { icon: "🐺", name: "WOLF", req: "< 6:30/km", dist: "20+ km/wk", col: "text-slate-400" },
+                              { icon: "🐕", name: "DOG", req: "< 7:30/km", dist: "10+ km/wk", col: "text-orange-400" },
+                              { icon: "🐢", name: "TURTLE", req: "Any Pace", dist: "Just Run", col: "text-green-400" }
+                            ].map((tier) => (
+                              <div key={tier.name} className={`bg-white/5 rounded-xl p-4 border border-white/10 backdrop-blur-sm ${animalPersonality.animal.toUpperCase().includes(tier.name) ? 'ring-2 ring-[#ccff00] bg-white/10' : 'opacity-50 hover:opacity-100 transition-opacity'}`}>
+                                <div className="text-3xl mb-2">{tier.icon}</div>
+                                <h4 className={`font-bangers text-xl ${tier.col} mb-1`}>{tier.name}</h4>
+                                <div className="text-xs font-fredoka text-white/60 space-y-1">
+                                  <p>{tier.req}</p>
+                                  <p>{tier.dist}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </ScrollReveal>
                     )}
@@ -2241,6 +2309,15 @@ const Dashboard = () => {
                         </h2>
                         <p className="text-[#ffd700] font-bangers text-6xl md:text-7xl mb-12 animate-bounce">THAT'S YOUR YEAR.</p>
                         <p className="text-white font-fredoka text-2xl tracking-[0.2em] uppercase border-t border-white/20 pt-12 inline-block">SEE YOU ON THE ROAD, CHAMPION.</p>
+                        
+                        <div className="mt-16">
+                          <Button 
+                            onClick={() => navigate('/cards')}
+                            className="bg-[#FF0066] hover:bg-[#d60055] text-white font-bangers text-2xl md:text-3xl px-10 py-8 rounded-full border-4 border-white shadow-[0_0_30px_rgba(255,0,102,0.6)] hover:scale-105 hover:shadow-[0_0_50px_rgba(255,0,102,0.8)] transition-all duration-300 animate-pulse"
+                          >
+                            CHECKOUT YOUR CARD ➔
+                          </Button>
+                        </div>
                       </div>
                     </ScrollReveal>
 
