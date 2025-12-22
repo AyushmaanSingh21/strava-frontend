@@ -1184,16 +1184,16 @@ const Dashboard = () => {
     <div className="min-h-screen bg-black w-full overflow-x-hidden">
       {/* SIDE SCROLL INDICATOR */}
       <div className="fixed right-6 md:right-10 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-6 py-6 px-3 bg-black/80 backdrop-blur-md rounded-full border-2 border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.5)] hidden md:flex">
-        {[1, 2, 3, 4, 5, 6, 7].map((act) => (
+        {acts.map((act) => (
           <button
-            key={act}
-            onClick={() => scrollToAct(act)}
+            key={act.num}
+            onClick={() => scrollToAct(act.num)}
             className={`transition-all duration-300 rounded-full ${
-              currentAct === act 
+              currentAct === act.num 
                 ? "w-5 h-5 bg-[#39ff14] shadow-[0_0_15px_#39ff14] scale-125 border-2 border-white" 
                 : "w-4 h-4 bg-white/30 hover:bg-white/80 hover:scale-110"
             }`}
-            title={`Jump to Act ${act}`}
+            title={`Jump to ${act.title}`}
           />
         ))}
       </div>
