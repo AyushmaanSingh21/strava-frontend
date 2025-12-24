@@ -1,6 +1,7 @@
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
+import MusicPlayer from "./MusicPlayer";
 
 interface DashboardNavProps {
   currentPage: "dashboard" | "cards" | "roast";
@@ -77,6 +78,7 @@ const DashboardNav = ({ currentPage, sidebarOpen, onToggleSidebar, showSidebarTo
         </div>
         
         <div className="flex items-center gap-4">
+          <MusicPlayer />
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#2F71FF] to-[#FF006E] flex items-center justify-center text-white font-bold">
               {userName[0]}

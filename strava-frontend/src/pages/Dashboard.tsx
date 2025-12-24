@@ -1198,7 +1198,7 @@ const Dashboard = () => {
         ))}
       </div>
 
-      <Navigation />
+      <Navigation autoPlayMusic={true} />
 
       {/* MAIN CONTENT */}
       <div className="w-full">

@@ -3,8 +3,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Home, LayoutDashboard, CreditCard, Flame, User } from "lucide-react";
 import { initiateStravaLogin } from "@/services/stravaAuth";
 import { useEffect, useState } from "react";
+import MusicPlayer from "./MusicPlayer";
 
-const Navigation = () => {
+interface NavigationProps {
+  autoPlayMusic?: boolean;
+}
+
+const Navigation = ({ autoPlayMusic = false }: NavigationProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [userProfile, setUserProfile] = useState<any>(null);
@@ -91,6 +96,7 @@ const Navigation = () => {
 
       {/* Right: User Profile (Absolute) */}
       <div className="absolute right-8 top-8 pointer-events-auto hidden md:flex items-center gap-4">
+        <MusicPlayer autoPlay={autoPlayMusic} />
         {userProfile ? (
           <div className="flex items-center gap-3 bg-black border-[3px] border-white px-4 py-2 rounded-full shadow-[4px_4px_0_#000]">
             <img 

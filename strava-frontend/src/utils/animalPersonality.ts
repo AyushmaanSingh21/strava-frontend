@@ -15,8 +15,8 @@ export const ANIMAL_TIERS: AnimalTier[] = [
     id: 'falcon',
     name: 'The Sky Hunter',
     animal: 'Falcon',
-    minPace: 4.5, // Faster than 4:30 min/km
-    minDist: 50, // More than 50km/week
+    minPace: 5.0, // Faster than 5:00 min/km (was 4.5)
+    minDist: 35, // More than 35km/week (was 50)
     desc: "You don't just run; you soar. High altitude, high speed, absolute dominance.",
     image: "/animals/falcon.png",
     color: "bg-sky-500"
@@ -25,8 +25,8 @@ export const ANIMAL_TIERS: AnimalTier[] = [
     id: 'cheetah',
     name: 'The Blur of the Savannah',
     animal: 'Cheetah',
-    minPace: 5.5, // Faster than 5:30 min/km
-    minDist: 30, // More than 30km/week
+    minPace: 6.0, // Faster than 6:00 min/km (was 5.5)
+    minDist: 20, // More than 20km/week (was 30)
     desc: "Explosive speed. Minimal wasted movement. You are built for the chase.",
     image: "/animals/cheetah.png",
     color: "bg-yellow-500"
@@ -35,8 +35,8 @@ export const ANIMAL_TIERS: AnimalTier[] = [
     id: 'wolf',
     name: 'The Lone Wolf',
     animal: 'Wolf',
-    minPace: 6.5, // Faster than 6:30 min/km
-    minDist: 20, // More than 20km/week
+    minPace: 7.5, // Faster than 7:30 min/km (was 6.5)
+    minDist: 10, // More than 10km/week (was 20)
     desc: "Focused. Disciplined. You run your own path, and you never back down.",
     image: "/animals/wolf.png",
     color: "bg-slate-600"
@@ -45,8 +45,8 @@ export const ANIMAL_TIERS: AnimalTier[] = [
     id: 'dog',
     name: 'The Happy Warrior',
     animal: 'Golden Retriever',
-    minPace: 7.5, // Faster than 7:30 min/km
-    minDist: 10, // More than 10km/week
+    minPace: 9.0, // Faster than 9:00 min/km (was 7.5)
+    minDist: 5, // More than 5km/week (was 10)
     desc: "Energetic, loyal, and always down for a run. You bring the vibes.",
     image: "/animals/dog.png",
     color: "bg-orange-500"
