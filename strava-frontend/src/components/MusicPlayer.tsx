@@ -46,7 +46,7 @@ const MusicPlayer = ({ autoPlay = false }: MusicPlayerProps) => {
         onClick={togglePlay}
         className={`
             gap-2 rounded-full border-[3px] border-black shadow-[4px_4px_0_#000] 
-            hover:translate-y-1 hover:shadow-none transition-all font-bangers tracking-wider uppercase h-auto py-2 px-4
+            hover:translate-y-1 hover:shadow-none transition-all font-bangers tracking-wider uppercase h-auto py-2 px-3 sm:px-4
             ${isPlaying ? "bg-[#CCFF00] text-black hover:bg-[#b3e600]" : "bg-white text-black hover:bg-gray-100"}
         `}
       >

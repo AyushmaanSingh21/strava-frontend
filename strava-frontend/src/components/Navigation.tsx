@@ -95,26 +95,28 @@ const Navigation = ({ autoPlayMusic = false }: NavigationProps) => {
       </div>
 
       {/* Right: User Profile (Absolute) */}
-      <div className="absolute right-8 top-8 pointer-events-auto hidden md:flex items-center gap-4">
+      <div className="absolute right-4 md:right-8 top-8 pointer-events-auto flex items-center gap-2 md:gap-4">
         <MusicPlayer autoPlay={autoPlayMusic} />
-        {userProfile ? (
-          <div className="flex items-center gap-3 bg-black border-[3px] border-white px-4 py-2 rounded-full shadow-[4px_4px_0_#000]">
-            <img 
-              src={userProfile.profile} 
-              alt={userProfile.firstname} 
-              className="w-8 h-8 rounded-full border-2 border-white"
-            />
-            <div className="flex flex-col">
-              <span className="text-white font-bangers uppercase tracking-wide leading-none">{userProfile.firstname} {userProfile.lastname}</span>
-              <span className="text-[#CCFF00] text-[10px] font-fredoka font-bold uppercase tracking-wider">Athlete</span>
+        <div className="hidden md:block">
+          {userProfile ? (
+            <div className="flex items-center gap-3 bg-black border-[3px] border-white px-4 py-2 rounded-full shadow-[4px_4px_0_#000]">
+              <img 
+                src={userProfile.profile} 
+                alt={userProfile.firstname} 
+                className="w-8 h-8 rounded-full border-2 border-white"
+              />
+              <div className="flex flex-col">
+                <span className="text-white font-bangers uppercase tracking-wide leading-none">{userProfile.firstname} {userProfile.lastname}</span>
+                <span className="text-[#CCFF00] text-[10px] font-fredoka font-bold uppercase tracking-wider">Athlete</span>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 text-gray-400 font-bangers uppercase tracking-wide">
-            <User className="w-5 h-5" />
-            <span className="text-sm">Guest</span>
-          </div>
-        )}
+          ) : (
+            <div className="flex items-center gap-2 text-gray-400 font-bangers uppercase tracking-wide">
+              <User className="w-5 h-5" />
+              <span className="text-sm">Guest</span>
+            </div>
+          )}
+        </div>
       </div>
     </nav>
   );
