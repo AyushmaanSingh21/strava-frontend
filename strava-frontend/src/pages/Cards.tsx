@@ -171,10 +171,20 @@ const Cards = () => {
     if (!cardRef.current || !cardData) return;
     try {
       const canvas = await html2canvas(cardRef.current, { 
-        scale: 2, 
-        backgroundColor: '#000000',
+        scale: 3, // Higher scale for crisp text on mobile
+        backgroundColor: null, // Transparent to respect rounded corners
         logging: false,
-        useCORS: true 
+        useCORS: true,
+        allowTaint: true,
+        scrollX: 0,
+        scrollY: -window.scrollY, // Fix for mobile scroll issues
+        onclone: (clonedDoc) => {
+            // Ensure the cloned card maintains the ideal width for layout consistency
+            const card = clonedDoc.getElementById('strava-card');
+            if (card) {
+                card.style.transform = 'none'; // Remove hover effects
+            }
+        }
       });
       canvas.toBlob((blob) => {
         if (!blob) return;
@@ -194,10 +204,19 @@ const Cards = () => {
     if (!cardRef.current) return;
     try {
       const canvas = await html2canvas(cardRef.current, {
-        scale: 2,
-        backgroundColor: '#000000',
+        scale: 3,
+        backgroundColor: null,
         logging: false,
-        useCORS: true
+        useCORS: true,
+        allowTaint: true,
+        scrollX: 0,
+        scrollY: -window.scrollY,
+        onclone: (clonedDoc) => {
+            const card = clonedDoc.getElementById('strava-card');
+            if (card) {
+                card.style.transform = 'none';
+            }
+        }
       });
       canvas.toBlob(async (blob) => {
         if (!blob) return;
@@ -262,7 +281,7 @@ const Cards = () => {
         <div className="flex flex-col items-center gap-8 w-full max-w-sm">
             
             {/* The Card */}
-            <div ref={cardRef} className="relative w-full aspect-[9/16] bg-[#3a86ff] rounded-[32px] overflow-hidden border-[5px] border-black shadow-[15px_15px_0_#000000] flex flex-col p-5 group hover:scale-[1.02] transition-transform duration-300">
+            <div id="strava-card" ref={cardRef} className="relative w-full aspect-[9/16] bg-[#3a86ff] rounded-[32px] overflow-hidden border-[5px] border-black shadow-[15px_15px_0_#000000] flex flex-col p-5 group hover:scale-[1.02] transition-transform duration-300">
               
               {/* Background Pattern */}
               <div className="absolute inset-0 opacity-10 pointer-events-none" 
@@ -320,10 +339,10 @@ const Cards = () => {
                   {/* Total Runs */}
                   <div className="bg-[#8338ec] rounded-[16px] p-3 border-[3px] border-black shadow-[3px_3px_0_#000] flex flex-col items-center justify-center transform hover:-translate-y-1 transition-transform">
                     <span className="text-xl mb-1">👟</span>
-                    <span className="text-white font-bangers text-3xl leading-none">
+                    <span className="text-white font-bangers text-3xl leading-none whitespace-nowrap">
                       {cardData.totalRuns}
                     </span>
-                    <span className="text-white/80 font-fredoka text-[10px] uppercase font-bold">Total Runs</span>
+                    <span className="text-white/80 font-fredoka text-[10px] uppercase font-bold whitespace-nowrap">Total Runs</span>
                   </div>
 
                   {/* Total Distance */}
@@ -331,12 +350,12 @@ const Cards = () => {
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#CCFF00] via-[#00F0FF] to-[#CCFF00]"></div>
                     <span className="text-xl mb-1">📏</span>
                     <div className="flex items-baseline gap-1">
-                        <span className="text-white font-bangers text-3xl leading-none">
+                        <span className="text-white font-bangers text-3xl leading-none whitespace-nowrap">
                         {Math.round(cardData.totalDistance).toLocaleString()}
                         </span>
-                        <span className="text-[#CCFF00] font-bangers text-sm">KM</span>
+                        <span className="text-[#CCFF00] font-bangers text-sm whitespace-nowrap">KM</span>
                     </div>
-                    <span className="text-white/60 font-fredoka text-[10px] uppercase font-bold">Distance</span>
+                    <span className="text-white/60 font-fredoka text-[10px] uppercase font-bold whitespace-nowrap">Distance</span>
                   </div>
                 </div>
 
@@ -345,28 +364,28 @@ const Cards = () => {
                   {/* Calories */}
                   <div className="bg-[#ffbe0b] rounded-[16px] p-2 border-[3px] border-black shadow-[3px_3px_0_#000] flex flex-col items-center justify-center transform hover:-translate-y-1 transition-transform">
                     <span className="text-lg mb-1">🔥</span>
-                    <span className="text-black font-bangers text-xl leading-none">
+                    <span className="text-black font-bangers text-xl leading-none whitespace-nowrap">
                       {(cardData.calories / 1000).toFixed(1)}k
                     </span>
-                    <span className="text-black/80 font-fredoka text-[8px] uppercase font-bold">Cals</span>
+                    <span className="text-black/80 font-fredoka text-[8px] uppercase font-bold whitespace-nowrap">Cals</span>
                   </div>
 
                   {/* Total Minutes */}
                   <div className="bg-[#ff006e] rounded-[16px] p-2 border-[3px] border-black shadow-[3px_3px_0_#000] flex flex-col items-center justify-center transform hover:-translate-y-1 transition-transform delay-75">
                     <span className="text-lg mb-1">⏱️</span>
-                    <span className="text-white font-bangers text-xl leading-none">
+                    <span className="text-white font-bangers text-xl leading-none whitespace-nowrap">
                       {cardData.totalMinutes.toLocaleString()}
                     </span>
-                    <span className="text-white/80 font-fredoka text-[8px] uppercase font-bold">Mins</span>
+                    <span className="text-white/80 font-fredoka text-[8px] uppercase font-bold whitespace-nowrap">Mins</span>
                   </div>
 
                   {/* 0 Regrets */}
                   <div className="bg-[#3a86ff] rounded-[16px] p-2 border-[3px] border-black shadow-[3px_3px_0_#000] flex flex-col items-center justify-center transform hover:-translate-y-1 transition-transform delay-150">
                     <span className="text-lg mb-1">😎</span>
-                    <span className="text-white font-bangers text-xl leading-none">
+                    <span className="text-white font-bangers text-xl leading-none whitespace-nowrap">
                       0
                     </span>
-                    <span className="text-white/80 font-fredoka text-[8px] uppercase font-bold">Regrets</span>
+                    <span className="text-white/80 font-fredoka text-[8px] uppercase font-bold whitespace-nowrap">Regrets</span>
                   </div>
                 </div>
 
