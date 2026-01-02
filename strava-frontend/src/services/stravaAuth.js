@@ -110,6 +110,23 @@ export const handleStravaCallback = async (code) => {
       expires_at: data.expires_at,
       athlete: data.athlete ?? null,
     });
+
+    // --- NEW: Track User in Backend ---
+    if (data.athlete) {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+      fetch(`${backendUrl}/api/users/track`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          stravaId: data.athlete.id,
+          firstname: data.athlete.firstname,
+          lastname: data.athlete.lastname,
+          profile: data.athlete.profile
+        })
+      }).catch(err => console.error("Failed to track user:", err));
+    }
+    // ----------------------------------
+
     return true;
   } catch (error) {
     console.error("Error during Strava callback handling", error);

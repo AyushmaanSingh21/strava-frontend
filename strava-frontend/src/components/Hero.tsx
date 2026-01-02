@@ -1,8 +1,27 @@
 import { Button } from "@/components/ui/button";
 import { initiateStravaLogin } from "@/services/stravaAuth";
 import { Footprints, Map, Flame, Trophy, Activity, Zap, Timer } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const Hero = () => {
+  const [userCount, setUserCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchCount = async () => {
+      try {
+        const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+        const res = await fetch(`${backendUrl}/api/users/count`);
+        if (res.ok) {
+          const data = await res.json();
+          setUserCount(data.count);
+        }
+      } catch (e) {
+        console.error("Failed to fetch user count", e);
+      }
+    };
+    fetchCount();
+  }, []);
+
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-black pt-40 pb-20 border-b-[5px] border-white/20">
       {/* Background Effects */}
@@ -39,12 +58,20 @@ const Hero = () => {
       <div className="container mx-auto px-6 relative z-10 text-center">
         
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 mb-12 animate-fade-in-up backdrop-blur-md mt-12 transform -rotate-2 hover:rotate-0 transition-transform">
-          <span className="relative flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#CCFF00] opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-[#CCFF00]"></span>
-          </span>
-          <span className="text-[#CCFF00] text-sm font-bangers tracking-widest uppercase">The #1 Storyteller for Runners</span>
+        <div className="flex flex-col items-center gap-4 mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 animate-fade-in-up backdrop-blur-md transform -rotate-2 hover:rotate-0 transition-transform">
+            <span className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#CCFF00] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-[#CCFF00]"></span>
+            </span>
+            <span className="text-[#CCFF00] text-sm font-bangers tracking-widest uppercase">The #1 Storyteller for Runners</span>
+          </div>
+          
+          <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-[#CCFF00]/10 border border-[#CCFF00]/30 animate-fade-in-up delay-100 backdrop-blur-md">
+            <span className="text-[#CCFF00] text-xs font-fredoka font-bold uppercase tracking-wider">
+              Trusted by {userCount ? userCount + 100 : "100+"} Athletes
+            </span>
+          </div>
         </div>
 
         {/* Main Heading */}

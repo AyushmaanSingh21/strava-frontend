@@ -1,4 +1,4 @@
-import { Twitter, Users } from "lucide-react";
+import { Twitter, Users, MessageSquare } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -43,6 +43,14 @@ const Footer = () => {
             aria-label="Join Strava Club"
           >
             <Users className="w-6 h-6 text-white group-hover:text-black transition-colors" strokeWidth={2.5} />
+          </a>
+          <a 
+            href="mailto:your-email@example.com?subject=RunWrapped%20Feedback" 
+            className="w-12 h-12 bg-black border-[3px] border-white hover:bg-[#00F0FF] hover:border-black flex items-center justify-center transition-all duration-300 group shadow-[4px_4px_0_#fff] hover:shadow-[4px_4px_0_#000] hover:-translate-y-1"
+            aria-label="Send Feedback"
+            title="Send Feedback"
+          >
+            <MessageSquare className="w-6 h-6 text-white group-hover:text-black transition-colors" strokeWidth={2.5} />
           </a>
         </div>
         
