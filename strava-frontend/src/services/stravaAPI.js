@@ -67,6 +67,45 @@ export const getActivities = async (page = 1, perPage = 30) => {
 };
 
 /**
+ * Get ALL activities for a specific year
+ * Handles pagination automatically
+ * @param {number} year e.g. 2025
+ */
+export const getAllActivities = async (year) => {
+  const start = new Date(`${year}-01-01T00:00:00Z`).getTime() / 1000;
+  const end = new Date(`${year}-12-31T23:59:59Z`).getTime() / 1000;
+  
+  let allActivities = [];
+  let page = 1;
+  const perPage = 200; // Max allowed by Strava
+  
+  while (true) {
+    const params = new URLSearchParams({
+      after: String(start),
+      before: String(end),
+      page: String(page),
+      per_page: String(perPage)
+    });
+    
+    const activities = await authGet(`/athlete/activities?${params.toString()}`);
+    
+    if (!activities || activities.length === 0) {
+      break;
+    }
+    
+    allActivities = [...allActivities, ...activities];
+    
+    if (activities.length < perPage) {
+      break; // Last page reached
+    }
+    
+    page++;
+  }
+  
+  return allActivities;
+};
+
+/**
  * Get activity by id
  * GET /activities/{id}
  * @param {number|string} activityId

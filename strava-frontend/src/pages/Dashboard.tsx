@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Trophy, Zap, Mountain, Activity, Clock, Ruler, Flame, Award, TrendingUp, MapPin, Target, Calendar, Star, Sparkles, Rocket, Sunrise, Gauge, Lock, CheckCircle2, Swords, Dna, Heart, Crown, Clapperboard, Globe, Medal, User } from "lucide-react";
-import { getAthleteProfile, getActivities, getAthleteClubs } from "@/services/stravaAPI";
+import { getAthleteProfile, getActivities, getAllActivities, getAthleteClubs } from "@/services/stravaAPI";
 import RunMapViz from "@/components/RunMapViz";
 import Navigation from "@/components/Navigation";
 import maskImage from "@/assets/paoel.jpg";
@@ -113,9 +113,11 @@ const Dashboard = () => {
         const userClubs = await getAthleteClubs();
         setClubs(userClubs || []);
         
-        const acts = (await getActivities(1, 200)) || [];
+        // Fetch ALL activities for 2025 (handles pagination > 200)
+        const acts = (await getAllActivities(2025)) || [];
+        
         if (!Array.isArray(acts) || acts.length === 0) {
-          throw new Error("No activities found. Start running to see your stats!");
+          throw new Error("No activities found for 2025. Start running to see your stats!");
         }
         setActivities(acts);
         setLastSynced(new Date().toLocaleTimeString());
