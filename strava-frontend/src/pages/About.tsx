@@ -74,7 +74,7 @@ const About = () => {
             </h3>
             
             <div className="flex flex-col gap-4">
-              <a href="https://www.strava.com/athletes/YOUR_STRAVA_ID" target="_blank" rel="noreferrer" className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-[#FC4C02]/20 border border-white/10 hover:border-[#FC4C02] transition-all group">
+              <a href="https://www.strava.com/athletes/168504644" target="_blank" rel="noreferrer" className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-[#FC4C02]/20 border border-white/10 hover:border-[#FC4C02] transition-all group">
                 <div className="bg-[#FC4C02] p-2 rounded-lg text-white group-hover:scale-110 transition-transform">
                   <ExternalLink className="w-5 h-5" />
                 </div>
@@ -88,21 +88,21 @@ const About = () => {
                 <span className="font-bangers text-xl tracking-wide uppercase">Check Code</span>
               </a>
 
-              <a href="https://twitter.com/YOUR_TWITTER" target="_blank" rel="noreferrer" className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-[#1DA1F2]/20 border border-white/10 hover:border-[#1DA1F2] transition-all group">
+              <a href="https://x.com/AyuuSure" target="_blank" rel="noreferrer" className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-[#1DA1F2]/20 border border-white/10 hover:border-[#1DA1F2] transition-all group">
                 <div className="bg-[#1DA1F2] p-2 rounded-lg text-white group-hover:scale-110 transition-transform">
                   <Twitter className="w-5 h-5" />
                 </div>
                 <span className="font-bangers text-xl tracking-wide uppercase">Twitter / X</span>
               </a>
 
-              <a href="https://linkedin.com/in/YOUR_LINKEDIN" target="_blank" rel="noreferrer" className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-[#0077B5]/20 border border-white/10 hover:border-[#0077B5] transition-all group">
+              <a href="https://www.linkedin.com/in/ayushmaansingh21/" target="_blank" rel="noreferrer" className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-[#0077B5]/20 border border-white/10 hover:border-[#0077B5] transition-all group">
                 <div className="bg-[#0077B5] p-2 rounded-lg text-white group-hover:scale-110 transition-transform">
                   <Linkedin className="w-5 h-5" />
                 </div>
                 <span className="font-bangers text-xl tracking-wide uppercase">LinkedIn</span>
               </a>
               
-              <a href="mailto:your.email@example.com" className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-[#CCFF00]/20 border border-white/10 hover:border-[#CCFF00] transition-all group">
+              <a href="mailto:singh.ayushmaan2721@gmail.com" className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-[#CCFF00]/20 border border-white/10 hover:border-[#CCFF00] transition-all group">
                 <div className="bg-[#CCFF00] p-2 rounded-lg text-black group-hover:scale-110 transition-transform">
                   <Mail className="w-5 h-5" />
                 </div>
