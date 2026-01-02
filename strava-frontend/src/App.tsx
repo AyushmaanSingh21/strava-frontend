@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Cards from "./pages/Cards";
 import Roast from "./pages/Roast";
+import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import Callback from "./pages/Callback";
 import DataTest from "./pages/DataTest";
@@ -46,6 +47,7 @@ const App = () => (
               </ProtectedRoute>
             }
           />
+          <Route path="/about" element={<About />} />
           <Route path="/callback" element={<Callback />} />
           <Route
             path="/data-test"

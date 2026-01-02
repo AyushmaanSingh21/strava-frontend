@@ -83,6 +83,14 @@ const Navigation = ({ autoPlayMusic = false }: NavigationProps) => {
           <span className="hidden sm:inline">Roast</span>
         </button>
 
+        <button 
+          onClick={() => navigate('/about')}
+          className={`flex items-center gap-2 px-3 sm:px-5 py-2 rounded-full text-sm font-bangers uppercase tracking-wide transition-all border-2 ${isActive('/about') ? 'bg-[#CCFF00] text-black border-black shadow-[2px_2px_0_#000]' : 'bg-transparent text-white border-transparent hover:bg-white/10'}`}
+        >
+          <User className="w-4 h-4" strokeWidth={2.5} />
+          <span className="hidden sm:inline">About</span>
+        </button>
+
         {!userProfile && (
           <Button 
             onClick={initiateStravaLogin}
