@@ -30,8 +30,13 @@ const About = () => {
               Name's <span className="text-[#CCFF00]">Ayushmaan.</span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-300 leading-relaxed font-medium max-w-2xl">
-              I build systems. End to end. Front to back. Pixel to packet. 
-              I architect chaos into clean design. I take broken ideas, gut them, and rebuild them stronger, faster, leaner.
+              I build systems end to end, pixel to packet. <br/>
+              Chaos in, clean architecture out. <br/>
+              Genius, billionaire, engineer - minus the billionaire part (for now). <br/>
+              I tear broken ideas apart and rebuild them stronger, faster, leaner.
+              <span className="text-white font-bold block mt-4">
+                I wanted to see my running wrap so I just made one.
+              </span>
             </p>
           </div>
         </div>
