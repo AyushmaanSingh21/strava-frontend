@@ -30,30 +30,31 @@ const Hero = () => {
            style={{ backgroundImage: 'radial-gradient(#333 2px, transparent 2px)', backgroundSize: '30px 30px' }}>
       </div>
       
-      {/* Floating Elements - Left Side */}
-      <div className="absolute top-1/4 left-[5%] md:left-[10%] hidden lg:block animate-float-delayed">
-        <div className="bg-black border-[3px] border-[#CCFF00] p-4 rounded-2xl shadow-[4px_4px_0_#CCFF00] transform -rotate-12 hover:rotate-0 transition-transform duration-500 group">
-          <Footprints className="w-12 h-12 text-[#CCFF00] group-hover:scale-110 transition-transform" />
-        </div>
-      </div>
-      <div className="absolute bottom-1/3 left-[8%] md:left-[15%] hidden lg:block animate-float">
-        <div className="bg-black border-[3px] border-[#00F0FF] p-4 rounded-2xl shadow-[4px_4px_0_#00F0FF] transform rotate-6 hover:rotate-0 transition-transform duration-500 group">
-          <Map className="w-10 h-10 text-[#00F0FF] group-hover:scale-110 transition-transform" />
+      {/* Floating Icons (Desktop) */}
+      <div className="absolute top-[15%] left-[5%] hidden lg:block animate-float-delayed">
+        <div className="bg-black p-4 rounded-2xl border-4 border-[#CCFF00] transform -rotate-12 shadow-[0_0_20px_rgba(204,255,0,0.3)]">
+          <Footprints className="w-12 h-12 text-[#CCFF00]" />
         </div>
       </div>
 
-      {/* Floating Elements - Right Side */}
-      <div className="absolute top-1/3 right-[5%] md:right-[10%] hidden lg:block animate-float">
-        <div className="bg-black border-[3px] border-[#FF0066] p-4 rounded-2xl shadow-[4px_4px_0_#FF0066] transform rotate-12 hover:rotate-0 transition-transform duration-500 group">
-          <Trophy className="w-12 h-12 text-[#FF0066] group-hover:scale-110 transition-transform" />
-        </div>
-      </div>
-      <div className="absolute bottom-1/4 right-[8%] md:right-[15%] hidden lg:block animate-float-delayed">
-        <div className="bg-black border-[3px] border-orange-500 p-4 rounded-2xl shadow-[4px_4px_0_orange] transform -rotate-6 hover:rotate-0 transition-transform duration-500 group">
-          <Flame className="w-10 h-10 text-orange-500 group-hover:scale-110 transition-transform" />
+      <div className="absolute top-[40%] left-[8%] hidden lg:block animate-float">
+        <div className="bg-black p-4 rounded-2xl border-4 border-[#00F0FF] transform rotate-6 shadow-[0_0_20px_rgba(0,240,255,0.3)]">
+          <Map className="w-12 h-12 text-[#00F0FF]" />
         </div>
       </div>
 
+      <div className="absolute top-[15%] right-[5%] hidden lg:block animate-float">
+        <div className="bg-black p-4 rounded-2xl border-4 border-[#FF0066] transform rotate-12 shadow-[0_0_20px_rgba(255,0,102,0.3)]">
+          <Trophy className="w-12 h-12 text-[#FF0066]" />
+        </div>
+      </div>
+
+      <div className="absolute top-[40%] right-[8%] hidden lg:block animate-float-delayed">
+        <div className="bg-black p-4 rounded-2xl border-4 border-orange-500 transform -rotate-6 shadow-[0_0_20px_rgba(255,165,0,0.3)]">
+          <Flame className="w-12 h-12 text-orange-500" />
+        </div>
+      </div>
+      
       {/* Main Content */}
       <div className="container mx-auto px-6 relative z-10 text-center">
         
@@ -104,8 +105,32 @@ const Hero = () => {
           </Button>
         </div>
 
+        {/* Social Proof Stickers */}
+        <div className="mt-16 relative max-w-6xl mx-auto flex flex-wrap justify-center items-center gap-8 md:gap-12">
+            
+            {/* Reddit 1 */}
+            <div className="transform -rotate-3 hover:scale-105 transition-transform duration-300 z-10">
+                <img src="/reviews/reddit-1.png" className="w-48 md:w-56 rounded-md border-[3px] border-white shadow-[4px_4px_0_rgba(0,0,0,0.5)]" alt="Reddit Review" />
+            </div>
+
+            {/* Twitter 1 */}
+            <div className="transform rotate-2 hover:scale-105 transition-transform duration-300 z-10 mt-4 md:mt-8">
+                <img src="/reviews/twitter-1.png" className="w-48 md:w-56 rounded-md border-[3px] border-white shadow-[4px_4px_0_rgba(0,0,0,0.5)]" alt="Twitter Review" />
+            </div>
+
+            {/* Reddit 2 (Hidden on small mobile) */}
+            <div className="transform -rotate-2 hover:scale-105 transition-transform duration-300 z-10 hidden sm:block">
+                <img src="/reviews/reddit-2.png" className="w-48 md:w-56 rounded-md border-[3px] border-white shadow-[4px_4px_0_rgba(0,0,0,0.5)]" alt="Reddit Review" />
+            </div>
+
+            {/* Twitter 2 (Hidden on small mobile) */}
+            <div className="transform rotate-3 hover:scale-105 transition-transform duration-300 z-10 mt-4 md:mt-8 hidden sm:block">
+                <img src="/reviews/twitter-2.png" className="w-48 md:w-56 rounded-md border-[3px] border-white shadow-[4px_4px_0_rgba(0,0,0,0.5)]" alt="Twitter Review" />
+            </div>
+        </div>
+
         {/* Stats Strip */}
-        <div className="mt-32 flex flex-wrap justify-center gap-12 md:gap-24 opacity-80 hover:opacity-100 transition-opacity duration-500">
+        <div className="mt-20 flex flex-wrap justify-center gap-12 md:gap-24 opacity-80 hover:opacity-100 transition-opacity duration-500">
             <div className="flex items-center gap-4 group cursor-default">
                 <Activity className="w-6 h-6 text-[#CCFF00] group-hover:scale-110 transition-transform" />
                 <span className="text-white font-bangers tracking-widest text-lg md:text-xl">10K+ RUNS</span>
