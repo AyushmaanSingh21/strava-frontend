@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useReveal } from "@/lib/gsap";
+import { gsap, useGSAP } from "@/lib/gsap";
 
 const TESTIMONIALS = [
   {
@@ -31,22 +31,71 @@ const TESTIMONIALS = [
 
 const Reviews = () => {
   const container = useRef<HTMLElement>(null);
-  useReveal(container);
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        // Header reveal.
+        gsap.from(".rev-head", {
+          autoAlpha: 0,
+          y: 30,
+          stagger: 0.12,
+          duration: 0.7,
+          ease: "power3.out",
+          scrollTrigger: { trigger: container.current, start: "top 75%" },
+        });
+
+        // Cards pop in with an alternating tilt.
+        gsap.from(".tcard", {
+          autoAlpha: 0,
+          y: 70,
+          scale: 0.9,
+          rotate: (i: number) => (i % 2 === 0 ? -3 : 3),
+          transformOrigin: "center",
+          duration: 0.8,
+          ease: "back.out(1.4)",
+          stagger: 0.14,
+          clearProps: "transform",
+          scrollTrigger: { trigger: ".tcard-grid", start: "top 82%" },
+        });
+
+        // Quote marks draw attention as their card lands.
+        gsap.from(".tcard-quote", {
+          autoAlpha: 0,
+          scale: 0.3,
+          rotate: -20,
+          transformOrigin: "left top",
+          duration: 0.6,
+          ease: "back.out(2)",
+          stagger: 0.14,
+          scrollTrigger: { trigger: ".tcard-grid", start: "top 82%" },
+        });
+
+        // Gentle continuous float (on inner wrapper so it never fights the entrance).
+        gsap.to(".tcard-inner", {
+          y: -10,
+          duration: 3.2,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true,
+          stagger: { each: 0.5, from: "random" },
+        });
+      });
+
+      return () => mm.revert();
+    },
+    { scope: container }
+  );
 
   return (
     <section ref={container} className="relative bg-[#0B0910] py-24 md:py-36">
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-14 md:mb-20">
-          <span
-            data-reveal
-            className="font-mono text-xs uppercase tracking-[0.3em] text-[#FF7847]"
-          >
+          <span className="rev-head font-mono text-xs uppercase tracking-[0.3em] text-[#FF7847]">
             / The receipts
           </span>
-          <h2
-            data-reveal
-            className="mt-4 font-grotesk text-5xl uppercase leading-[0.9] tracking-tight text-white sm:text-7xl md:text-8xl"
-          >
+          <h2 className="rev-head mt-4 font-grotesk text-5xl uppercase leading-[0.9] tracking-tight text-white sm:text-7xl md:text-8xl">
             You ran.{" "}
             <span className="font-condiment lowercase tracking-normal text-[#FFB84D]">
               they talked.
@@ -54,39 +103,40 @@ const Reviews = () => {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="tcard-grid grid grid-cols-1 gap-6 md:grid-cols-2">
           {TESTIMONIALS.map((t) => (
             <blockquote
               key={t.name}
-              data-reveal
-              className="relative flex flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-8 transition-colors duration-300 hover:border-white/25 md:p-10"
+              className="tcard rounded-2xl border border-white/10 bg-white/[0.03] transition-[border-color,transform] duration-300 hover:-translate-y-1.5 hover:border-white/30"
             >
-              <span
-                aria-hidden
-                className="font-grotesk text-6xl leading-none"
-                style={{ color: t.accent }}
-              >
-                &ldquo;
-              </span>
-              <p className="-mt-4 flex-1 font-mono text-lg leading-relaxed text-white/90 md:text-xl">
-                {t.quote}
-              </p>
-              <footer className="mt-8 flex items-center gap-3">
+              <div className="tcard-inner flex h-full flex-col p-8 md:p-10">
                 <span
-                  className="flex h-9 w-9 items-center justify-center rounded-full font-grotesk text-sm text-black"
-                  style={{ backgroundColor: t.accent }}
+                  aria-hidden
+                  className="tcard-quote font-grotesk text-6xl leading-none"
+                  style={{ color: t.accent }}
                 >
-                  {t.name.charAt(0)}
+                  &ldquo;
                 </span>
-                <span className="flex flex-col leading-tight">
-                  <span className="font-grotesk text-sm uppercase tracking-wide text-white">
-                    {t.name}
+                <p className="-mt-4 flex-1 font-mono text-lg leading-relaxed text-white/90 md:text-xl">
+                  {t.quote}
+                </p>
+                <footer className="mt-8 flex items-center gap-3">
+                  <span
+                    className="flex h-9 w-9 items-center justify-center rounded-full font-grotesk text-sm text-black"
+                    style={{ backgroundColor: t.accent }}
+                  >
+                    {t.name.charAt(0)}
                   </span>
-                  <span className="font-mono text-xs uppercase tracking-widest text-white/40">
-                    {t.source}
+                  <span className="flex flex-col leading-tight">
+                    <span className="font-grotesk text-sm uppercase tracking-wide text-white">
+                      {t.name}
+                    </span>
+                    <span className="font-mono text-xs uppercase tracking-widest text-white/40">
+                      {t.source}
+                    </span>
                   </span>
-                </span>
-              </footer>
+                </footer>
+              </div>
             </blockquote>
           ))}
         </div>
