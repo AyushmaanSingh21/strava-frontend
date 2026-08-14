@@ -1,102 +1,124 @@
 import { Sparkles, CreditCard, Flame, Check } from "lucide-react";
+import { useRef } from "react";
+import { useReveal } from "@/lib/gsap";
+
+const FEATURES = [
+  {
+    number: "01",
+    title: "Run Wrapped",
+    shortCopy: "Your running year, boiled down to what matters.",
+    items: ["Total distance", "Pace highlights", "Your running personality", "Year-in-review summary"],
+    icon: Sparkles,
+    accent: "#8338ec",
+  },
+  {
+    number: "02",
+    title: "Wrapped Card",
+    shortCopy: "One card. All the flex.",
+    items: ["One clean, shareable card", "Auto-generated", "Instagram/X ready"],
+    icon: CreditCard,
+    accent: "#3a86ff",
+  },
+  {
+    number: "03",
+    title: "The Roast",
+    shortCopy: "We roast your runs. Respectfully.",
+    items: ["Playful, not toxic", "Based on your data only"],
+    icon: Flame,
+    accent: "#ff006e",
+  },
+];
 
 const Features = () => {
-  const features = [
-    {
-      title: "RUN WRAPPED",
-      shortCopy: "Your running year, boiled down to what matters.",
-      items: ["Total distance", "Pace highlights", "Your running personality", "Year-in-review summary"],
-      icon: Sparkles,
-      borderColor: "border-[#8338ec]", // Purple
-      iconColor: "text-[#8338ec]",
-      number: "01"
-    },
-    {
-      title: "WRAPPED CARD",
-      shortCopy: "One card. All the flex.",
-      items: ["One clean, shareable card", "Auto-generated", "Instagram/X ready"],
-      icon: CreditCard,
-      borderColor: "border-[#3a86ff]", // Blue
-      iconColor: "text-[#3a86ff]",
-      number: "02"
-    },
-    {
-      title: "THE ROAST",
-      shortCopy: "We roast your runs. Respectfully.",
-      items: ["Playful, not toxic", "Based on your data only"],
-      icon: Flame,
-      borderColor: "border-[#ff006e]", // Pink
-      iconColor: "text-[#ff006e]",
-      number: "03"
-    }
-  ];
-  
+  const container = useRef<HTMLElement>(null);
+  useReveal(container);
+
   return (
-    <section id="features" className="py-24 bg-black relative overflow-hidden border-b-[5px] border-white/20">
-      {/* Background gradient animation */}
-      <div className="absolute inset-0 bg-[radial-gradient(#ffffff33_1px,transparent_1px)] [background-size:16px_16px] opacity-10"></div>
-      
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-white font-bangers text-6xl md:text-8xl mb-4 uppercase tracking-wide drop-shadow-[4px_4px_0_#000]">
-            WHAT <span className="text-[#CCFF00]">YOU GET</span>
+    <section ref={container} id="features" className="relative bg-black py-24 md:py-36">
+      <div className="dot-grid pointer-events-none absolute inset-0 opacity-40" />
+
+      <div className="relative mx-auto max-w-7xl px-6">
+        {/* Header */}
+        <div className="mb-16 md:mb-24">
+          <span
+            data-reveal
+            className="font-mono text-xs uppercase tracking-[0.3em] text-[#CCFF00]"
+          >
+            / What you get
+          </span>
+          <h2
+            data-reveal
+            className="mt-4 max-w-4xl font-grotesk text-5xl uppercase leading-[0.9] tracking-tight text-white sm:text-7xl md:text-8xl"
+          >
+            Everything to level up your <span className="text-stroke-white">running game</span>
           </h2>
-          <p className="text-gray-400 text-xl md:text-2xl font-fredoka font-bold uppercase tracking-wider">
-            Everything you need to level up your running game
-          </p>
         </div>
-        
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-          {features.map((feature, index) => {
-            const Icon = feature.icon;
+
+        {/* Feature rows */}
+        <div className="flex flex-col">
+          {FEATURES.map((f, i) => {
+            const Icon = f.icon;
             return (
-              <div 
-                key={index}
-                className={`bg-black ${feature.borderColor} border-[4px] p-6 relative hover:scale-105 transition-all duration-300 group shadow-[8px_8px_0px_0px_#ffffff33] hover:shadow-[12px_12px_0px_0px_#ffffff55] rounded-[24px] flex flex-col max-w-sm mx-auto w-full`}
+              <div
+                key={f.number}
+                data-reveal
+                className="group grid grid-cols-1 items-start gap-6 border-t border-white/10 py-12 md:grid-cols-12 md:gap-10 md:py-16"
               >
-                
-                {/* Corner Number */}
-                <div className="absolute top-4 right-4 text-white/20 font-bangers text-3xl">
-                  {feature.number}
+                {/* Big index */}
+                <div className="md:col-span-2">
+                  <span
+                    className="font-grotesk text-6xl leading-none transition-transform duration-500 group-hover:-translate-y-1 md:text-8xl"
+                    style={{ color: f.accent }}
+                  >
+                    {f.number}
+                  </span>
                 </div>
-                
-                {/* Icon */}
-                <div className={`mb-4 relative z-10 bg-black w-12 h-12 rounded-xl flex items-center justify-center border-[3px] ${feature.borderColor} shadow-[3px_3px_0_rgba(255,255,255,0.2)] transform -rotate-3 group-hover:rotate-3 transition-transform`}>
-                  <Icon className={`w-6 h-6 ${feature.iconColor}`} strokeWidth={2.5} />
+
+                {/* Title + short copy */}
+                <div className="md:col-span-5">
+                  <div className="mb-5 flex items-center gap-4">
+                    <span
+                      className="flex h-12 w-12 items-center justify-center rounded-xl border"
+                      style={{ borderColor: f.accent }}
+                    >
+                      <Icon className="h-6 w-6" style={{ color: f.accent }} strokeWidth={2.2} />
+                    </span>
+                    <h3 className="font-grotesk text-3xl uppercase tracking-tight text-white md:text-4xl">
+                      {f.title}
+                    </h3>
+                  </div>
+                  <p className="font-condiment text-2xl text-white/70 md:text-3xl">
+                    {f.shortCopy}
+                  </p>
                 </div>
-                
-                {/* Title */}
-                <h3 className="text-white font-bangers text-2xl mb-4 uppercase relative z-10 tracking-wide">
-                  {feature.title}
-                </h3>
-                
-                {/* Items List */}
-                <ul className="space-y-2 mb-6 relative z-10 flex-1">
-                  {feature.items.map((item, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <div className={`mt-1 w-4 h-4 rounded-full border-2 ${feature.borderColor} flex items-center justify-center flex-shrink-0`}>
-                        <Check className={`w-2.5 h-2.5 ${feature.iconColor}`} strokeWidth={4} />
-                      </div>
-                      <span className="text-white/90 font-fredoka text-base font-medium leading-tight">
+
+                {/* Items */}
+                <ul className="space-y-3 md:col-span-5">
+                  {f.items.map((item) => (
+                    <li key={item} className="flex items-center gap-3">
+                      <span
+                        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
+                        style={{ backgroundColor: f.accent }}
+                      >
+                        <Check className="h-3 w-3 text-black" strokeWidth={4} />
+                      </span>
+                      <span className="font-mono text-sm uppercase tracking-wide text-white/80">
                         {item}
                       </span>
                     </li>
                   ))}
                 </ul>
-
-                {/* Short Copy */}
-                <div className={`relative z-10 pt-4 border-t-2 ${feature.borderColor.replace('border-', 'border-opacity-30 ')}`}>
-                  <p className="text-white font-bangers text-lg uppercase tracking-wide leading-tight">
-                    "{feature.shortCopy}"
-                  </p>
-                </div>
               </div>
             );
           })}
+          <div className="border-t border-white/10" />
         </div>
-        
-        <p className="text-center text-gray-500 font-bangers text-xl mt-16 max-w-2xl mx-auto uppercase tracking-widest">
-          Built for athletes who want more than just numbers
+
+        <p
+          data-reveal
+          className="mt-16 font-mono text-sm uppercase tracking-[0.2em] text-white/40"
+        >
+          Built for athletes who want more than just numbers.
         </p>
       </div>
     </section>

@@ -96,6 +96,53 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
+  /* ===== Cinematic redesign utilities ===== */
+
+  /* Fade the edges of a horizontal marquee */
+  .marquee-mask {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 8%,
+      black 92%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 8%,
+      black 92%,
+      transparent 100%
+    );
+  }
+
+  /* Subtle film grain overlay (apply to a positioned parent) */
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.06;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Outlined display text */
+  .text-stroke-white {
+    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.85);
+    color: transparent;
+  }
+  .text-stroke-thin {
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.5);
+    color: transparent;
+  }
+
+  /* Dotted backdrop */
+  .dot-grid {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.14) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+
   /* Athletic Patterns */
   .grid-pattern {
     background-image: 

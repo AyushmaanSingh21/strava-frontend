@@ -70,6 +70,8 @@ export default {
         mono: "var(--font-mono)",
         bangers: ["Bangers", "cursive"],
         fredoka: ["Fredoka", "sans-serif"],
+        grotesk: ["Anton", "sans-serif"],
+        condiment: ["Condiment", "cursive"],
       },
       borderRadius: {
         lg: "var(--radius)",

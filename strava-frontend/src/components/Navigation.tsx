@@ -1,18 +1,29 @@
-import { Button } from "@/components/ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, LayoutDashboard, CreditCard, Flame, User } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { initiateStravaLogin } from "@/services/stravaAuth";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MusicPlayer from "./MusicPlayer";
+import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 
 interface NavigationProps {
   autoPlayMusic?: boolean;
 }
 
+const LINKS = [
+  { label: "Home", path: "/" },
+  { label: "Wrap", path: "/dashboard" },
+  { label: "Cards", path: "/cards" },
+  { label: "Roast", path: "/roast" },
+  { label: "About", path: "/about" },
+];
+
 const Navigation = ({ autoPlayMusic = false }: NavigationProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [open, setOpen] = useState(false);
+  const bar = useRef<HTMLElement>(null);
+  const overlay = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const profile = localStorage.getItem("strava_profile");
@@ -27,106 +38,156 @@ const Navigation = ({ autoPlayMusic = false }: NavigationProps) => {
 
   const isActive = (path: string) => location.pathname === path;
 
+  // Scroll-aware bar: fades in a blurred backdrop after leaving the top.
+  useGSAP(
+    () => {
+      gsap.set(".nav-backdrop", { autoAlpha: 0 });
+      ScrollTrigger.create({
+        start: "top -60",
+        end: 99999,
+        onToggle: (self) =>
+          gsap.to(".nav-backdrop", {
+            autoAlpha: self.isActive ? 1 : 0,
+            duration: 0.35,
+          }),
+      });
+    },
+    { scope: bar }
+  );
+
+  // Animate the mobile overlay menu.
+  useGSAP(
+    () => {
+      if (open) {
+        gsap.set(overlay.current, { display: "flex" });
+        gsap
+          .timeline()
+          .to(overlay.current, { autoAlpha: 1, duration: 0.3, ease: "power2.out" })
+          .from(
+            ".overlay-link",
+            { y: 40, autoAlpha: 0, stagger: 0.07, duration: 0.5, ease: "power3.out" },
+            "-=0.1"
+          );
+      } else {
+        gsap.to(overlay.current, {
+          autoAlpha: 0,
+          duration: 0.25,
+          ease: "power2.in",
+          onComplete: () => gsap.set(overlay.current, { display: "none" }),
+        });
+      }
+    },
+    { dependencies: [open], scope: overlay }
+  );
+
+  const go = (path: string) => {
+    setOpen(false);
+    navigate(path);
+  };
+
   const Logo = () => (
-    <div className="flex flex-col items-center">
-      <span className="text-white font-bangers tracking-wider text-2xl uppercase flex items-center gap-[1px] drop-shadow-[2px_2px_0_#000]">
-        RUNWR<span className="text-[#CCFF00]">▲</span>PPED
-      </span>
-      <svg width="100" height="12" viewBox="0 0 100 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="-mt-1">
-        <path d="M5 8H42C42 8 45 3 50 3C55 3 58 8 58 8H95" stroke="#CCFF00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M50 3C47 3 45 5 45 7C45 9 48 9 50 8" stroke="#CCFF00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M50 3C53 3 55 5 55 7C55 9 52 9 50 8" stroke="#CCFF00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg>
-    </div>
+    <button
+      onClick={() => go("/")}
+      className="font-grotesk text-white text-2xl md:text-3xl uppercase tracking-tight leading-none hover:opacity-80 transition-opacity"
+    >
+      RUNWR<span className="text-[#CCFF00]">▲</span>PPED
+    </button>
   );
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center pt-6 px-6 pointer-events-none">
-      
-      {/* Left: Logo (Absolute) */}
-      <div className="absolute left-8 top-8 pointer-events-auto hidden md:flex items-center gap-2 cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate('/')}>
-        <Logo />
-      </div>
+    <>
+      <nav ref={bar} className="fixed top-0 left-0 right-0 z-50">
+        {/* Backdrop that appears on scroll */}
+        <div className="nav-backdrop absolute inset-0 bg-black/70 backdrop-blur-xl border-b border-white/10" />
 
-      {/* Center: Pill Navigation */}
-      <div className="pointer-events-auto bg-black border-[3px] border-white rounded-full p-2 shadow-[4px_4px_0_#000] flex items-center gap-2">
-        
-        <button 
-          onClick={() => navigate('/')}
-          className={`flex items-center gap-2 px-3 sm:px-5 py-2 rounded-full text-sm font-bangers uppercase tracking-wide transition-all border-2 ${isActive('/') ? 'bg-[#CCFF00] text-black border-black shadow-[2px_2px_0_#000]' : 'bg-transparent text-white border-transparent hover:bg-white/10'}`}
-        >
-          <Home className="w-4 h-4" strokeWidth={2.5} />
-          <span className="hidden sm:inline">Home</span>
-        </button>
+        <div className="relative container mx-auto px-6 h-20 flex items-center justify-between">
+          <Logo />
 
-        <button 
-          onClick={() => navigate('/dashboard')}
-          className={`flex items-center gap-2 px-3 sm:px-5 py-2 rounded-full text-sm font-bangers uppercase tracking-wide transition-all border-2 ${isActive('/dashboard') ? 'bg-[#00F0FF] text-black border-black shadow-[2px_2px_0_#000]' : 'bg-transparent text-white border-transparent hover:bg-white/10'}`}
-        >
-          <LayoutDashboard className="w-4 h-4" strokeWidth={2.5} />
-          <span className="hidden sm:inline">Wrap</span>
-        </button>
+          {/* Desktop links */}
+          <div className="hidden md:flex items-center gap-8">
+            {LINKS.map((link) => (
+              <button
+                key={link.path}
+                onClick={() => go(link.path)}
+                className={`font-grotesk uppercase text-sm tracking-widest transition-colors relative group ${
+                  isActive(link.path) ? "text-[#CCFF00]" : "text-white/70 hover:text-white"
+                }`}
+              >
+                {link.label}
+                <span
+                  className={`absolute -bottom-1.5 left-0 h-0.5 bg-[#CCFF00] transition-all duration-300 ${
+                    isActive(link.path) ? "w-full" : "w-0 group-hover:w-full"
+                  }`}
+                />
+              </button>
+            ))}
+          </div>
 
-        <button 
-          onClick={() => navigate('/cards')}
-          className={`flex items-center gap-2 px-3 sm:px-5 py-2 rounded-full text-sm font-bangers uppercase tracking-wide transition-all border-2 ${isActive('/cards') ? 'bg-[#FF0066] text-white border-black shadow-[2px_2px_0_#000]' : 'bg-transparent text-white border-transparent hover:bg-white/10'}`}
-        >
-          <CreditCard className="w-4 h-4" strokeWidth={2.5} />
-          <span className="hidden sm:inline">Cards</span>
-        </button>
+          {/* Right cluster */}
+          <div className="flex items-center gap-3 md:gap-4">
+            <MusicPlayer autoPlay={autoPlayMusic} />
 
-        <button 
-          onClick={() => navigate('/roast')}
-          className={`flex items-center gap-2 px-3 sm:px-5 py-2 rounded-full text-sm font-bangers uppercase tracking-wide transition-all border-2 ${isActive('/roast') ? 'bg-white text-black border-black shadow-[2px_2px_0_#000]' : 'bg-transparent text-white border-transparent hover:bg-white/10'}`}
-        >
-          <Flame className="w-4 h-4" strokeWidth={2.5} />
-          <span className="hidden sm:inline">Roast</span>
-        </button>
-
-        <button 
-          onClick={() => navigate('/about')}
-          className={`flex items-center gap-2 px-3 sm:px-5 py-2 rounded-full text-sm font-bangers uppercase tracking-wide transition-all border-2 ${isActive('/about') ? 'bg-[#CCFF00] text-black border-black shadow-[2px_2px_0_#000]' : 'bg-transparent text-white border-transparent hover:bg-white/10'}`}
-        >
-          <User className="w-4 h-4" strokeWidth={2.5} />
-          <span className="hidden sm:inline">About</span>
-        </button>
-
-        {!userProfile && (
-          <Button 
-            onClick={initiateStravaLogin}
-            className="ml-2 bg-[#FC4C02] hover:bg-[#E34402] text-white font-bangers uppercase tracking-wider border-[3px] border-black shadow-[4px_4px_0_#000] hover:translate-y-1 hover:shadow-none transition-all rounded-full px-4 sm:px-6 py-2 h-auto text-sm"
-          >
-            <span className="hidden sm:inline">Connect Strava</span>
-            <span className="sm:hidden">Connect</span>
-          </Button>
-        )}
-      </div>
-
-      {/* Right: User Profile (Absolute) */}
-      <div className="absolute right-4 md:right-8 top-8 pointer-events-auto flex items-center gap-2 md:gap-4">
-        <MusicPlayer autoPlay={autoPlayMusic} />
-        <div className="hidden md:block">
-          {userProfile ? (
-            <div className="flex items-center gap-3 bg-black border-[3px] border-white px-4 py-2 rounded-full shadow-[4px_4px_0_#000]">
-              <img 
-                src={userProfile.profile} 
-                alt={userProfile.firstname} 
-                className="w-8 h-8 rounded-full border-2 border-white"
-              />
-              <div className="flex flex-col">
-                <span className="text-white font-bangers uppercase tracking-wide leading-none">{userProfile.firstname} {userProfile.lastname}</span>
-                <span className="text-[#CCFF00] text-[10px] font-fredoka font-bold uppercase tracking-wider">Athlete</span>
+            {userProfile ? (
+              <div className="hidden md:flex items-center gap-2.5 pl-1">
+                <img
+                  src={userProfile.profile}
+                  alt={userProfile.firstname}
+                  className="w-9 h-9 rounded-full border-2 border-[#CCFF00] object-cover"
+                />
+                <span className="font-grotesk uppercase text-white text-sm tracking-wide leading-none">
+                  {userProfile.firstname}
+                </span>
               </div>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2 text-gray-400 font-bangers uppercase tracking-wide">
-              <User className="w-5 h-5" />
-              <span className="text-sm">Guest</span>
-            </div>
-          )}
+            ) : (
+              <button
+                onClick={initiateStravaLogin}
+                className="hidden md:inline-flex items-center bg-[#FC4C02] hover:bg-[#E34402] text-white font-grotesk uppercase tracking-widest text-sm px-5 py-2.5 rounded-full transition-all hover:-translate-y-0.5"
+              >
+                Connect Strava
+              </button>
+            )}
+
+            {/* Mobile toggle */}
+            <button
+              onClick={() => setOpen((v) => !v)}
+              className="md:hidden text-white p-2"
+              aria-label="Menu"
+            >
+              {open ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
+            </button>
+          </div>
         </div>
+      </nav>
+
+      {/* Fullscreen mobile overlay */}
+      <div
+        ref={overlay}
+        className="fixed inset-0 z-40 hidden flex-col items-center justify-center gap-6 bg-black/95 backdrop-blur-2xl md:hidden"
+        style={{ opacity: 0 }}
+      >
+        <div className="dot-grid absolute inset-0 opacity-30" />
+        {LINKS.map((link) => (
+          <button
+            key={link.path}
+            onClick={() => go(link.path)}
+            className={`overlay-link relative font-grotesk uppercase text-5xl tracking-tight ${
+              isActive(link.path) ? "text-[#CCFF00]" : "text-white"
+            }`}
+          >
+            {link.label}
+          </button>
+        ))}
+        <button
+          onClick={() => {
+            setOpen(false);
+            initiateStravaLogin();
+          }}
+          className="overlay-link mt-4 bg-[#FC4C02] text-white font-grotesk uppercase tracking-widest text-lg px-8 py-4 rounded-full"
+        >
+          Connect Strava
+        </button>
       </div>
-    </nav>
+    </>
   );
 };
 
