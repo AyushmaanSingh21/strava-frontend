@@ -55,32 +55,18 @@ const Hero = () => {
       ref={container}
       className="relative h-screen min-h-[600px] w-full overflow-hidden bg-[#1a1030]"
     >
+      {/* Full-bleed, high-res painterly background */}
       <div ref={bgRef} className="absolute inset-x-0 -top-[5%] h-[110%] will-change-transform">
-        {/* Blurred fill so big screens have no empty gutters */}
         <img
           src={IMG}
-          alt=""
-          aria-hidden
-          className="absolute inset-0 h-full w-full scale-110 object-cover blur-2xl"
+          alt="Two runners at sunset on the city waterfront"
+          className="nb-img h-full w-full object-cover object-center"
+          decoding="async"
         />
-        {/* Crisp center — capped to native size so it never upscales */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div
-            className="relative w-full max-w-[1672px] overflow-hidden"
-            style={{ aspectRatio: "1672 / 941" }}
-          >
-            <img
-              src={IMG}
-              alt="Two runners at sunset on the city waterfront"
-              className="nb-img h-full w-full object-cover"
-              decoding="async"
-            />
-          </div>
-        </div>
-        {/* Film grain to mask any residual softness */}
+        {/* Whisper of film grain for texture */}
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.10] mix-blend-overlay"
-          style={{ backgroundImage: NOISE, backgroundSize: "140px 140px" }}
+          className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-overlay"
+          style={{ backgroundImage: NOISE, backgroundSize: "160px 160px" }}
         />
       </div>
 
