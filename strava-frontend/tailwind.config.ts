@@ -72,6 +72,7 @@ export default {
         fredoka: ["Fredoka", "sans-serif"],
         grotesk: ["Anton", "sans-serif"],
         condiment: ["Condiment", "cursive"],
+        bruno: ["'Bruno Ace'", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
