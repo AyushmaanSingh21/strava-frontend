@@ -18,7 +18,7 @@ const Footer = () => {
   useReveal(container);
 
   return (
-    <footer ref={container} className="relative overflow-hidden bg-black pt-24">
+    <footer ref={container} className="relative overflow-hidden bg-[#0B0910] pt-24">
       <div className="mx-auto max-w-6xl px-6">
         {/* Closing CTA */}
         <div className="border-t border-white/10 py-16 text-center md:py-24">

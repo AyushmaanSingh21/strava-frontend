@@ -6,7 +6,7 @@ const TESTIMONIALS = [
     quote: "Cool, well done, and much better than Strava's official one.",
     name: "JapanskElorgel",
     source: "Reddit",
-    accent: "#FF7847",
+    accent: "#4C6FFF",
   },
   {
     quote: "Love the analogies u did man, also loved the design .. great work",
@@ -25,7 +25,7 @@ const TESTIMONIALS = [
       "Good project, although I'm not active on Strava — any plans for next year's wrap? 😅👀",
     name: "Satya",
     source: "@sa7yaaa",
-    accent: "#FF7847",
+    accent: "#4C6FFF",
   },
 ];
 
@@ -92,7 +92,7 @@ const Reviews = () => {
     <section ref={container} className="relative bg-[#0B0910] py-24 md:py-36">
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-14 md:mb-20">
-          <span className="rev-head font-mono text-xs uppercase tracking-[0.3em] text-[#FF7847]">
+          <span className="rev-head font-mono text-xs uppercase tracking-[0.3em] text-[#4C6FFF]">
             / The receipts
           </span>
           <h2 className="rev-head mt-4 font-grotesk text-5xl uppercase leading-[0.9] tracking-tight text-white sm:text-7xl md:text-8xl">

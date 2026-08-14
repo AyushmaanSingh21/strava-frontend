@@ -44,7 +44,7 @@ const Pricing = () => {
   useReveal(container);
 
   return (
-    <section ref={container} id="pricing" className="relative bg-[#141024] py-24 md:py-36">
+    <section ref={container} id="pricing" className="relative bg-[#0B0910] py-24 md:py-36">
       <div className="dot-grid pointer-events-none absolute inset-0 opacity-30" />
 
       <div className="relative mx-auto max-w-6xl px-6">

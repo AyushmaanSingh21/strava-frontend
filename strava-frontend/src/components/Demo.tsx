@@ -17,7 +17,7 @@ const STEPS = [
     title: "We Analyze Your Run Data",
     description:
       "We look at your pace, your distance, and that 3-week break you took in November. We find the story behind your sweat.",
-    accent: "#FF7847",
+    accent: "#4C6FFF",
   },
   {
     icon: Download,
@@ -59,7 +59,7 @@ const Demo = () => {
   );
 
   return (
-    <section ref={container} id="demo" className="relative bg-[#1C1730] py-24 md:py-36">
+    <section ref={container} id="demo" className="relative bg-[#0B0910] py-24 md:py-36">
       <div className="relative mx-auto max-w-5xl px-6">
         {/* Header */}
         <div className="mb-16 text-center md:mb-24">
@@ -91,7 +91,7 @@ const Demo = () => {
         <div className="demo-timeline relative pl-12 md:pl-20">
           {/* Track */}
           <div className="absolute left-[18px] top-2 h-full w-0.5 bg-white/10 md:left-[30px]">
-            <div className="demo-line-fill h-full w-full origin-top bg-gradient-to-b from-[#FFB84D] via-[#FF7847] to-[#8E7BE8]" />
+            <div className="demo-line-fill h-full w-full origin-top bg-gradient-to-b from-[#FFB84D] via-[#4C6FFF] to-[#8E7BE8]" />
           </div>
 
           <div className="flex flex-col gap-16 md:gap-24">

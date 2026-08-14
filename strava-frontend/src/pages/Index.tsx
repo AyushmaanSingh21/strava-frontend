@@ -10,13 +10,13 @@ import Footer from "@/components/Footer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-[#0B0910]">
       <Navigation />
 
       <Hero />
 
       {/* Ticker divider */}
-      <div className="border-y border-white/10 bg-black py-5 text-white">
+      <div className="border-y border-white/10 bg-[#0B0910] py-5 text-white">
         <Marquee
           items={[
             "Unwrap Your Run",

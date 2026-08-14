@@ -20,7 +20,7 @@ const SOCIALS = [
     label: "Twitter / X",
     href: "https://x.com/AyuuSure",
     icon: Twitter,
-    accent: "#FF7847",
+    accent: "#4C6FFF",
   },
   {
     label: "LinkedIn",
@@ -140,7 +140,7 @@ const About = () => {
               <br />
               <br />
               I didn't just want another dashboard. I wanted a story. Strava gives you data;{" "}
-              <span className="text-[#FF7847]">RunWrapped</span> gives you a vibe. I built this
+              <span className="text-[#4C6FFF]">RunWrapped</span> gives you a vibe. I built this
               to tear down the walls between your sweat and your social feed. It's not just
               code — it's your year in pixels.
             </p>

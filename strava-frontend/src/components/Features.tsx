@@ -17,7 +17,7 @@ const FEATURES = [
     shortCopy: "One card. All the flex.",
     items: ["One clean, shareable card", "Auto-generated", "Instagram/X ready"],
     icon: CreditCard,
-    accent: "#FF7847",
+    accent: "#4C6FFF",
   },
   {
     number: "03",
