@@ -59,7 +59,7 @@ const Demo = () => {
   );
 
   return (
-    <section ref={container} id="demo" className="relative bg-black py-24 md:py-36">
+    <section ref={container} id="demo" className="relative bg-[#1C1730] py-24 md:py-36">
       <div className="relative mx-auto max-w-5xl px-6">
         {/* Header */}
         <div className="mb-16 text-center md:mb-24">

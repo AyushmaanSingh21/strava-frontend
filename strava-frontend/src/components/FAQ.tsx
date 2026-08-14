@@ -39,7 +39,7 @@ const FAQ = () => {
   useReveal(container);
 
   return (
-    <section ref={container} className="relative bg-black py-24 md:py-36">
+    <section ref={container} className="relative bg-[#0B0910] py-24 md:py-36">
       <div className="mx-auto max-w-4xl px-6">
         <div className="mb-14 md:mb-20">
           <span

@@ -34,7 +34,7 @@ const Features = () => {
   useReveal(container);
 
   return (
-    <section ref={container} id="features" className="relative bg-black py-24 md:py-36">
+    <section ref={container} id="features" className="relative bg-[#0B0910] py-24 md:py-36">
       <div className="dot-grid pointer-events-none absolute inset-0 opacity-40" />
 
       <div className="relative mx-auto max-w-7xl px-6">
