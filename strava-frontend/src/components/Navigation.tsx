@@ -90,7 +90,7 @@ const Navigation = ({ autoPlayMusic = false }: NavigationProps) => {
       onClick={() => go("/")}
       className="font-grotesk text-white text-2xl md:text-3xl uppercase tracking-tight leading-none hover:opacity-80 transition-opacity"
     >
-      RUNWR<span className="text-[#CCFF00]">▲</span>PPED
+      RUNWR<span className="text-[#FFB84D]">▲</span>PPED
     </button>
   );
 
@@ -110,12 +110,12 @@ const Navigation = ({ autoPlayMusic = false }: NavigationProps) => {
                 key={link.path}
                 onClick={() => go(link.path)}
                 className={`font-grotesk uppercase text-sm tracking-widest transition-colors relative group ${
-                  isActive(link.path) ? "text-[#CCFF00]" : "text-white/70 hover:text-white"
+                  isActive(link.path) ? "text-[#FFB84D]" : "text-white/70 hover:text-white"
                 }`}
               >
                 {link.label}
                 <span
-                  className={`absolute -bottom-1.5 left-0 h-0.5 bg-[#CCFF00] transition-all duration-300 ${
+                  className={`absolute -bottom-1.5 left-0 h-0.5 bg-[#FFB84D] transition-all duration-300 ${
                     isActive(link.path) ? "w-full" : "w-0 group-hover:w-full"
                   }`}
                 />
@@ -132,7 +132,7 @@ const Navigation = ({ autoPlayMusic = false }: NavigationProps) => {
                 <img
                   src={userProfile.profile}
                   alt={userProfile.firstname}
-                  className="w-9 h-9 rounded-full border-2 border-[#CCFF00] object-cover"
+                  className="w-9 h-9 rounded-full border-2 border-[#FFB84D] object-cover"
                 />
                 <span className="font-grotesk uppercase text-white text-sm tracking-wide leading-none">
                   {userProfile.firstname}
@@ -171,7 +171,7 @@ const Navigation = ({ autoPlayMusic = false }: NavigationProps) => {
             key={link.path}
             onClick={() => go(link.path)}
             className={`overlay-link relative font-grotesk uppercase text-5xl tracking-tight ${
-              isActive(link.path) ? "text-[#CCFF00]" : "text-white"
+              isActive(link.path) ? "text-[#FFB84D]" : "text-white"
             }`}
           >
             {link.label}

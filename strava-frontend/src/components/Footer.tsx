@@ -24,7 +24,7 @@ const Footer = () => {
         <div className="border-t border-white/10 py-16 text-center md:py-24">
           <p
             data-reveal
-            className="font-condiment text-3xl text-[#CCFF00] md:text-5xl"
+            className="font-condiment text-3xl text-[#FFB84D] md:text-5xl"
           >
             ready?
           </p>
@@ -47,7 +47,7 @@ const Footer = () => {
         <div className="flex flex-col items-center justify-between gap-8 border-t border-white/10 py-12 md:flex-row">
           <div className="text-center md:text-left">
             <div className="font-grotesk text-3xl uppercase tracking-tight text-white">
-              RUNWR<span className="text-[#CCFF00]">▲</span>PPED
+              RUNWR<span className="text-[#FFB84D]">▲</span>PPED
             </div>
             <p className="mt-1 font-mono text-xs uppercase tracking-widest text-white/50">
               You ran. We kept receipts.
@@ -62,7 +62,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={label}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white/70 transition-all hover:border-[#CCFF00] hover:text-[#CCFF00]"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white/70 transition-all hover:border-[#FFB84D] hover:text-[#FFB84D]"
               >
                 <Icon className="h-5 w-5" strokeWidth={2.2} />
               </a>

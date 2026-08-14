@@ -26,7 +26,7 @@ const Index = () => {
             "100% Free",
           ]}
           className="text-2xl md:text-4xl"
-          accent="#CCFF00"
+          accent="#FFB84D"
         />
       </div>
 

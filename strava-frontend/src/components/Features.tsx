@@ -9,7 +9,7 @@ const FEATURES = [
     shortCopy: "Your running year, boiled down to what matters.",
     items: ["Total distance", "Pace highlights", "Your running personality", "Year-in-review summary"],
     icon: Sparkles,
-    accent: "#8338ec",
+    accent: "#FFB84D",
   },
   {
     number: "02",
@@ -17,7 +17,7 @@ const FEATURES = [
     shortCopy: "One card. All the flex.",
     items: ["One clean, shareable card", "Auto-generated", "Instagram/X ready"],
     icon: CreditCard,
-    accent: "#3a86ff",
+    accent: "#FF7847",
   },
   {
     number: "03",
@@ -25,7 +25,7 @@ const FEATURES = [
     shortCopy: "We roast your runs. Respectfully.",
     items: ["Playful, not toxic", "Based on your data only"],
     icon: Flame,
-    accent: "#ff006e",
+    accent: "#8E7BE8",
   },
 ];
 
@@ -42,7 +42,7 @@ const Features = () => {
         <div className="mb-16 md:mb-24">
           <span
             data-reveal
-            className="font-mono text-xs uppercase tracking-[0.3em] text-[#CCFF00]"
+            className="font-mono text-xs uppercase tracking-[0.3em] text-[#FFB84D]"
           >
             / What you get
           </span>

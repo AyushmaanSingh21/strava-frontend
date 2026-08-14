@@ -19,7 +19,7 @@ const Marquee = ({
   speed = 28,
   reverse = false,
   className = "",
-  accent = "#CCFF00",
+  accent = "#FFB84D",
 }: MarqueeProps) => {
   const container = useRef<HTMLDivElement>(null);
 

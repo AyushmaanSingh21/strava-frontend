@@ -61,7 +61,7 @@ const Reviews = () => {
       <div className="mb-14 px-6 text-center">
         <span
           data-reveal
-          className="font-mono text-xs uppercase tracking-[0.3em] text-[#00F0FF]"
+          className="font-mono text-xs uppercase tracking-[0.3em] text-[#FF7847]"
         >
           / The receipts
         </span>
@@ -70,7 +70,7 @@ const Reviews = () => {
           className="mt-4 font-grotesk text-5xl uppercase leading-[0.9] tracking-tight text-white sm:text-7xl md:text-8xl"
         >
           You ran.{" "}
-          <span className="font-condiment lowercase tracking-normal text-[#CCFF00]">
+          <span className="font-condiment lowercase tracking-normal text-[#FFB84D]">
             they talked.
           </span>
         </h2>

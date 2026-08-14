@@ -9,7 +9,7 @@ const STEPS = [
     title: "Connect Strava",
     description:
       "Click the button. We grab your stats faster than you grab water at an aid station. Secure, safe, and judgment-free (until the roast starts).",
-    accent: "#CCFF00",
+    accent: "#FFB84D",
   },
   {
     icon: Zap,
@@ -17,7 +17,7 @@ const STEPS = [
     title: "We Analyze Your Run Data",
     description:
       "We look at your pace, your distance, and that 3-week break you took in November. We find the story behind your sweat.",
-    accent: "#00F0FF",
+    accent: "#FF7847",
   },
   {
     icon: Download,
@@ -25,7 +25,7 @@ const STEPS = [
     title: "You Get Wrapped + Roasted",
     description:
       "Your year in review, served with a side of sass. One beautiful card to rule them all. Share it before you change your mind.",
-    accent: "#FF0066",
+    accent: "#8E7BE8",
   },
 ];
 
@@ -65,7 +65,7 @@ const Demo = () => {
         <div className="mb-16 text-center md:mb-24">
           <span
             data-reveal
-            className="font-mono text-xs uppercase tracking-[0.3em] text-[#FF0066]"
+            className="font-mono text-xs uppercase tracking-[0.3em] text-[#8E7BE8]"
           >
             / How it works
           </span>
@@ -75,7 +75,7 @@ const Demo = () => {
           >
             Three steps.
             <br />
-            <span className="font-condiment lowercase tracking-normal text-[#FF0066]">
+            <span className="font-condiment lowercase tracking-normal text-[#8E7BE8]">
               zero excuses.
             </span>
           </h2>
@@ -91,7 +91,7 @@ const Demo = () => {
         <div className="demo-timeline relative pl-12 md:pl-20">
           {/* Track */}
           <div className="absolute left-[18px] top-2 h-full w-0.5 bg-white/10 md:left-[30px]">
-            <div className="demo-line-fill h-full w-full origin-top bg-gradient-to-b from-[#CCFF00] via-[#00F0FF] to-[#FF0066]" />
+            <div className="demo-line-fill h-full w-full origin-top bg-gradient-to-b from-[#FFB84D] via-[#FF7847] to-[#8E7BE8]" />
           </div>
 
           <div className="flex flex-col gap-16 md:gap-24">

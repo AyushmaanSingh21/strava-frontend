@@ -44,7 +44,7 @@ const FAQ = () => {
         <div className="mb-14 md:mb-20">
           <span
             data-reveal
-            className="font-mono text-xs uppercase tracking-[0.3em] text-[#FF0066]"
+            className="font-mono text-xs uppercase tracking-[0.3em] text-[#8E7BE8]"
           >
             / FAQ
           </span>
@@ -63,7 +63,7 @@ const FAQ = () => {
               value={`item-${index}`}
               className="border-b border-white/10"
             >
-              <AccordionTrigger className="py-7 text-left font-grotesk text-xl uppercase tracking-tight text-white transition-colors hover:no-underline data-[state=open]:text-[#CCFF00] md:text-3xl">
+              <AccordionTrigger className="py-7 text-left font-grotesk text-xl uppercase tracking-tight text-white transition-colors hover:no-underline data-[state=open]:text-[#FFB84D] md:text-3xl">
                 {faq.question}
               </AccordionTrigger>
               <AccordionContent className="pb-7 font-mono text-base leading-relaxed text-white/60 md:text-lg">

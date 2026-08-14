@@ -51,7 +51,7 @@ const Pricing = () => {
         <div className="mb-16 text-center">
           <span
             data-reveal
-            className="font-mono text-xs uppercase tracking-[0.3em] text-[#CCFF00]"
+            className="font-mono text-xs uppercase tracking-[0.3em] text-[#FFB84D]"
           >
             / Pricing
           </span>
@@ -76,7 +76,7 @@ const Pricing = () => {
               data-reveal
               className={`relative flex flex-col rounded-3xl border p-8 md:p-10 transition-transform duration-300 hover:-translate-y-2 ${
                 tier.highlight
-                  ? "border-[#FF0066] bg-[#FF0066]/10"
+                  ? "border-[#8E7BE8] bg-[#8E7BE8]/10"
                   : "border-white/15 bg-white/[0.03]"
               }`}
             >
@@ -86,7 +86,7 @@ const Pricing = () => {
                 </h3>
                 <span
                   className={`rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-widest ${
-                    tier.highlight ? "bg-[#FF0066] text-white" : "bg-[#CCFF00] text-black"
+                    tier.highlight ? "bg-[#8E7BE8] text-white" : "bg-[#FFB84D] text-black"
                   }`}
                 >
                   {tier.badge}
@@ -108,7 +108,7 @@ const Pricing = () => {
                   <li key={f} className="flex items-center gap-3">
                     <span
                       className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
-                        tier.highlight ? "bg-[#FF0066]" : "bg-[#CCFF00]"
+                        tier.highlight ? "bg-[#8E7BE8]" : "bg-[#FFB84D]"
                       }`}
                     >
                       <Check className="h-3 w-3 text-black" strokeWidth={4} />
@@ -123,7 +123,7 @@ const Pricing = () => {
                 className={`w-full rounded-full py-4 font-grotesk text-lg uppercase tracking-widest transition-all hover:-translate-y-0.5 ${
                   tier.highlight
                     ? "bg-white text-black hover:bg-white/90"
-                    : "bg-[#CCFF00] text-black hover:bg-[#b3e600]"
+                    : "bg-[#FFB84D] text-black hover:bg-[#F0A838]"
                 }`}
               >
                 {tier.cta}
