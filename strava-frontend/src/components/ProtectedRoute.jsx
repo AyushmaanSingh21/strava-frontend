@@ -1,17 +1,24 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { isAuthenticated } from "../services/stravaAuth";
+
+const isMockMode = () => new URLSearchParams(window.location.search).has("mock");
 
 const ProtectedRoute = ({ children }) => {
   const [allowed, setAllowed] = useState(null);
+  const location = useLocation();
 
   useEffect(() => {
+    if (isMockMode()) {
+      setAllowed(true);
+      return;
+    }
     const check = async () => {
       const ok = await isAuthenticated();
       setAllowed(ok);
     };
     check();
-  }, []);
+  }, [location.search]);
 
   if (allowed === null) {
     return (

@@ -11,6 +11,7 @@ import {
   findPersonalRecords 
 } from "../utils/dataProcessor";
 import { assignAnimal } from "../utils/animalPersonality";
+import { isMockMode, getMockProfile, getMockActivities } from "@/utils/mockData";
 
 const Cards = () => {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -71,6 +72,38 @@ const Cards = () => {
       try {
         setLoading(true);
         setError(null);
+
+        if (isMockMode()) {
+          const mockProfile = getMockProfile();
+          const mockActs = getMockActivities();
+          const totalDistance = calculateTotalDistance(mockActs);
+          const avgPaceNum = getAveragePace(mockActs);
+          const totalMinutes = Math.round(mockActs.reduce((acc, c) => acc + c.moving_time, 0) / 60);
+          const fastest = [...mockActs].sort((a, b) => b.average_speed - a.average_speed)[0];
+          const longest = Math.max(...mockActs.map((a) => a.distance)) / 1000;
+          const morningRuns = mockActs.filter((a) => new Date(a.start_date_local).getHours() >= 5 && new Date(a.start_date_local).getHours() < 11).length;
+          const eveningRuns = mockActs.filter((a) => new Date(a.start_date_local).getHours() >= 17 && new Date(a.start_date_local).getHours() < 22).length;
+
+          setCardData({
+            name: `${mockProfile.firstname} ${mockProfile.lastname}`.trim(),
+            username: mockProfile.username,
+            profilePhoto: "",
+            originalProfilePhoto: "",
+            totalDistance: Math.round(totalDistance),
+            totalRuns: mockActs.length,
+            totalTime: Math.round(calculateTotalTime(mockActs)),
+            totalMinutes,
+            avgPace: formatPace(avgPaceNum),
+            topGenre: morningRuns > eveningRuns ? "Morning Runner" : "Evening Warrior",
+            calories: Math.round(mockActs.reduce((acc, c) => acc + c.calories, 0)),
+            fastestPace: fastest ? formatPace(16.666666666667 / fastest.average_speed) : "-",
+            longestRun: parseFloat(longest.toFixed(1)),
+            animal: null,
+          });
+          setLoading(false);
+          return;
+        }
+
         const profile = await getAthleteProfile();
         const activities = await getActivities(1, 200);
         if (!profile || !activities) throw new Error("Failed to fetch data");

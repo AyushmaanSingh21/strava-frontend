@@ -14,6 +14,7 @@ import {
   findPersonalRecords,
 } from "@/utils/dataProcessor";
 import { assignAnimal } from "@/utils/animalPersonality";
+import { isMockMode, getMockProfile, getMockActivities, getMockClubs } from "@/utils/mockData";
 
 const ScrollReveal = ({ children, className = "", delay = 0 }: { children: React.ReactNode, className?: string, delay?: number }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -102,6 +103,16 @@ const Dashboard = () => {
       try {
         setLoading(true);
         setError(null);
+
+        if (isMockMode()) {
+          setProfile(getMockProfile());
+          setClubs(getMockClubs());
+          setActivities(getMockActivities());
+          setLastSynced(new Date().toLocaleTimeString());
+          setLoading(false);
+          return;
+        }
+
         const prof = await getAthleteProfile();
         if (!prof) {
           throw new Error("Failed to load athlete profile. Please try logging in again.");

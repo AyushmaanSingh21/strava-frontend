@@ -11,6 +11,7 @@ import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import Callback from "./pages/Callback";
 import DataTest from "./pages/DataTest";
+import Wrap from "./pages/Wrap";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -48,6 +49,14 @@ const App = () => (
             }
           />
           <Route path="/about" element={<About />} />
+          <Route
+            path="/wrap"
+            element={
+              <ProtectedRoute>
+                <Wrap />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/callback" element={<Callback />} />
           <Route
             path="/data-test"
