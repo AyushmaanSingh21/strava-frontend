@@ -141,30 +141,77 @@ const cardBase =
   "wrap-card relative flex h-[min(82vh,700px)] shrink-0 flex-col overflow-hidden rounded-[24px] border border-white/[0.07] bg-[#141317] will-change-transform";
 const cardPad = "p-8 md:p-10";
 
-const Card = ({ index, label, accent = "#FFB84D", children, wide = false, className = "" }: {
+// Option B (bold) pastel palettes: solid card colour + dark ink for text.
+const BOLD_THEMES: Record<string, { bg: string; ink: string; sub: string }> = {
+  mint: { bg: "#B8EAD6", ink: "#0E2A22", sub: "#2C5E4E" },
+  peach: { bg: "#FFD3B6", ink: "#3A1A0E", sub: "#7A3A22" },
+  lavender: { bg: "#D6CCF5", ink: "#221A3A", sub: "#4A3C7A" },
+  sky: { bg: "#BEE1FF", ink: "#0E2338", sub: "#2C4E70" },
+  butter: { bg: "#FFE9A8", ink: "#332800", sub: "#6E5510" },
+};
+
+const Card = ({ index, label, accent = "#FFB84D", children, wide = false, className = "", bold, fill = false }: {
   index: number; label: string; accent?: string; children: React.ReactNode; wide?: boolean; className?: string;
-}) => (
-  <article
-    data-card
-    className={`${cardBase} ${cardPad} ${wide ? "w-[min(96vw,1020px)]" : "w-[min(88vw,470px)]"} ${className}`}
-  >
-    {/* tinted wash */}
-    <div
-      className="pointer-events-none absolute inset-0"
-      style={{ background: `linear-gradient(160deg, ${accent}2e 0%, #141317 58%)` }}
-    />
-    <div
-      className="pointer-events-none absolute inset-0"
-      style={{ background: `radial-gradient(ellipse 80% 45% at 50% 0%, ${accent}12, transparent 70%)` }}
-    />
-    {/* label row */}
-    <div className="relative z-10 mb-auto flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.3em]">
-      <span style={{ color: accent }}>/ {String(index).padStart(2, "0")}</span>
-      <span className="text-white/35">{label}</span>
+  /** Option B — set to a BOLD_THEMES key for a fully-coloured pastel card */
+  bold?: keyof typeof BOLD_THEMES;
+  /** fill = content spans the full card top→bottom (child controls distribution) instead of being vertically centred */
+  fill?: boolean;
+}) => {
+  const theme = bold ? BOLD_THEMES[bold] : null;
+
+  return (
+    <article
+      data-card
+      data-bold={bold ? "" : undefined}
+      className={`${cardBase} ${cardPad} ${wide ? "w-[min(96vw,1020px)]" : "w-[min(88vw,470px)]"} ${className}`}
+      style={theme ? { background: theme.bg, borderColor: "rgba(0,0,0,0.08)", color: theme.ink } : undefined}
+    >
+      {theme ? (
+        /* Option B: subtle paper texture + soft top light, everything else inherits dark ink */
+        <>
+          <div className="pointer-events-none absolute inset-0 opacity-[0.5]"
+            style={{ background: `radial-gradient(ellipse 90% 55% at 50% -10%, rgba(255,255,255,0.7), transparent 60%)` }} />
+          <div className="pointer-events-none absolute inset-0 dot-grid opacity-[0.08]" />
+        </>
+      ) : (
+        /* Option A: dark card with a tinted colour wash */
+        <>
+          <div className="pointer-events-none absolute inset-0"
+            style={{ background: `linear-gradient(160deg, ${accent}2e 0%, #141317 58%)` }} />
+          <div className="pointer-events-none absolute inset-0"
+            style={{ background: `radial-gradient(ellipse 80% 45% at 50% 0%, ${accent}12, transparent 70%)` }} />
+        </>
+      )}
+
+      {/* label row */}
+      <div className="relative z-10 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.3em]">
+        <span style={{ color: theme ? theme.sub : accent }}>/ {String(index).padStart(2, "0")}</span>
+        <span style={theme ? { color: theme.sub, opacity: 0.75 } : undefined} className={theme ? "" : "text-white/35"}>{label}</span>
+      </div>
+      <div className={`relative z-10 mt-6 flex flex-1 flex-col ${fill ? "" : "justify-center"}`}>{children}</div>
+    </article>
+  );
+};
+
+// Stat card body: big number pinned to the top, a larger refined comparison
+// panel pinned to the bottom — so the vertical space actually gets used.
+const StatBody = ({ bold, eyebrow, value, unit, children }: {
+  bold: keyof typeof BOLD_THEMES; eyebrow: string; value: React.ReactNode; unit: string; children: React.ReactNode;
+}) => {
+  const t = BOLD_THEMES[bold];
+  return (
+    <div className="flex h-full flex-col">
+      <div className="pt-1">
+        <p className="font-mono text-[11px] uppercase tracking-[0.35em]" style={{ color: t.sub }}>{eyebrow}</p>
+        <p className="mt-3 font-grotesk leading-[0.78] text-[clamp(5rem,15vh,9.5rem)]" style={{ color: t.ink }}>{value}</p>
+        <p className="mt-1 font-condiment text-4xl md:text-5xl" style={{ color: t.sub }}>{unit}</p>
+      </div>
+      <div className="mt-auto rounded-3xl border border-black/10 bg-black/[0.06] p-6 md:p-7">
+        {children}
+      </div>
     </div>
-    <div className="relative z-10 my-auto flex flex-1 flex-col justify-center">{children}</div>
-  </article>
-);
+  );
+};
 
 const Script = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
   <span className={`font-condiment text-[#FFB84D] ${className}`}>{children}</span>
@@ -233,46 +280,55 @@ const Wrap = () => {
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const pad = () => parseFloat(getComputedStyle(track).paddingLeft);
-        const distance = () => track.scrollWidth - window.innerWidth + pad() * 2;
+        const vw = () => window.innerWidth;
+        const centerOf = (c: HTMLElement) => c.offsetLeft + c.offsetWidth / 2;
+        const first = () => centerOf(cards[0]);
+        const last = () => centerOf(cards[cards.length - 1]);
+        // Total horizontal travel = distance between first and last card centres.
+        const span = () => Math.max(1, last() - first());
 
+        // Each card's snap progress = how far its centre sits between the
+        // first and last centres. Evenly spaced, one entry per card.
         const computeSnapPoints = () => {
-          const total = distance();
-          const vw = window.innerWidth;
-          snapPointsRef.current = cards.map((c) => {
-            const center = c.offsetLeft + c.offsetWidth / 2 - pad();
-            return Math.min(1, Math.max(0, (center - vw / 2) / total));
-          });
+          const f = first();
+          const sp = span();
+          snapPointsRef.current = cards.map((c) => (centerOf(c) - f) / sp);
         };
         computeSnapPoints();
 
-        const tween = gsap.to(track, {
-          x: () => -distance(),
-          ease: "none",
-          scrollTrigger: {
-            id: "wrapPin",
-            trigger: rootRef.current,
-            start: "top top",
-            end: () => `+=${distance()}`,
-            pin: true,
-            scrub: 1,
-            invalidateOnRefresh: true,
-            snap: {
-              snapTo: (v: number) =>
-                snapPointsRef.current.reduce((a, b) => (Math.abs(b - v) < Math.abs(a - v) ? b : a), 0),
-              duration: { min: 0.2, max: 0.5 },
-              ease: "power1.inOut",
+        // Start with card 1 centred, end with the last card centred.
+        const tween = gsap.fromTo(
+          track,
+          { x: () => vw() / 2 - first() },
+          {
+            x: () => vw() / 2 - last(),
+            ease: "none",
+            scrollTrigger: {
+              id: "wrapPin",
+              trigger: rootRef.current,
+              start: "top top",
+              end: () => `+=${span()}`,
+              pin: true,
+              scrub: 1,
+              invalidateOnRefresh: true,
+              onRefresh: computeSnapPoints,
+              snap: {
+                snapTo: (v: number) =>
+                  snapPointsRef.current.reduce((a, b) => (Math.abs(b - v) < Math.abs(a - v) ? b : a), 0),
+                duration: { min: 0.2, max: 0.5 },
+                ease: "power1.inOut",
+              },
+              onUpdate: (self) => {
+                const pts = snapPointsRef.current;
+                let nearest = 0;
+                pts.forEach((p, i) => {
+                  if (Math.abs(p - self.progress) < Math.abs(pts[nearest] - self.progress)) nearest = i;
+                });
+                setActive(nearest);
+              },
             },
-            onUpdate: (self) => {
-              const pts = snapPointsRef.current;
-              let nearest = 0;
-              pts.forEach((p, i) => {
-                if (Math.abs(p - self.progress) < Math.abs(pts[nearest] - self.progress)) nearest = i;
-              });
-              setActive(nearest);
-            },
-          },
-        });
+          }
+        );
 
         gsap.utils.toArray<HTMLElement>("[data-count]").forEach((el) => {
           const target = parseFloat(el.dataset.count || "0");
@@ -407,94 +463,90 @@ const Wrap = () => {
             </div>
           </Card>
 
-          {/* 2 · DISTANCE */}
-          <Card index={2} label="Distance">
-            <Label>Total distance</Label>
-            <div className="mt-3 text-center">
-              <p className="font-grotesk text-[110px] leading-none text-white md:text-[130px]">
-                <span data-count={s.totalKm} data-decimals="1">0</span>
-              </p>
-              <p className="font-condiment text-4xl text-[#FFB84D] md:text-5xl">kilometers</p>
-            </div>
-            <div className="mt-8 rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5">
-              <div className="flex items-center gap-3">
-                <span className="text-3xl">🏯</span>
+          {/* 2 · DISTANCE — Option B (bold: mint) */}
+          <Card index={2} label="Distance" bold="mint" fill>
+            <StatBody bold="mint" eyebrow="Total distance" unit="kilometers"
+              value={<span data-count={s.totalKm} data-decimals="1">0</span>}>
+              <div className="flex items-start gap-4">
+                <span className="text-4xl md:text-5xl">🏯</span>
                 <div>
-                  <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#FFB84D]">Great Wall challenge</p>
-                  <p className="mt-1 font-mono text-sm text-white/70">
-                    That's <span className="text-white">{((s.totalKm / 21196) * 100).toFixed(4)}%</span> of the Great Wall · only {Math.max(0, 21196 - s.totalKm).toFixed(0)} km to go 🥟
+                  <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-[#2C5E4E]">Great Wall of China</p>
+                  <p className="mt-2 font-grotesk text-3xl leading-none text-[#0E2A22] md:text-4xl">
+                    {((s.totalKm / 21196) * 100).toFixed(2)}%{" "}
+                    <span className="font-condiment text-2xl text-[#2C5E4E] md:text-3xl">conquered</span>
+                  </p>
+                  <p className="mt-2 font-mono text-sm text-[#0E2A22]/75">
+                    {s.totalKm.toFixed(0)} of 21,196 km — only {Math.max(0, 21196 - s.totalKm).toFixed(0)} km to go 🥟
                   </p>
                 </div>
               </div>
-            </div>
+            </StatBody>
           </Card>
 
-          {/* 3 · TIME */}
-          <Card index={3} label="Time on feet" accent="#f5c518">
-            <Label>Time on feet</Label>
+          {/* 3 · TIME — Option B (bold: sky) */}
+          <Card index={3} label="Time on feet" bold="sky">
+            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#2C4E70]">Time on feet</p>
             <div className="mt-3 text-center">
               <div className="flex items-baseline justify-center gap-2">
-                <p className="font-grotesk text-[100px] leading-none text-white md:text-[120px]">{Math.floor(s.totalMinutes / 60)}</p>
-                <span className="font-mono text-xl text-white/40">h</span>
-                <p className="font-grotesk text-[100px] leading-none text-white md:text-[120px]">{s.totalMinutes % 60}</p>
-                <span className="font-mono text-xl text-white/40">m</span>
+                <p className="font-grotesk text-[100px] leading-none text-[#0E2338] md:text-[120px]">{Math.floor(s.totalMinutes / 60)}</p>
+                <span className="font-mono text-xl text-[#0E2338]/40">h</span>
+                <p className="font-grotesk text-[100px] leading-none text-[#0E2338] md:text-[120px]">{s.totalMinutes % 60}</p>
+                <span className="font-mono text-xl text-[#0E2338]/40">m</span>
               </div>
-              <p className="font-condiment text-4xl text-[#f5c518]">pure grind</p>
+              <p className="font-condiment text-4xl text-[#2C4E70]">pure grind</p>
             </div>
-            <div className="mt-8 rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5">
+            <div className="mt-8 rounded-2xl border border-black/10 bg-black/[0.04] p-5">
               <div className="flex items-center gap-4">
-                <div className="h-16 w-11 shrink-0 overflow-hidden rounded-md border border-white/10">
+                <div className="h-16 w-11 shrink-0 overflow-hidden rounded-md border border-black/10">
                   <img src="https://image.tmdb.org/t/p/w500/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg" alt="Inception" className="h-full w-full object-cover" />
                 </div>
-                <p className="font-mono text-sm text-white/70">
-                  Like watching <span className="text-[#f5c518]">Inception</span>{" "}
-                  <span className="text-white">{(s.totalMinutes / 148).toFixed(1)}×</span>
+                <p className="font-mono text-sm text-[#0E2338]/80">
+                  Like watching <span className="font-bold text-[#0E2338]">Inception</span>{" "}
+                  <span className="font-bold text-[#0E2338]">{(s.totalMinutes / 148).toFixed(1)}×</span>
                 </p>
               </div>
-              <p className="mt-3 font-mono text-xs italic text-white/40">"You mustn't be afraid to dream a little bigger, darling."</p>
+              <p className="mt-3 font-mono text-xs italic text-[#0E2338]/55">"You mustn't be afraid to dream a little bigger, darling."</p>
             </div>
           </Card>
 
-          {/* 4 · CALORIES */}
-          <Card index={4} label="Energy" accent="#ff6b4a">
-            <Label>Energy burned</Label>
-            <div className="mt-3 text-center">
-              <p className="font-grotesk text-[100px] leading-none text-white md:text-[120px]">
-                <span data-count={s.calories}>0</span>
-              </p>
-              <p className="font-condiment text-4xl text-[#ff6b4a]">calories</p>
-            </div>
-            <div className="mt-8 rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5">
-              <div className="flex items-center gap-3">
-                <span className="text-3xl">🍕</span>
-                <p className="font-mono text-sm text-white/70">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#ff6b4a] block">The pizza index</span>
-                    <span className="text-white">{Math.floor(s.calories / 285)}</span> slices earned · {Math.floor(s.calories / (285 * 8))} whole pizzas. Bon appétit 🇮🇹
-                </p>
+          {/* 4 · CALORIES — Option B (bold: peach) */}
+          <Card index={4} label="Energy" bold="peach" fill>
+            <StatBody bold="peach" eyebrow="Energy burned" unit="calories"
+              value={<span data-count={s.calories}>0</span>}>
+              <div className="flex items-start gap-4">
+                <span className="text-4xl md:text-5xl">🍕</span>
+                <div>
+                  <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-[#7A3A22]">The pizza index</p>
+                  <p className="mt-2 font-grotesk text-3xl leading-none text-[#3A1A0E] md:text-4xl">
+                    {Math.floor(s.calories / 285)}{" "}
+                    <span className="font-condiment text-2xl text-[#7A3A22] md:text-3xl">slices earned</span>
+                  </p>
+                  <p className="mt-2 font-mono text-sm text-[#3A1A0E]/75">
+                    That's {Math.floor(s.calories / (285 * 8))} whole pizzas. Bon appétit 🇮🇹
+                  </p>
+                </div>
               </div>
-            </div>
+            </StatBody>
           </Card>
 
-          {/* 5 · LONGEST RUN */}
-          <Card index={5} label="Longest run" accent="#5b8cff">
-            <Label>Your longest run</Label>
-            <div className="mt-3 text-center">
-              <p className="font-grotesk text-[110px] leading-none text-white md:text-[130px]">
-                <span data-count={longestKm} data-decimals="1">0</span>
-              </p>
-              <p className="font-condiment text-4xl text-[#5b8cff]">kilometers</p>
-            </div>
-            <div className="mt-8 rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5">
-              <div className="flex items-center gap-3">
-                <span className="text-3xl">{isMarathon ? "🏅" : "🌉"}</span>
-                <p className="font-mono text-sm text-white/70">
-                  <span className="block font-mono text-[10px] uppercase tracking-[0.25em] text-[#5b8cff]">{isMarathon ? "Marathon master" : "Bridge conqueror"}</span>
-                  {isMarathon
-                    ? <>That's <span className="text-white">{(longestKm / 42.2).toFixed(1)}×</span> a full marathon. Athens is calling 🇬🇷</>
-                    : <>That's <span className="text-white">{(longestKm / 2.7).toFixed(1)}×</span> the Golden Gate Bridge 🌁</>}
-                </p>
+          {/* 5 · LONGEST RUN — Option B (bold: butter) */}
+          <Card index={5} label="Longest run" bold="butter" fill>
+            <StatBody bold="butter" eyebrow="Your longest run" unit="kilometers"
+              value={<span data-count={longestKm} data-decimals="1">0</span>}>
+              <div className="flex items-start gap-4">
+                <span className="text-4xl md:text-5xl">{isMarathon ? "🏅" : "🌉"}</span>
+                <div>
+                  <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-[#6E5510]">{isMarathon ? "Marathon master" : "Bridge conqueror"}</p>
+                  <p className="mt-2 font-grotesk text-3xl leading-none text-[#332800] md:text-4xl">
+                    {isMarathon ? (longestKm / 42.2).toFixed(1) : (longestKm / 2.7).toFixed(1)}×{" "}
+                    <span className="font-condiment text-2xl text-[#6E5510] md:text-3xl">{isMarathon ? "a marathon" : "the bridge"}</span>
+                  </p>
+                  <p className="mt-2 font-mono text-sm text-[#332800]/75">
+                    {isMarathon ? "A full 42.2 km — Athens is calling 🇬🇷" : "The Golden Gate is 2.7 km 🌁"}
+                  </p>
+                </div>
               </div>
-            </div>
+            </StatBody>
           </Card>
 
           {/* 6 · FASTEST */}
@@ -553,14 +605,14 @@ const Wrap = () => {
             </div>
           </Card>
 
-          {/* 8 · BIGGEST MONTH */}
-          <Card index={8} label="Peak month" accent="#ccff00">
-            <Label>Peak performance</Label>
+          {/* 8 · BIGGEST MONTH — Option B (bold: lavender) */}
+          <Card index={8} label="Peak month" bold="lavender">
+            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#4A3C7A]">Peak performance</p>
             <div className="mt-4 text-center">
               <span className="text-5xl">📅</span>
-              <p className="mt-4 font-mono text-xs uppercase tracking-[0.35em] text-white/40">Your biggest month</p>
-              <h2 className="mt-2 font-grotesk text-6xl uppercase text-white md:text-7xl">{s.bestMonthName}</h2>
-              <p className="mt-3 font-condiment text-4xl text-[#ccff00]">{s.bestMonthCount} runs</p>
+              <p className="mt-4 font-mono text-xs uppercase tracking-[0.35em] text-[#4A3C7A]">Your biggest month</p>
+              <h2 className="mt-2 font-grotesk text-6xl uppercase text-[#221A3A] md:text-7xl">{s.bestMonthName}</h2>
+              <p className="mt-3 font-condiment text-4xl text-[#4A3C7A]">{s.bestMonthCount} runs</p>
             </div>
           </Card>
 
@@ -646,19 +698,24 @@ const Wrap = () => {
             );
           })}
 
-          {/* 13 · ELEVATION */}
-          <Card index={13} label="Vertical limit" accent="#c084fc">
-            <Label>Total elevation gain</Label>
-            <div className="mt-3 text-center">
-              <span className="text-5xl">🧗</span>
-              <p className="mt-3 font-grotesk text-[90px] leading-none text-white md:text-[110px]">
-                <span data-count={s.elevation}>0</span><span className="text-4xl text-white/40">m</span>
-              </p>
-            </div>
-            <div className="mt-8 rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5 text-center">
-              <p className="font-mono text-sm text-white/70">That's climbing <span className="text-[#c084fc]">Qutub Minar</span></p>
-              <p className="font-condiment text-5xl text-[#c084fc]">{(s.elevation / 73).toFixed(1)} times</p>
-            </div>
+          {/* 13 · ELEVATION — Option B (bold: mint) */}
+          <Card index={13} label="Vertical limit" bold="mint" fill>
+            <StatBody bold="mint" eyebrow="Total elevation gain" unit="meters climbed"
+              value={<><span data-count={s.elevation}>0</span><span className="text-[0.45em] text-[#0E2A22]/45">m</span></>}>
+              <div className="flex items-start gap-4">
+                <span className="text-4xl md:text-5xl">🧗</span>
+                <div>
+                  <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-[#2C5E4E]">Qutub Minar climbs</p>
+                  <p className="mt-2 font-grotesk text-3xl leading-none text-[#0E2A22] md:text-4xl">
+                    {(s.elevation / 73).toFixed(1)}×{" "}
+                    <span className="font-condiment text-2xl text-[#2C5E4E] md:text-3xl">the tower</span>
+                  </p>
+                  <p className="mt-2 font-mono text-sm text-[#0E2A22]/75">
+                    You gained {s.elevation.toLocaleString()} m of vertical this year.
+                  </p>
+                </div>
+              </div>
+            </StatBody>
           </Card>
 
           {/* 14 · BODY */}
@@ -852,24 +909,23 @@ const Wrap = () => {
             </div>
           </Card>
 
-          {/* 20 · FINALE */}
-          <Card index={20} label="The finale" accent="#FFB84D" wide>
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#FFB84D]/[0.07] via-transparent to-transparent" />
+          {/* 20 · FINALE — Option B (bold: lavender) */}
+          <Card index={20} label="The finale" bold="lavender" wide>
             <div className="relative text-center">
-              <p className="font-mono text-xs uppercase tracking-[0.35em] text-white/40">2025 was just the beginning</p>
-              <h2 className="mt-4 font-grotesk text-8xl uppercase text-white md:text-9xl">2026?</h2>
-              <p className="mt-2 font-condiment text-5xl text-[#FFB84D] md:text-6xl">that's your year.</p>
-              <p className="mt-6 font-mono text-xs uppercase tracking-[0.3em] text-white/50">See you on the road, champion.</p>
+              <p className="font-mono text-xs uppercase tracking-[0.35em] text-[#4A3C7A]">2025 was just the beginning</p>
+              <h2 className="mt-4 font-grotesk text-8xl uppercase text-[#221A3A] md:text-9xl">2026?</h2>
+              <p className="mt-2 font-condiment text-5xl text-[#4A3C7A] md:text-6xl">that's your year.</p>
+              <p className="mt-6 font-mono text-xs uppercase tracking-[0.3em] text-[#221A3A]/60">See you on the road, champion.</p>
               <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
                 <Link
                   to="/cards"
-                  className="rounded-full bg-[#FFB84D] px-8 py-3 font-mono text-xs uppercase tracking-[0.25em] text-black transition-transform hover:scale-105 active:scale-95"
+                  className="rounded-full bg-[#221A3A] px-8 py-3 font-mono text-xs uppercase tracking-[0.25em] text-[#D6CCF5] transition-transform hover:scale-105 active:scale-95"
                 >
                   Checkout your card →
                 </Link>
                 <button
                   onClick={() => goTo(0)}
-                  className="flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 font-mono text-xs uppercase tracking-[0.25em] text-white/60 transition-colors hover:border-[#FFB84D] hover:text-[#FFB84D]"
+                  className="flex items-center gap-2 rounded-full border border-[#221A3A]/25 px-6 py-3 font-mono text-xs uppercase tracking-[0.25em] text-[#221A3A]/70 transition-colors hover:border-[#221A3A] hover:text-[#221A3A]"
                 >
                   <RotateCcw className="h-3.5 w-3.5" /> Replay
                 </button>
