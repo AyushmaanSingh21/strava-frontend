@@ -2,11 +2,24 @@
  * Mock data mode for local UI development.
  * Activate by adding ?mock to the URL (e.g. http://localhost:8080/dashboard?mock)
  * No Strava tokens or backend required.
+ *
+ * The flag is remembered for the rest of the browser session so in-app
+ * navigation (which drops the query string) keeps using mock data.
+ * Use ?mock=off to clear it.
  */
 
 export const isMockMode = (): boolean => {
   if (typeof window === "undefined") return false;
-  return new URLSearchParams(window.location.search).has("mock");
+  const param = new URLSearchParams(window.location.search).get("mock");
+  if (param !== null) {
+    if (param === "off") {
+      sessionStorage.removeItem("mock_mode");
+      return false;
+    }
+    sessionStorage.setItem("mock_mode", "1");
+    return true;
+  }
+  return sessionStorage.getItem("mock_mode") === "1";
 };
 
 // --- Polyline encoding (Google encoded polyline format) ---

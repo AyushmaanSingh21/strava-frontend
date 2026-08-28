@@ -12,6 +12,7 @@ import NotFound from "./pages/NotFound";
 import Callback from "./pages/Callback";
 import DataTest from "./pages/DataTest";
 import Wrap from "./pages/Wrap";
+import Hub from "./pages/Hub";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -24,8 +25,11 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          {/* Hub is just navigation — no Strava data, so it needs no auth guard */}
+          <Route path="/dashboard" element={<Hub />} />
+          {/* Previous dashboard, kept reachable while the hub takes over /dashboard */}
           <Route
-            path="/dashboard"
+            path="/dashboard-old"
             element={
               <ProtectedRoute>
                 <Dashboard />

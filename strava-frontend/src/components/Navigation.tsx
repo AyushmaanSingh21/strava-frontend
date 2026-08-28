@@ -11,10 +11,7 @@ interface NavigationProps {
 
 const LINKS = [
   { label: "Home", path: "/" },
-  { label: "Wrap", path: "/dashboard" },
-  { label: "Cards", path: "/cards" },
-  { label: "Roast", path: "/roast" },
-  { label: "About", path: "/about" },
+  { label: "Dashboard", path: "/dashboard" },
 ];
 
 const Navigation = ({ autoPlayMusic = false }: NavigationProps) => {

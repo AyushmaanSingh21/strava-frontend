@@ -2,7 +2,21 @@ import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { isAuthenticated } from "../services/stravaAuth";
 
-const isMockMode = () => new URLSearchParams(window.location.search).has("mock");
+// `?mock` enables mock mode and remembers it for the rest of the session, so
+// in-app navigation (which drops the query string) stays unlocked.
+// `?mock=off` clears it.
+const isMockMode = () => {
+  const param = new URLSearchParams(window.location.search).get("mock");
+  if (param !== null) {
+    if (param === "off") {
+      sessionStorage.removeItem("mock_mode");
+      return false;
+    }
+    sessionStorage.setItem("mock_mode", "1");
+    return true;
+  }
+  return sessionStorage.getItem("mock_mode") === "1";
+};
 
 const ProtectedRoute = ({ children }) => {
   const [allowed, setAllowed] = useState(null);

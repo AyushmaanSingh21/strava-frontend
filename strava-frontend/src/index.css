@@ -143,6 +143,43 @@ All colors MUST be HSL.
     background-size: 30px 30px;
   }
 
+  /* ===== Pastel (Option B) wrap-card auto-theming =====
+     Any element inside a [data-bold] card inherits dark ink; common dark-theme
+     utilities are remapped to pastel-appropriate values so cards convert with
+     just a `bold` prop. Regions marked `.dark-inset` (e.g. run maps) opt back
+     into a dark look so their content stays legible. */
+  [data-bold] { color: var(--ink); }
+
+  [data-bold] [class*="text-white"] { color: var(--ink) !important; }
+  [data-bold] [class*="text-white/2"],
+  [data-bold] [class*="text-white/3"],
+  [data-bold] [class*="text-white/4"],
+  [data-bold] [class*="text-white/5"],
+  [data-bold] [class*="text-white/6"] { color: var(--sub) !important; }
+  [data-bold] [class*="text-white/1"] { color: var(--ink) !important; opacity: 0.12; }
+
+  [data-bold] [class*="bg-white/"] { background-color: var(--panel, rgba(0, 0, 0, 0.05)) !important; }
+  [data-bold] [class*="border-white/"] { border-color: var(--panel-brd, rgba(0, 0, 0, 0.1)) !important; }
+
+  /* Neon accent hexes used by the old dark cards → the theme's mid tone. */
+  [data-bold] [class*="text-[#ccff00]"],
+  [data-bold] [class*="text-[#4cc9f0]"],
+  [data-bold] [class*="text-[#ff4d8d]"],
+  [data-bold] [class*="text-[#c084fc]"],
+  [data-bold] [class*="text-[#5b8cff]"],
+  [data-bold] [class*="text-[#b18cff]"],
+  [data-bold] [class*="text-[#f5c518]"],
+  [data-bold] [class*="text-[#ff9838]"],
+  [data-bold] [class*="text-[#ff4d6d]"],
+  [data-bold] [class*="text-[#FFB84D]"] { color: var(--sub) !important; }
+  [data-bold] [class*="bg-[#ccff00]"] { background-color: var(--ink) !important; box-shadow: none !important; }
+
+  /* Dark insets keep their original look (maps etc). */
+  [data-bold] .dark-inset { color: #fff; }
+  [data-bold] .dark-inset [class*="text-white"] { color: rgba(255, 255, 255, 0.9) !important; }
+  [data-bold] .dark-inset [class*="bg-white/"] { background-color: rgba(255, 255, 255, 0.05) !important; }
+  [data-bold] .dark-inset [class*="border-white/"] { border-color: rgba(255, 255, 255, 0.1) !important; }
+
   /* Athletic Patterns */
   .grid-pattern {
     background-image: 

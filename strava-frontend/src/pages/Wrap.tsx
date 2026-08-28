@@ -9,6 +9,7 @@ import { getAthleteProfile, getAllActivities, getAthleteClubs } from "@/services
 import { isMockMode, getMockProfile, getMockActivities, getMockClubs } from "@/utils/mockData";
 import { assignAnimal } from "@/utils/animalPersonality";
 import RunMapViz from "@/components/RunMapViz";
+import Starfield from "@/components/Starfield";
 import maskImage from "@/assets/paoel.jpg";
 
 const fmtPace = (paceMinPerKm: number) => {
@@ -138,16 +139,30 @@ const useBadges = (activities: any[]) =>
 // ---------- card shells ----------
 
 const cardBase =
-  "wrap-card relative flex h-[min(82vh,700px)] shrink-0 flex-col overflow-hidden rounded-[24px] border border-white/[0.07] bg-[#141317] will-change-transform";
-const cardPad = "p-8 md:p-10";
+  "wrap-card relative flex h-[min(84vh,700px)] shrink-0 flex-col overflow-hidden rounded-[24px] border border-white/[0.07] bg-[#141317] will-change-transform";
+const cardPad = "p-6 sm:p-8 md:p-10";
 
-// Option B (bold) pastel palettes: solid card colour + dark ink for text.
-const BOLD_THEMES: Record<string, { bg: string; ink: string; sub: string }> = {
+// Option B (bold) card palettes. Light pastels use dark ink; `dark: true`
+// themes are deep, saturated colours that use light ink instead.
+type BoldTheme = { bg: string; ink: string; sub: string; dark?: boolean };
+const BOLD_THEMES: Record<string, BoldTheme> = {
+  // light pastels (dark ink)
   mint: { bg: "#B8EAD6", ink: "#0E2A22", sub: "#2C5E4E" },
   peach: { bg: "#FFD3B6", ink: "#3A1A0E", sub: "#7A3A22" },
   lavender: { bg: "#D6CCF5", ink: "#221A3A", sub: "#4A3C7A" },
   sky: { bg: "#BEE1FF", ink: "#0E2338", sub: "#2C4E70" },
   butter: { bg: "#FFE9A8", ink: "#332800", sub: "#6E5510" },
+  rose: { bg: "#FBC9D8", ink: "#3A0E1E", sub: "#7A2C46" },
+  aqua: { bg: "#B4E7E4", ink: "#0A2A28", sub: "#276460" },
+  lilac: { bg: "#E3CFF2", ink: "#2E163A", sub: "#5C3A72" },
+  sage: { bg: "#D4E7C5", ink: "#1E2A12", sub: "#47632C" },
+  periwinkle: { bg: "#C9CFFB", ink: "#17193A", sub: "#3C4185" },
+  yellow: { bg: "#F5C518", ink: "#2E2600", sub: "#6E5B10" },
+  // deep / saturated (light ink)
+  red: { bg: "#B5232E", ink: "#FFECEC", sub: "#F0A9AE", dark: true },
+  navy: { bg: "#1C2A72", ink: "#EAF0FF", sub: "#A9B6E8", dark: true },
+  emerald: { bg: "#1B5E43", ink: "#E7F6EF", sub: "#8FC8AF", dark: true },
+  maroon: { bg: "#5E1B2E", ink: "#F6E3E9", sub: "#CE8FA3", dark: true },
 };
 
 const Card = ({ index, label, accent = "#FFB84D", children, wide = false, className = "", bold, fill = false }: {
@@ -158,21 +173,43 @@ const Card = ({ index, label, accent = "#FFB84D", children, wide = false, classN
   fill?: boolean;
 }) => {
   const theme = bold ? BOLD_THEMES[bold] : null;
+  const boldStyle = theme
+    ? ({
+        background: theme.bg,
+        color: theme.ink,
+        borderColor: theme.dark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)",
+        ["--ink" as string]: theme.ink,
+        ["--sub" as string]: theme.sub,
+        ["--panel" as string]: theme.dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)",
+        ["--panel-brd" as string]: theme.dark ? "rgba(255,255,255,0.14)" : "rgba(0,0,0,0.10)",
+      } as React.CSSProperties)
+    : undefined;
 
   return (
     <article
       data-card
       data-bold={bold ? "" : undefined}
       className={`${cardBase} ${cardPad} ${wide ? "w-[min(96vw,1020px)]" : "w-[min(88vw,470px)]"} ${className}`}
-      style={theme ? { background: theme.bg, borderColor: "rgba(0,0,0,0.08)", color: theme.ink } : undefined}
+      style={boldStyle}
     >
       {theme ? (
-        /* Option B: subtle paper texture + soft top light, everything else inherits dark ink */
-        <>
-          <div className="pointer-events-none absolute inset-0 opacity-[0.5]"
-            style={{ background: `radial-gradient(ellipse 90% 55% at 50% -10%, rgba(255,255,255,0.7), transparent 60%)` }} />
-          <div className="pointer-events-none absolute inset-0 dot-grid opacity-[0.08]" />
-        </>
+        theme.dark ? (
+          /* Deep colour: soft top light + a little bottom depth */
+          <>
+            <div className="pointer-events-none absolute inset-0"
+              style={{ background: `radial-gradient(ellipse 90% 55% at 50% -10%, rgba(255,255,255,0.12), transparent 60%)` }} />
+            <div className="pointer-events-none absolute inset-0"
+              style={{ background: `linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.22))` }} />
+            <div className="pointer-events-none absolute inset-0 dot-grid opacity-[0.05]" />
+          </>
+        ) : (
+          /* Light pastel: paper sheen from the top */
+          <>
+            <div className="pointer-events-none absolute inset-0 opacity-[0.5]"
+              style={{ background: `radial-gradient(ellipse 90% 55% at 50% -10%, rgba(255,255,255,0.7), transparent 60%)` }} />
+            <div className="pointer-events-none absolute inset-0 dot-grid opacity-[0.08]" />
+          </>
+        )
       ) : (
         /* Option A: dark card with a tinted colour wash */
         <>
@@ -206,7 +243,7 @@ const StatBody = ({ bold, eyebrow, value, unit, children }: {
         <p className="mt-3 font-grotesk leading-[0.78] text-[clamp(5rem,15vh,9.5rem)]" style={{ color: t.ink }}>{value}</p>
         <p className="mt-1 font-condiment text-4xl md:text-5xl" style={{ color: t.sub }}>{unit}</p>
       </div>
-      <div className="mt-auto rounded-3xl border border-black/10 bg-black/[0.06] p-6 md:p-7">
+      <div className="mt-auto rounded-3xl border p-6 md:p-7" style={{ background: "var(--panel)", borderColor: "var(--panel-brd)" }}>
         {children}
       </div>
     </div>
@@ -416,8 +453,11 @@ const Wrap = () => {
   const year = 2025;
 
   return (
-    <main ref={rootRef} className="relative h-screen w-full overflow-hidden bg-[#0e0d12] text-white">
-      <div className="pointer-events-none absolute inset-0 dot-grid opacity-20" />
+    <main ref={rootRef} className="relative h-screen w-full overflow-hidden bg-[#05040a] text-white">
+      {/* Deep-space backdrop: drifting starfield + soft nebula glows */}
+      <Starfield className="pointer-events-none absolute inset-0 h-full w-full" density={2.4} />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_-10%,rgba(142,123,232,0.12),transparent_60%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_85%_110%,rgba(255,184,77,0.08),transparent_60%)]" />
 
       {/* top bar */}
       <header className="absolute inset-x-0 top-0 z-20 flex items-center justify-between px-6 py-4 font-mono text-[11px] uppercase tracking-[0.3em] md:px-10">
@@ -444,8 +484,8 @@ const Wrap = () => {
         <div ref={trackRef} className="flex items-center gap-[6vw] px-[14vw] will-change-transform">
 
           {/* 1 · INTRO */}
-          <Card index={1} label="The intro">
-            <div className="pointer-events-none absolute inset-0 rounded-[24px] opacity-[0.12] mix-blend-soft-light"
+          <Card index={1} label="The intro" bold="navy">
+            <div className="pointer-events-none absolute inset-0 rounded-[24px] opacity-[0.05] mix-blend-soft-light"
               style={{ backgroundImage: `url(${maskImage})`, backgroundSize: "cover", backgroundPosition: "center", filter: "grayscale(60%)" }} />
             <div className="relative">
               <p className="font-mono text-xs uppercase tracking-[0.35em] text-white/50">Hey</p>
@@ -550,10 +590,10 @@ const Wrap = () => {
           </Card>
 
           {/* 6 · FASTEST */}
-          <Card index={6} label="Fastest run" accent="#b18cff">
+          <Card index={6} label="Fastest run" bold="maroon">
             <Label>Your fastest pace</Label>
             <div className="mt-3 text-center">
-              <p className="font-grotesk text-[100px] leading-none text-white md:text-[120px]">
+              <p className="font-grotesk text-[64px] leading-none text-white sm:text-[100px] md:text-[120px]">
                 {s.fastest ? fmtPace(16.666666666667 / s.fastest.average_speed) : "-"}
               </p>
               <p className="font-condiment text-4xl text-[#b18cff]">min/km</p>
@@ -570,15 +610,15 @@ const Wrap = () => {
           </Card>
 
           {/* 7 · FIRST RUN */}
-          <Card index={7} label="Where it began" accent="#4cc9f0" wide>
+          <Card index={7} label="Where it began" bold="sky" wide>
             <div className="grid flex-1 grid-cols-1 items-center gap-8 md:grid-cols-2">
-              <div className="relative aspect-square max-h-[420px] w-full overflow-hidden rounded-2xl border border-[#4cc9f0]/25 bg-[#020617]">
+              <div className="dark-inset relative aspect-square max-h-[420px] w-full overflow-hidden rounded-2xl border border-[#4cc9f0]/25 bg-[#020617]">
                 {s.firstRun?.map?.summary_polyline && (
                   <div className="absolute inset-0 opacity-90 mix-blend-screen contrast-125 brightness-110">
                     <RunMapViz activity={s.firstRun} />
                   </div>
                 )}
-                <div className="absolute bottom-3 left-3 rounded-md border border-white/10 bg-black/60 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.25em] text-[#4cc9f0] backdrop-blur">
+                <div className="absolute bottom-3 left-3 rounded-md border border-white/10 bg-black/60 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.25em] text-white/90 backdrop-blur">
                   First run map
                 </div>
               </div>
@@ -617,7 +657,7 @@ const Wrap = () => {
           </Card>
 
           {/* 9 · YEAR IN PIXELS */}
-          <Card index={9} label="Year in pixels" accent="#ccff00" wide>
+          <Card index={9} label="Year in pixels" bold="sky" wide>
             <div className="flex items-end justify-between border-b border-white/[0.07] pb-4">
               <div>
                 <Label>Level progress</Label>
@@ -669,7 +709,7 @@ const Wrap = () => {
             const accents = ["#ff4d8d", "#5b8cff", "#ff9838"];
             const medals = ["👑", "🥈", "🥉"];
             return (
-              <Card key={run.id} index={10 + index} label={`Greatest runs · #${index + 1}`} accent={accents[index]}>
+              <Card key={run.id} index={10 + index} label={`Greatest runs · #${index + 1}`} bold={(["maroon", "sky", "yellow"] as const)[index]}>
                 <div className="flex items-center justify-between">
                   <span className="text-5xl">{medals[index]}</span>
                   <span className="font-grotesk text-5xl text-white/10">#{index + 1}</span>
@@ -719,7 +759,7 @@ const Wrap = () => {
           </Card>
 
           {/* 14 · BODY */}
-          <Card index={14} label="The engine" accent="#ff4d6d">
+          <Card index={14} label="The engine" bold="red">
             <Label>Your body did this</Label>
             <div className="mt-4 text-center text-6xl">🫀</div>
             <div className="mt-6 space-y-4">
@@ -735,7 +775,7 @@ const Wrap = () => {
           </Card>
 
           {/* 15 · HALL OF FAME */}
-          <Card index={15} label="Hall of fame" accent="#4cc9f0" wide>
+          <Card index={15} label="Hall of fame" bold="maroon" wide>
             <div className="text-center">
               <h2 className="font-grotesk text-4xl uppercase text-white">Hall of Fame</h2>
               <p className="mt-1 font-mono text-xs text-white/40">every drop of sweat, every kilometer, every streak.</p>
@@ -762,19 +802,19 @@ const Wrap = () => {
           </Card>
 
           {/* 16 · THE NUMBERS */}
-          <Card index={16} label="The numbers" accent="#FFB84D" wide>
+          <Card index={16} label="The numbers" bold="emerald" wide>
             <div className="text-center">
               <Label>Not just kilometers. Not just calories.</Label>
-              <p className="mt-4 font-grotesk text-[130px] leading-none text-white md:text-[170px]">
+              <p className="mt-4 font-grotesk text-[80px] leading-none text-white sm:text-[130px] md:text-[170px]">
                 <span data-count={activities.length}>0</span>
               </p>
               <p className="font-condiment text-4xl text-[#FFB84D] md:text-5xl">moments you chose yourself.</p>
             </div>
             <div className="mt-8 grid grid-cols-3 gap-4">
               {[
-                { v: s.totalKm.toFixed(1), l: "Kilometers", c: "#4cc9f0" },
-                { v: String(s.totalMinutes), l: "Minutes", c: "#ff4d8d" },
-                { v: "0", l: "Regrets", c: "#FFB84D" },
+                { v: s.totalKm.toFixed(1), l: "Kilometers", c: "var(--ink)" },
+                { v: String(s.totalMinutes), l: "Minutes", c: "var(--sub)" },
+                { v: "0", l: "Regrets", c: "var(--ink)" },
               ].map((tile) => (
                 <div key={tile.l} className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-5 text-center transition-transform hover:-translate-y-1">
                   <p className="font-grotesk text-4xl md:text-5xl" style={{ color: tile.c }}>{tile.v}</p>
@@ -826,7 +866,7 @@ const Wrap = () => {
           </Card>
 
           {/* 18 · CLUB */}
-          <Card index={18} label="The family" accent="#c084fc">
+          <Card index={18} label="The family" bold="navy">
             {clubs.length > 0 ? (
               <div className="text-center">
                 <Crown className="mx-auto h-12 w-12 text-[#FFB84D]" />
@@ -848,7 +888,7 @@ const Wrap = () => {
           </Card>
 
           {/* 19 · ANIMAL PERSONALITY */}
-          <Card index={19} label="Running soul" accent="#FFB84D" wide>
+          <Card index={19} label="Running soul" bold="sky" wide>
             <div className="grid flex-1 grid-cols-1 items-center gap-8 md:grid-cols-2">
               <div className="relative mx-auto max-w-[260px]">
                 <div className="absolute inset-0 rounded-full bg-[#FFB84D]/10 blur-[70px]" />
@@ -898,7 +938,7 @@ const Wrap = () => {
               ].map((tier) => (
                 <div key={tier.name} className={`rounded-xl border p-2 text-center transition-all ${
                   s.animal.animal.toUpperCase().includes(tier.name)
-                    ? "border-[#FFB84D]/60 bg-[#FFB84D]/10"
+                    ? "border-black/40 bg-black/[0.07]"
                     : "border-white/[0.06] bg-white/[0.02] opacity-40 hover:opacity-80"
                 }`}>
                   <div className="text-xl">{tier.icon}</div>
@@ -913,7 +953,7 @@ const Wrap = () => {
           <Card index={20} label="The finale" bold="lavender" wide>
             <div className="relative text-center">
               <p className="font-mono text-xs uppercase tracking-[0.35em] text-[#4A3C7A]">2025 was just the beginning</p>
-              <h2 className="mt-4 font-grotesk text-8xl uppercase text-[#221A3A] md:text-9xl">2026?</h2>
+              <h2 className="mt-4 font-grotesk text-7xl uppercase text-[#221A3A] sm:text-8xl md:text-9xl">2026?</h2>
               <p className="mt-2 font-condiment text-5xl text-[#4A3C7A] md:text-6xl">that's your year.</p>
               <p className="mt-6 font-mono text-xs uppercase tracking-[0.3em] text-[#221A3A]/60">See you on the road, champion.</p>
               <div className="mt-10 flex flex-wrap items-center justify-center gap-4">

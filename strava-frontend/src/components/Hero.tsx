@@ -53,7 +53,7 @@ const Hero = () => {
   return (
     <section
       ref={container}
-      className="relative h-screen min-h-[600px] w-full overflow-hidden bg-[#1a1030]"
+      className="relative z-0 h-screen min-h-[600px] w-full overflow-hidden bg-[#1a1030]"
     >
       {/* Full-bleed, high-res painterly background */}
       <div ref={bgRef} className="absolute inset-x-0 -top-[5%] h-[110%] will-change-transform">
